@@ -1,0 +1,38 @@
+name: Build and Deploy Neptun Driver Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        env:
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+        run: echo "${GHCR_PAT}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t ghcr.io/wkorol/neptun_driver_frontend:latest .
+
+      - name: Push to GitHub Container Registry
+        run: docker push ghcr.io/wkorol/neptun_driver_frontend:latest
+
+      - name: Deploy to DigitalOcean
+        env:
+          DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+          DO_APP_ID: ${{ secrets.DO_APP_ID }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${DO_API_TOKEN}" \
+          https://api.digitalocean.com/v2/apps/${DO_APP_ID}/deployments
+

@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    working_dir: /var/www/neptun-frontend
+    image: neptun-frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/var/www/neptun-frontend
+    networks:
+      - neptun-frontend-nginx-proxy
+
+networks:
+  neptun-frontend-nginx-proxy:
