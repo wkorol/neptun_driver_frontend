@@ -1,0 +1,47 @@
+<div class="hotel-container">
+    <mat-card *ngFor="let hotel of hotels" class="hotel-card" [class.expanded]="hotel.expanded">
+        <mat-card-header>
+            <mat-card-title>{{ hotel.name }}</mat-card-title>
+            <mat-card-subtitle>Region: {{ hotel.region.name }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <p><strong>Lump Sums:</strong> {{ hotel.lump_sums.name }}</p>
+            <p><strong>Last Updated:</strong> {{ hotel.update_date.date }}</p>
+
+            <mat-accordion *ngIf="hotel.lump_sums.fixedValues">
+                <mat-expansion-panel (opened)="hotel.expanded = true" (closed)="hotel.expanded = false">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Fixed Values
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            Click to view tariffs
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div *ngFor="let fixedValue of hotel.lump_sums.fixedValues">
+                        <h4>{{ fixedValue.name }}</h4>
+                        <p>1 Tariff:</p>
+                        <ul>
+                            <li *ngFor="let tariff of fixedValue['1tariff']">
+                                Bus: {{ tariff.busValue }} - Car: {{ tariff.carValue }}
+                            </li>
+                        </ul>
+                        <p>2 Tariff:</p>
+                        <ul>
+                            <li *ngFor="let tariff of fixedValue['2tariff']">
+                                Bus: {{ tariff.busValue }} - Car: {{ tariff.carValue }}
+                            </li>
+                        </ul>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </mat-card-content>
+
+        <mat-card-actions>
+            <button mat-button color="primary">Learn More</button>
+            <button mat-button color="accent">Book Now</button>
+        </mat-card-actions>
+    </mat-card>
+</div>
