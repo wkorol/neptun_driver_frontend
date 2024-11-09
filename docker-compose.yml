@@ -1,17 +1,23 @@
-version: '3.9'
-services:
-  app:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    working_dir: /var/www/neptun-frontend
-    image: neptun-frontend
-    ports:
-      - "4200:4200"
-    volumes:
-      - .:/var/www/neptun-frontend
-    networks:
-      - neptun-frontend-nginx-proxy
+# Specifies Docker Compose file version
+version: '3.8'
 
-networks:
-  neptun-frontend-nginx-proxy:
+# Define the services that make up your app in docker-compose
+services:
+  # This would be equivalent to running docker container run with the net host option.
+  neptun-driver-frontend:
+    # Name of the container when docker-compose up
+    container_name: neptun-driver-frontend
+
+    # Build configuration for this service
+    build:
+      # Dockerfile location
+      context: .
+
+      # Dockerfile name, 'Dockerfile' is default value, you can keep it as is or remove this line
+      dockerfile: Dockerfile
+
+    # Expose ports. Format is
+    # <host-port>:<container-port>
+    # In this case, application inside docker will be available at localhost:8081 (on host machine)
+    ports:
+      - "4200:80"

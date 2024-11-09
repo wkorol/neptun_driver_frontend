@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "neptun_driver_frontend": {
+    "neptun-driver-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/neptun_driver_frontend",
+            "outputPath": "dist/neptun-driver-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -59,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "neptun_driver_frontend:build:production"
+              "buildTarget": "neptun-driver-frontend:build:production"
             },
             "development": {
-              "buildTarget": "neptun_driver_frontend:build:development"
+              "buildTarget": "neptun-driver-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

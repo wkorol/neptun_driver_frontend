@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'neptun_driver_frontend' title`, () => {
+  it(`should have the 'neptun-driver-frontend' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('neptun_driver_frontend');
+    expect(app.title).toEqual('neptun-driver-frontend');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, neptun_driver_frontend');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, neptun-driver-frontend');
   });
 });
