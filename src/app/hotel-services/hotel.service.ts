@@ -1,19 +1,14 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {Region} from "../region-service/region.service";
+import {LumpSum} from "../shared/lump-sums.model";
 
 export interface Hotel {
-  id:string;
+  id: string;
   name: string;
-  region: { name: string };
-  lump_sums: {
-    name: string;
-    fixedValues: Array<{
-      name: string;
-      'tariff1': Array<{ busValue: number; carValue: number }>;
-      'tariff2': Array<{ busValue: number; carValue: number }>;
-    }>;
-  };
+  region:  Region;
+  lump_sums: LumpSum;
   update_date: { date: string };
 }
 

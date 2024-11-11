@@ -1,0 +1,62 @@
+<h2>Edit Hotel</h2>
+
+<mat-form-field appearance="fill" class="form-field">
+    <mat-label>Hotel Name</mat-label>
+    <input matInput [(ngModel)]="hotelName" placeholder="Enter hotel name">
+</mat-form-field>
+
+<mat-form-field appearance="fill" class="form-field">
+    <mat-label>Select Region</mat-label>
+    <mat-select [(ngModel)]="selectedRegionId">
+        <!-- Assume regions are available as part of component data -->
+        <mat-option *ngFor="let region of regions" [value]="region.id">
+            {{ region.name }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="fill" class="form-field">
+    <mat-label>Select Lump Sum</mat-label>
+    <mat-select [(ngModel)]="selectedLumpSumsId">
+        <mat-option *ngFor="let lumpSum of lumpSums" [value]="lumpSum.id">
+            {{ lumpSum.name }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<button mat-raised-button color="primary" (click)="saveHotel()">Save Hotel</button>
+
+<h3>Create New Lump Sum</h3>
+<mat-form-field appearance="fill" class="form-field">
+    <mat-label>Lump Sum Name</mat-label>
+    <input matInput [(ngModel)]="newLumpSumName" placeholder="Enter new lump sum name">
+</mat-form-field>
+
+<div *ngFor="let fixedValue of newLumpSumFixedValues; let i = index">
+    <mat-form-field appearance="fill">
+        <mat-label>Fixed Value Name</mat-label>
+        <input matInput [(ngModel)]="fixedValue.name">
+    </mat-form-field>
+    <h4>Tariff 1</h4>
+    <mat-form-field appearance="fill">
+        <mat-label>Car Value</mat-label>
+        <input matInput type="number" [(ngModel)]="fixedValue.tariff1.carValue">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Bus Value</mat-label>
+        <input matInput type="number" [(ngModel)]="fixedValue.tariff1.busValue">
+    </mat-form-field>
+    <h4>Tariff 2</h4>
+    <mat-form-field appearance="fill">
+        <mat-label>Car Value</mat-label>
+        <input matInput type="number" [(ngModel)]="fixedValue.tariff2.carValue">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Bus Value</mat-label>
+        <input matInput type="number" [(ngModel)]="fixedValue.tariff2.busValue">
+    </mat-form-field>
+    <button mat-button color="warn" (click)="removeFixedValue(i)">Remove Fixed Value</button>
+</div>
+
+<button mat-button (click)="addFixedValue()">Add Fixed Value</button>
+<button mat-raised-button color="primary" (click)="createNewLumpSum()">Create and Select New Lump Sum</button>

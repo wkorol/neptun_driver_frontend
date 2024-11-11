@@ -4,13 +4,14 @@ import { AdminPanelService } from './admin-panel.service';
 import {NgForOf} from "@angular/common";
 import {Hotel} from "../hotel-services/hotel.service";
 import {LumpSum} from "../shared/lump-sums.model";
-import {Region} from "../region-service/region.service";
+import {Region, RegionService} from "../region-service/region.service";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {FormsModule} from "@angular/forms";
 import {MatButton} from "@angular/material/button";
 import {FixedValue} from "../shared/fixed-value.model";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-admin-panel',
@@ -41,7 +42,11 @@ export class AdminPanelComponent implements OnInit {
   newLumpSumName = '';
   fixedValues: FixedValue[] = [];
 
-  constructor(private adminPanelService: AdminPanelService) {}
+
+  newRegionId: number | undefined;
+  newRegionName: string | undefined;
+
+  constructor(private adminPanelService: AdminPanelService, private router: Router, private regionService: RegionService) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -51,6 +56,23 @@ export class AdminPanelComponent implements OnInit {
     this.adminPanelService.getHotels().subscribe(hotels => (this.hotels = hotels));
     this.adminPanelService.getLumpSums().subscribe(lumpSums => (this.lumpSums = lumpSums));
     this.adminPanelService.getRegions().subscribe(regions => (this.regions = regions));
+  }
+
+  addRegion() {
+    const newRegion = { id: this.newRegionId, name: this.newRegionName };
+    this.regionService.addRegion(newRegion).subscribe(response => {
+      // Handle success, e.g., clear inputs and refresh region list
+      this.newRegionId = 0;
+      this.newRegionName = '';
+      this.loadRegions(); // Assuming you have a method to refresh the regions list
+    });
+  }
+
+  loadRegions(): void
+  {
+     this.regionService.getRegionList().subscribe(regions => {
+       this.regions = regions;
+     })
   }
 
   addHotel(): void {
@@ -121,5 +143,9 @@ export class AdminPanelComponent implements OnInit {
     this.fixedValues = [
       { name: '', tariff1: { tariffType: 1, carValue: 0, busValue: 0 }, tariff2: { tariffType: 2, carValue: 0, busValue: 0 } }
     ];
+  }
+
+  goToEditHotel(hotelId: string): void {
+    this.router.navigate([`/hotel/${hotelId}/edit`]);
   }
 }

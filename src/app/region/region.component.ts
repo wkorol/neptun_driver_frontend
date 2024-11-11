@@ -51,6 +51,6 @@ export class RegionComponent implements OnInit {
 
   viewHotelsByRegion(regionId: number): void {
     // Navigate to /hotel with regionId as a query parameter
-    this.router.navigate(['/hotel'], { queryParams: { regionId: regionId } });
+    this.router.navigate(['hotel'], { queryParams: { regionId: regionId } });
   }
 }

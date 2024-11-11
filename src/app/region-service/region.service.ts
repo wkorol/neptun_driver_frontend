@@ -20,4 +20,9 @@ export class RegionService {
   {
     return this.http.get<Region[]>(`https://apineptun-ij5mx.ondigitalocean.app/region`);
   }
+
+  addRegion(regionData: { name: string | undefined, id: number | undefined }): Observable<void>
+  {
+    return this.http.post<void>(`https://apineptun-ij5mx.ondigitalocean.app/region/add`, regionData);
+  }
 }

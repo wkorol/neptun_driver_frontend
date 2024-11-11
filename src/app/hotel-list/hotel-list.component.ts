@@ -25,8 +25,6 @@ export class HotelListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getHotels();
-
     // Subscribe to search term changes without any navigation logic
     this.sharedService.currentSearchTerm.subscribe(term => {
       this.filteredHotels = term ? this.filterHotels(term) : this.hotels;
@@ -55,6 +53,7 @@ export class HotelListComponent implements OnInit {
   getHotelsByRegion(regionId: number): void {
     this.hotelService.getHotelsByRegion(regionId).subscribe({
       next: data => {
+        console.log(data);
         this.hotels = data;
         this.filteredHotels = data;
       },
