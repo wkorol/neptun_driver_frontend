@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    background-color: #f9f9f9; /* Set background color for the entire page */
+    min-height: 100vh; /* Ensure it covers the full height of the viewport */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}

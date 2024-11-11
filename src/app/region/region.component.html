@@ -1,0 +1,9 @@
+<div class="main-container">
+    <div class="region-container">
+        <mat-card *ngFor="let region of regions" class="region-card" (click)="viewHotelsByRegion(region.id)">
+            <mat-card-header>
+                <mat-card-title>{{ region.name }}</mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+/* Sidenav container styling */
+.sidenav-container {
+    height: 100vh;
+    width: 100%;
+}
+
+/* Sidenav styling */
+.sidenav {
+    width: 250px;
+    background-color: #3f51b5;
+    color: white;
+    padding-top: 20px;
+}
+
+.sidenav-links {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidenav-links li {
+    margin: 15px 0;
+}
+
+.sidenav-links a {
+    color: white;
+    font-size: 1rem;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+}
+
+.sidenav-links a.active {
+    background-color: #ffffff33;
+    border-radius: 4px;
+}
+
+.sidenav-links a:hover {
+    background-color: #ffffff33;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    height: 64px;
+    box-sizing: border-box;
+}
+
+.navbar-title {
+    font-size: 1.25rem;
+    color: white;
+    margin-left: 16px;
+}
+
+/* Centered content styling */
+.mat-sidenav-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 64px; /* Offset for the toolbar */
+}
+
+/* Styling for the main content area */
+.page-content {
+    max-width: 900px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Styling for the search bar wrapper */
+.search-bar-wrapper {
+    padding: 10px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #f9f9f9;
+}

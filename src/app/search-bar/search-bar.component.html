@@ -1,0 +1,6 @@
+<div class="search-bar-wrapper">
+    <mat-form-field appearance="outline" class="search-bar">
+        <mat-label>Wyszukiwanie hotelu</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (input)="onSearch(searchTerm)" placeholder="Wpisz nazwę hotelu" />
+    </mat-form-field>
+</div>

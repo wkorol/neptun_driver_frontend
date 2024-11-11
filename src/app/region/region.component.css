@@ -1,0 +1,75 @@
+/* Container with a responsive grid layout */
+body {
+    margin: 0;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Styling for the search bar */
+.search-bar {
+    width: 100%;
+}
+
+.search-bar-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Region cards container styling */
+.region-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+}
+
+/* Individual region card styling */
+.region-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: auto; /* Adjust height for region cards */
+    overflow: hidden;
+    text-align: center;
+}
+
+.region-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Card title styling */
+mat-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .region-container {
+        grid-template-columns: 1fr;
+    }
+}

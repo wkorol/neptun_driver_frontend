@@ -1,18 +1,12 @@
-<div class="main-container">
+
     <!-- Search Bar -->
-    <div class="search-bar-wrapper">
-        <mat-form-field appearance="outline" class="search-bar">
-            <mat-label>Wyszukiwanie hotelu</mat-label>
-            <input matInput [(ngModel)]="searchTerm" placeholder="Wpisz nazwę hotelu" />
-        </mat-form-field>
-    </div>
 
     <!-- Hotel Cards -->
     <div class="hotel-container">
-        <mat-card *ngFor="let hotel of filteredHotels()" class="hotel-card" (click)="viewHotelDetails(hotel.id)">
+        <mat-card *ngFor="let hotel of filteredHotels" class="hotel-card" (click)="viewHotelDetails(hotel.id)">
             <mat-card-header>
                 <mat-card-title>{{ hotel.name }}</mat-card-title>
-                <mat-card-subtitle>Region: {{ hotel.region.name }}</mat-card-subtitle>
+                <mat-card-subtitle>Rejon: {{ hotel.region.name }}</mat-card-subtitle>
             </mat-card-header>
 
             <mat-card-content>
@@ -21,4 +15,4 @@
             </mat-card-content>
         </mat-card>
     </div>
-</div>
+

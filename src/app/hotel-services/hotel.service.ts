@@ -21,16 +21,22 @@ export interface Hotel {
   providedIn: 'root'
 })
 export class HotelService {
-  private apiUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel';
 
   constructor(private http: HttpClient) { }
 
-  getHotels() {
-    return this.http.get<Hotel[]>('https://apineptun-ij5mx.ondigitalocean.app/hotel'); // Existing method
+  getHotels(): Observable<Hotel[]>
+  {
+    return this.http.get<Hotel[]>('https://apineptun-ij5mx.ondigitalocean.app/hotel');
   }
 
-  getHotel(hotelId: string | null): Observable<Hotel> {
+  getHotel(hotelId: string | null): Observable<Hotel>
+  {
     return this.http.get<Hotel>(`https://apineptun-ij5mx.ondigitalocean.app/hotel/${hotelId}`)
+  }
+
+  getHotelsByRegion(regionId: number): Observable<Hotel[]>
+  {
+    return this.http.get<Hotel[]>(`https://apineptun-ij5mx.ondigitalocean.app/region/${regionId}/hotels`)
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Hotel, HotelService} from '../hotel.service';
+import {Hotel, HotelService} from '../hotel-services/hotel.service';
 import {MatCard, MatCardContent} from "@angular/material/card";
 import {JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";

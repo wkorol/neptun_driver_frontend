@@ -1,0 +1,31 @@
+<mat-sidenav-container class="sidenav-container">
+    <!-- Side Navigation Drawer -->
+    <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav">
+        <ul class="sidenav-links">
+            <li><a routerLink="/" routerLinkActive="active" (click)="closeSidenav()">Home</a></li>
+            <li><a routerLink="/hotel" routerLinkActive="active" (click)="closeSidenav()">Hotels</a></li>
+            <li><a routerLink="/admin" routerLinkActive="active" (click)="closeSidenav()">Admin Panel</a></li>
+        </ul>
+    </mat-sidenav>
+
+    <!-- Main Content with Navbar Toggle Button -->
+    <mat-sidenav-content>
+        <mat-toolbar color="primary" class="navbar">
+            <!-- Toggle Button for Sidebar -->
+            <button mat-icon-button (click)="toggleSidenav()">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span class="navbar-title">My Application</span>
+        </mat-toolbar>
+
+        <!-- Search Bar placed directly under the toolbar -->
+        <div class="search-bar-wrapper">
+            <app-search-bar></app-search-bar>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <router-outlet></router-outlet>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
