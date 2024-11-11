@@ -2,13 +2,19 @@
     <!-- Side Navigation Drawer -->
     <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav">
         <ul class="sidenav-links">
-            <li><a routerLink="/" routerLinkActive="active" (click)="closeSidenav()">Home</a></li>
-            <li><a routerLink="/hotel" routerLinkActive="active" (click)="closeSidenav()">Hotels</a></li>
-            <li><a routerLink="/admin" routerLinkActive="active" (click)="closeSidenav()">Admin Panel</a></li>
+            <li>
+                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Home</a>
+            </li>
+            <li>
+                <a routerLink="/hotel" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Hotels</a>
+            </li>
+            <li>
+                <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Admin Panel</a>
+            </li>
         </ul>
     </mat-sidenav>
 
-    <!-- Main Content with Navbar Toggle Button -->
+    <!-- Main Content with Navbar and Search Bar -->
     <mat-sidenav-content>
         <mat-toolbar color="primary" class="navbar">
             <!-- Toggle Button for Sidebar -->
