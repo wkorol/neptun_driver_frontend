@@ -1,0 +1,110 @@
+/* Center everything within the entire container */
+.centered-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Grid layout for the cards */
+.lump-sum-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+    justify-content: center;
+}
+
+/* Card styling */
+.lump-sum-card {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    width: 250px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.lump-sum-card:hover {
+    transform: scale(1.02);
+}
+
+.lump-sum-card mat-card-content {
+    padding: 16px;
+}
+
+.lump-sum-card h4 {
+    margin: 8px 0 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.lump-sum-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lump-sum-card li {
+    padding: 4px 0;
+    font-size: 0.9rem;
+}
+
+/* Styling for tariff sections */
+.tariff-section {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    text-align: left;
+}
+
+/* Styling for icon and title */
+.tariff-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px; /* Space between icon/title and tariff details */
+}
+
+.tariff-header .icon {
+    font-size: 2rem;
+    margin-bottom: 4px; /* Space between icon and title text */
+}
+
+.sun-icon {
+    color: #FFA500; /* Orange color for sun icon */
+}
+
+.moon-icon {
+    color: #4B0082; /* Indigo color for moon icon */
+}
+
+.tariff-title {
+    font-weight: bold;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Center the back button */
+.back-button {
+    margin-top: 20px;
+}
+
+.back-button button {
+    width: 250px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #007bff;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.back-button button:hover {
+    transform: scale(1.02);
+}

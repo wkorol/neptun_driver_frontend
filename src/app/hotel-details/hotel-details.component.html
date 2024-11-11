@@ -1,0 +1,48 @@
+<div class="centered-container">
+    <h1>{{hotel?.name}}</h1>
+    Naciśnij w kafelek z miejscem, aby zobaczyć ryczałty
+    <div class="lump-sum-container">
+        <mat-card *ngFor="let lumpSum of lumpSums" class="lump-sum-card" (click)="toggleLumpSum(lumpSum)">
+            <mat-card-content>
+                <!-- Display lump sum name if not expanded, otherwise show fixed prices -->
+                <ng-container *ngIf="!lumpSum.expanded">
+                    <p>{{ lumpSum.name }}</p>
+                </ng-container>
+                <ng-container *ngIf="lumpSum.expanded">
+                    <h4>{{ lumpSum.name }}</h4>
+
+                    <div class="tariff-section">
+                        <div class="tariff-header">
+                            <span class="icon sun-icon">☀️</span>
+                            <p class="tariff-title">1 Taryfa</p>
+                        </div>
+                        <ul>
+                            <li *ngFor="let tariff of lumpSum['1tariff']">
+                                Osobowy: {{ tariff.carValue }} zł<br>
+                                Bus: {{ tariff.busValue }} zł
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tariff-section">
+                        <div class="tariff-header">
+                            <span class="icon moon-icon">🌙</span>
+                            <p class="tariff-title">2 Taryfa</p>
+                        </div>
+                        <ul>
+                            <li *ngFor="let tariff of lumpSum['2tariff']">
+                                Osobowy: {{ tariff.carValue }} zł<br>
+                                Bus: {{ tariff.busValue }} zł
+                            </li>
+                        </ul>
+                    </div>
+                </ng-container>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Centered button styled like cards -->
+    <div class="back-button">
+        <button mat-raised-button (click)="goBack()">Powrót</button>
+    </div>
+</div>

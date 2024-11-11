@@ -1,42 +1,44 @@
-import {Component, OnInit} from '@angular/core';
-import {HotelService} from "../hotel.service";
-import {CommonModule, NgFor, NgIf} from "@angular/common";
-import {
-  MatCard,
-  MatCardActions,
-  MatCardContent,
-  MatCardHeader,
-  MatCardSubtitle,
-  MatCardTitle
-} from "@angular/material/card";
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelDescription, MatExpansionPanelHeader,
-  MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {MatButton} from "@angular/material/button";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import {Hotel, HotelService} from '../hotel.service';
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
+import {NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-hotel-list',
-  standalone: true,
-  imports: [CommonModule, MatCard, MatCardHeader, MatCardTitle, MatExpansionPanelHeader,  MatCardSubtitle, MatCardContent, MatAccordion, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelDescription, MatCardActions, MatButton],
   templateUrl: './hotel-list.component.html',
-  styleUrl: './hotel-list.component.css'
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardSubtitle,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    NgForOf
+  ],
+  styleUrls: ['./hotel-list.component.css']
 })
 export class HotelListComponent implements OnInit {
-  hotels: any[] = [];
+  hotels: Hotel[] = [];
 
-  constructor(private hotelService: HotelService) { }
+  constructor(private hotelService: HotelService, private router: Router) {}
 
   ngOnInit(): void {
-    this.fetchHotels();
+    this.loadHotels();
   }
 
-  fetchHotels(): void {
+  loadHotels(): void {
     this.hotelService.getHotels().subscribe(
-        (data) => this.hotels = data,
-        (error) => console.error('Error fetching hotels', error)
+        (data) => {
+          this.hotels = data;
+        },
+        (error) => {
+          console.error('Error fetching hotels:', error);
+        }
     );
+  }
+
+  viewHotelDetails(hotelId: string): void {
+    this.router.navigate([`hotel/${hotelId}`]);
   }
 }
