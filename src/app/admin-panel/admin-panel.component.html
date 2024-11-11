@@ -1,0 +1,90 @@
+<h2>Admin Panel</h2>
+
+<h3>Dodaj nowy hotel</h3>
+<div class="add-hotel-form">
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Nazwa Hotelu</mat-label>
+        <input matInput [(ngModel)]="newHotelName" placeholder="Enter hotel name">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Wybierz Rejon</mat-label>
+        <mat-select [(ngModel)]="selectedRegionId">
+            <mat-option *ngFor="let region of regions" [value]="region.id">
+                {{ region.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Wybierz zestaw ryczałtów</mat-label>
+        <mat-select [(ngModel)]="selectedLumpSumsId">
+            <mat-option *ngFor="let lumpSum of lumpSums" [value]="lumpSum.id">
+                {{ lumpSum.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="addHotel()">Add Hotel</button>
+</div>
+
+<h3>Dodaj zestaw ryczałtów</h3>
+<div class="add-lump-sum-form">
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Nazwa zestawu</mat-label>
+        <input matInput [(ngModel)]="newLumpSumName" placeholder="Wprowadź nazwę">
+    </mat-form-field>
+
+    <div *ngFor="let fixedValue of fixedValues; let i = index" class="fixed-value-group">
+        <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Ryczałt z/do hotelu</mat-label>
+            <input matInput [(ngModel)]="fixedValue.name" placeholder="Enter location name (e.g., Gdynia)">
+        </mat-form-field>
+
+        <div class="tariff-group">
+            <h4>Taryfa 1</h4>
+            <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Car Value</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.carValue" placeholder="Enter car value">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Bus Value</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.busValue" placeholder="Enter bus value">
+            </mat-form-field>
+        </div>
+
+        <div class="tariff-group">
+            <h4>Taryfa 2</h4>
+            <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Car Value</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.carValue" placeholder="Enter car value">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Bus Value</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.busValue" placeholder="Enter bus value">
+            </mat-form-field>
+        </div>
+
+        <button mat-button color="warn" (click)="removeFixedValue(i)">Usuń ryczałt</button>
+    </div>
+
+    <button mat-button color="primary" (click)="addFixedValue()">Dodaj ryczałt</button>
+    <button mat-raised-button color="primary" (click)="addLumpSum()">Zapisz zestaw w bazie danych</button>
+</div>
+
+<h3>Hotele</h3>
+<ul>
+    <li *ngFor="let hotel of hotels">{{ hotel.name }}</li>
+</ul>
+
+<h3>Zestawy ryczałtów</h3>
+<ul>
+    <li *ngFor="let lumpSum of lumpSums">
+        {{ lumpSum.name }}
+    </li>
+</ul>
+
+<h3>Rejony</h3>
+<ul>
+    <li *ngFor="let region of regions">{{ region.name }}</li>
+</ul>

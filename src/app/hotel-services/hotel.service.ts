@@ -10,8 +10,8 @@ export interface Hotel {
     name: string;
     fixedValues: Array<{
       name: string;
-      '1tariff': Array<{ busValue: number; carValue: number }>;
-      '2tariff': Array<{ busValue: number; carValue: number }>;
+      'tariff1': Array<{ busValue: number; carValue: number }>;
+      'tariff2': Array<{ busValue: number; carValue: number }>;
     }>;
   };
   update_date: { date: string };
