@@ -39,7 +39,7 @@ export class HotelDetailsComponent implements OnInit {
     this.hotelService.getHotel(this.hotelId).subscribe(
         (data: Hotel) => {
           this.hotel = data;
-          this.lumpSums = (data.lump_sums.fixedValues || []).map((lumpSum: any) => ({
+          this.lumpSums = (data.lump_sums?.fixedValues || []).map((lumpSum: any) => ({
             ...lumpSum,
             expanded: false// Add an expanded property to each lump sum
           }));

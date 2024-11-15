@@ -16,6 +16,8 @@ import {SharedModule} from "../shared/shared.module";
 export class RegionComponent implements OnInit {
   regions: Region[] | null = null;
   private isOnRegionRoute = false;
+  isLoading = true;
+
 
   constructor(
       private regionService: RegionService,
@@ -24,33 +26,34 @@ export class RegionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Set a flag to detect if we're currently on the /regions route
     this.isOnRegionRoute = this.router.url.includes('/');
-
-    // Load regions initially
     this.loadRegions();
-
-    // Subscribe to search term changes
     this.sharedService.currentSearchTerm.subscribe(term => {
       if (term) {
-        // Navigate to HotelListComponent (e.g., `/`) when search term is present
         this.router.navigate(['/hotel']);
       } else if (this.isOnRegionRoute) {
-        // Only navigate back to `/regions` if we were initially on the `/regions` route
         this.router.navigate(['/']);
       }
     });
   }
 
   loadRegions(): void {
+    this.isLoading = true;
     this.regionService.getRegionList().subscribe({
-      next: data => this.regions = data,
-      error: error => console.error('Error fetching regions:', error)
+      next: data => {
+        this.regions = data;
+        this.isLoading = false;
+      },
+      error: error => {
+        console.error('Error fetching regions:', error);
+        this.isLoading = false;
+      }
     });
   }
 
   viewHotelsByRegion(regionId: number): void {
-    // Navigate to /hotel with regionId as a query parameter
-    this.router.navigate(['hotel'], { queryParams: { regionId: regionId } });
+    if (!this.isLoading) { // Only navigate if data is loaded
+      this.router.navigate(['hotel'], { queryParams: { regionId: regionId } });
+    }
   }
 }

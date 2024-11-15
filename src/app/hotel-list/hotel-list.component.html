@@ -1,18 +1,16 @@
+<div *ngIf="!isLoading" class="hotel-container">
+    <mat-card
+            *ngFor="let hotel of filteredHotels"
+            class="hotel-card"
+            (click)="viewHotelDetails(hotel.id)">
+        <mat-card-header>
+            <mat-card-title>{{ hotel?.name }}</mat-card-title>
+            <mat-card-subtitle>Rejon: {{ hotel?.region?.name }}</mat-card-subtitle>
+        </mat-card-header>
 
-    <!-- Search Bar -->
-
-    <!-- Hotel Cards -->
-    <div class="hotel-container">
-        <mat-card *ngFor="let hotel of filteredHotels" class="hotel-card" (click)="viewHotelDetails(hotel.id)">
-            <mat-card-header>
-                <mat-card-title>{{ hotel?.name }}</mat-card-title>
-                <mat-card-subtitle>Rejon: {{ hotel.region?.name }}</mat-card-subtitle>
-            </mat-card-header>
-
-            <mat-card-content>
-                <p><strong>Ryczałty:</strong> {{ hotel.lump_sums?.name }}</p>
-                <p><strong>Ostatnio aktualizowany:</strong> {{ hotel.update_date?.date }}</p>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
+        <mat-card-content>
+            <p><strong>Ryczałty:</strong> {{ hotel.lump_sums.name }}</p>
+            <p><strong>Ostatnio aktualizowany:</strong> {{ hotel.update_date }}</p>
+        </mat-card-content>
+    </mat-card>
+</div>

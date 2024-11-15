@@ -9,7 +9,7 @@ export interface Hotel {
   name: string;
   region:  Region;
   lump_sums: LumpSum;
-  update_date: { date: string };
+  update_date: Date;
 }
 
 @Injectable({

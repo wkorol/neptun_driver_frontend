@@ -16,6 +16,7 @@ export class HotelListComponent implements OnInit {
   hotels: Hotel[] = [];
   filteredHotels: Hotel[] = [];
   searchTerm: string = ''; // Track search term
+  isLoading = true;
 
   constructor(
       private hotelService: HotelService,
@@ -41,28 +42,39 @@ export class HotelListComponent implements OnInit {
   }
 
   getHotels(): void {
+    this.isLoading = true;
     this.hotelService.getHotels().subscribe({
       next: data => {
         this.hotels = data;
         this.filteredHotels = data;
+        this.isLoading = false;
       },
-      error: error => console.error('Error fetching hotels:', error)
+      error: error => {
+        console.error('Error fetching hotels:', error);
+        this.isLoading = false;
+      }
     });
   }
 
   getHotelsByRegion(regionId: number): void {
+    this.isLoading = true;
     this.hotelService.getHotelsByRegion(regionId).subscribe({
       next: data => {
-        console.log(data);
         this.hotels = data;
         this.filteredHotels = data;
+        this.isLoading = false;
       },
-      error: error => console.error('Error fetching hotels by region:', error)
+      error: error => {
+        console.error('Error fetching hotels by region:', error);
+        this.isLoading = false;
+      }
     });
   }
 
   viewHotelDetails(hotelId: string): void {
-    this.router.navigate([`hotel/${hotelId}`]);
+    if (!this.isLoading) { // Only navigate if data is loaded
+      this.router.navigate([`hotel/${hotelId}`]);
+    }
   }
 
   filterHotels(term: string): Hotel[] {
