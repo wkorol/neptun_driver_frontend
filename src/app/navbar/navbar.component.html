@@ -1,6 +1,6 @@
 <mat-sidenav-container class="sidenav-container">
     <!-- Side Navigation Drawer -->
-    <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav">
+    <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav" [ngClass]="{'open': isSidenavOpen}">
         <ul class="sidenav-links">
             <li>
                 <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Home</a>
@@ -17,11 +17,11 @@
     <!-- Main Content with Navbar and Search Bar -->
     <mat-sidenav-content>
         <mat-toolbar color="primary" class="navbar">
-            <!-- Toggle Button for Sidebar -->
-            <button mat-icon-button (click)="toggleSidenav()">
+            <!-- Toggle Button for Sidebar with animation class -->
+            <button mat-icon-button (click)="toggleSidenav()" class="menu-button" [ngClass]="{'rotated': isSidenavOpen}">
                 <mat-icon>menu</mat-icon>
             </button>
-            <span class="navbar-title">My Application</span>
+            <span class="navbar-title">Neptun Taxi - Strefa Kierowcy 2.0</span>
         </mat-toolbar>
 
         <!-- Search Bar placed directly under the toolbar -->

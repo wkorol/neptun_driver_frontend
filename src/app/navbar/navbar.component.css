@@ -17,6 +17,11 @@
     padding: 0;
 }
 
+.menu-button {
+    color: white;
+    transition: transform 0.3s ease; /* Smooth rotation animation */
+}
+
 .sidenav-links li {
     margin: 15px 0;
 }
@@ -39,19 +44,23 @@
 }
 
 /* Navbar */
+/* Navbar */
 .navbar {
     display: flex;
     align-items: center;
     padding: 0 16px;
     height: 64px;
     box-sizing: border-box;
+    background-color: #3f51b5; /* Match the sidenav background color */
 }
 
+/* Navbar title styling */
 .navbar-title {
     font-size: 1.25rem;
     color: white;
     margin-left: 16px;
 }
+
 
 /* Centered content styling */
 .mat-sidenav-content {
