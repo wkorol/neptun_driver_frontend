@@ -1,22 +1,34 @@
-// hotel-list.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Hotel, HotelService } from '../hotel-services/hotel.service';
 import { SharedService } from '../shared/shared.service';
-import {ActivatedRoute, Router} from "@angular/router";
-import {SharedModule} from "../shared/shared.module";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import {NgForOf, NgIf} from "@angular/common";
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
 
 @Component({
   selector: 'app-hotel-list',
   standalone: true,
   templateUrl: './hotel-list.component.html',
-  styleUrls: ['./hotel-list.component.css'],
-  imports: [SharedModule]
+  imports: [
+    NgIf,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    NgForOf,
+    MatCardTitle,
+    MatCardSubtitle
+  ],
+  styleUrls: ['./hotel-list.component.css']
 })
-export class HotelListComponent implements OnInit {
+export class HotelListComponent implements OnInit, OnDestroy {
   hotels: Hotel[] = [];
   filteredHotels: Hotel[] = [];
-  searchTerm: string = ''; // Track search term
+  displayedHotels: Hotel[] = [];
+  searchTerm: string = '';
   isLoading = true;
+  private destroy$ = new Subject<void>();
 
   constructor(
       private hotelService: HotelService,
@@ -26,9 +38,12 @@ export class HotelListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to search term changes without any navigation logic
-    this.sharedService.currentSearchTerm.subscribe(term => {
-      this.filteredHotels = term ? this.filterHotels(term) : this.hotels;
+    this.sharedService.currentSearchTerm.pipe(
+        takeUntil(this.destroy$)
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.filteredHotels = this.filterHotels(term);
+      this.updateDisplayedHotels();
     });
 
     this.route.queryParams.subscribe(params => {
@@ -43,14 +58,17 @@ export class HotelListComponent implements OnInit {
 
   getHotels(): void {
     this.isLoading = true;
+
     this.hotelService.getHotels().subscribe({
       next: data => {
         this.hotels = data;
         this.filteredHotels = data;
+        if (!this.searchTerm) {
+          this.updateDisplayedHotels();
+        }
         this.isLoading = false;
       },
       error: error => {
-        console.error('Error fetching hotels:', error);
         this.isLoading = false;
       }
     });
@@ -58,21 +76,24 @@ export class HotelListComponent implements OnInit {
 
   getHotelsByRegion(regionId: number): void {
     this.isLoading = true;
+
     this.hotelService.getHotelsByRegion(regionId).subscribe({
       next: data => {
         this.hotels = data;
         this.filteredHotels = data;
+        if (!this.searchTerm) {
+          this.updateDisplayedHotels();
+        }
         this.isLoading = false;
       },
       error: error => {
-        console.error('Error fetching hotels by region:', error);
         this.isLoading = false;
       }
     });
   }
 
   viewHotelDetails(hotelId: string): void {
-    if (!this.isLoading) { // Only navigate if data is loaded
+    if (!this.isLoading) {
       this.router.navigate([`hotel/${hotelId}`]);
     }
   }
@@ -81,16 +102,21 @@ export class HotelListComponent implements OnInit {
     if (!term) {
       return this.hotels;
     }
-    return this.hotels.filter(hotel =>
+
+    const filtered = this.hotels.filter(hotel =>
         hotel.name.toLowerCase().includes(term.toLowerCase())
     );
+
+    console.log('Filtered Hotels:', filtered);
+    return filtered.length > 0 ? filtered : [];
   }
 
-  get displayedHotels(): Hotel[] {
-    return this.searchTerm ? this.filteredHotels : this.hotels;
+  updateDisplayedHotels(): void {
+    this.displayedHotels = this.searchTerm ? this.filteredHotels : this.hotels;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
-
-
-
-

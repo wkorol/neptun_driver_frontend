@@ -1,10 +1,8 @@
-// region.component.ts
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RegionService } from '../region-service/region.service';
-import { SharedService } from '../shared/shared.service';
 import { Region } from '../region-service/region.service';
-import {SharedModule} from "../shared/shared.module";
+import { SharedModule } from "../shared/shared.module";
+import {Route, Router} from "@angular/router";
 
 @Component({
   selector: 'app-region',
@@ -15,26 +13,12 @@ import {SharedModule} from "../shared/shared.module";
 })
 export class RegionComponent implements OnInit {
   regions: Region[] | null = null;
-  private isOnRegionRoute = false;
   isLoading = true;
 
-
-  constructor(
-      private regionService: RegionService,
-      private sharedService: SharedService,
-      private router: Router
-  ) {}
+  constructor(private regionService: RegionService, private router: Router) {}
 
   ngOnInit(): void {
-    this.isOnRegionRoute = this.router.url.includes('/');
     this.loadRegions();
-    this.sharedService.currentSearchTerm.subscribe(term => {
-      if (term) {
-        this.router.navigate(['/hotel']);
-      } else if (this.isOnRegionRoute) {
-        this.router.navigate(['/']);
-      }
-    });
   }
 
   loadRegions(): void {

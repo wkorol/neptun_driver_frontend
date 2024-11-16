@@ -1,6 +1,6 @@
 <div *ngIf="!isLoading" class="hotel-container">
     <mat-card
-            *ngFor="let hotel of filteredHotels"
+            *ngFor="let hotel of displayedHotels"
             class="hotel-card"
             (click)="viewHotelDetails(hotel.id)">
         <mat-card-header>
