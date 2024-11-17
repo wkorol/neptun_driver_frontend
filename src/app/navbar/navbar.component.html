@@ -6,17 +6,17 @@
                 <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Home</a>
             </li>
             <li>
-                <a routerLink="/hotel" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Hotels</a>
+                <a routerLink="/hotel" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Hotele</a>
             </li>
             <li>
-                <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Admin Panel</a>
+                <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Panel Administratora</a>
             </li>
         </ul>
     </mat-sidenav>
 
     <!-- Main Content with Navbar and Search Bar -->
     <mat-sidenav-content>
-        <mat-toolbar color="primary" class="navbar">
+        <mat-toolbar color="primary" class="navbar sticky-navbar">
             <!-- Toggle Button for Sidebar with animation class -->
             <button mat-icon-button (click)="toggleSidenav()" class="menu-button" [ngClass]="{'rotated': isSidenavOpen}">
                 <mat-icon>menu</mat-icon>
@@ -25,12 +25,11 @@
         </mat-toolbar>
 
         <!-- Search Bar placed directly under the toolbar -->
-        <div class="search-bar-wrapper">
-            <app-search-bar></app-search-bar>
-        </div>
+
 
         <!-- Page Content -->
         <div class="page-content">
+                <app-search-bar></app-search-bar>
             <router-outlet></router-outlet>
         </div>
     </mat-sidenav-content>

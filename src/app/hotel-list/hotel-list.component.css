@@ -23,7 +23,7 @@
     color: #333;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: just;
     height: auto; /* Increase the height for larger square */
     overflow: hidden; /* Prevent overflow */
 }

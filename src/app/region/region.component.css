@@ -50,10 +50,12 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: auto; /* Adjust height for region cards */
+    align-items: center; /* Center horizontally */
+    height: auto;
     overflow: hidden;
     text-align: center;
 }
+
 
 .region-card:hover {
     transform: scale(1.05);
