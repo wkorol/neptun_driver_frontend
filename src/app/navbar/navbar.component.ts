@@ -4,9 +4,10 @@ import {MatToolbar} from "@angular/material/toolbar";
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
-import {NgClass, NgIf} from "@angular/common";
+import {AsyncPipe, NgClass, NgIf} from "@angular/common";
 import {SearchBarComponent} from "../search-bar/search-bar.component";
-import {filter} from "rxjs";
+import {filter, Observable} from "rxjs";
+import {AuthService} from "../services/auth.service";
 
 @Component({
   selector: 'app-navbar',
@@ -24,13 +25,16 @@ import {filter} from "rxjs";
     NgIf,
     RouterOutlet,
     SearchBarComponent,
-    NgClass
+    NgClass,
+    AsyncPipe
   ],
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit{
+  isLoggedIn$: Observable<boolean>;
   showSearchBar: boolean = true;
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
+    this.isLoggedIn$ = this.authService.isLoggedIn$;
   }
   isSidenavOpen = false; // Set the sidenav to be closed by default
 
@@ -50,5 +54,10 @@ export class NavbarComponent implements OnInit{
       // Hide search bar on the `HotelDetailsComponent` route
       this.showSearchBar = !event.url.includes('/hotel/');
     });
+  }
+
+  logout() {
+    this.closeSidenav();
+    this.authService.logout();
   }
 }

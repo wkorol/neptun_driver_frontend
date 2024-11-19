@@ -1,3 +1,11 @@
+
+<mat-toolbar color="primary" class="navbar sticky-navbar">
+    <!-- Toggle Button for Sidebar with animation class -->
+    <button mat-icon-button (click)="toggleSidenav()" class="menu-button" [ngClass]="{'rotated': isSidenavOpen}">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <span class="navbar-title">Neptun Taxi - Strefa Kierowcy 2.0</span>
+</mat-toolbar>
 <mat-sidenav-container class="sidenav-container">
     <!-- Side Navigation Drawer -->
     <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav" [ngClass]="{'open': isSidenavOpen}">
@@ -11,23 +19,17 @@
             <li>
                 <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Panel Administratora</a>
             </li>
+            <li *ngIf="!(isLoggedIn$ | async)">
+                <a routerLink="/login" routerLinkActive="active" (click)="closeSidenav()">Login</a>
+            </li>
+            <li *ngIf="isLoggedIn$ | async">
+                <a href="javascript:void(0)" (click)="logout()">Logout</a>
+            </li>
         </ul>
     </mat-sidenav>
 
     <!-- Main Content with Navbar and Search Bar -->
     <mat-sidenav-content>
-        <mat-toolbar color="primary" class="navbar sticky-navbar">
-            <!-- Toggle Button for Sidebar with animation class -->
-            <button mat-icon-button (click)="toggleSidenav()" class="menu-button" [ngClass]="{'rotated': isSidenavOpen}">
-                <mat-icon>menu</mat-icon>
-            </button>
-            <span class="navbar-title">Neptun Taxi - Strefa Kierowcy 2.0</span>
-        </mat-toolbar>
-
-        <!-- Search Bar placed directly under the toolbar -->
-
-
-        <!-- Page Content -->
         <div class="page-content">
                 <app-search-bar></app-search-bar>
             <router-outlet></router-outlet>

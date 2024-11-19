@@ -1,7 +1,6 @@
 /* Sidenav container styling */
 .sidenav-container {
     height: 100%;
-    width: 100%;
 }
 
 /* Sidenav styling */
@@ -20,7 +19,7 @@
 .sticky-navbar {
     position: sticky;
     top: 0;
-    z-index: 1000; /* Ensures it stays on top of other elements */
+    /*z-index: 1000; !* Ensures it stays on top of other elements *!*/
 }
 
 
@@ -56,7 +55,7 @@
     display: flex;
     align-items: center;
     padding: 0 16px;
-    height: 64px;
+    height: 100px;
     box-sizing: border-box;
     background-color: #3f51b5; /* Match the sidenav background color */
 }
