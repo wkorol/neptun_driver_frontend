@@ -1,0 +1,41 @@
+<h2>Zarządzanie Hotelami</h2>
+
+<!-- Add/Edit Hotel Form -->
+<div class="add-hotel-form">
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Nazwa hotelu</mat-label>
+        <input matInput [(ngModel)]="newHotelName" placeholder="Wprowadź nazwę hotelu">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Wybierz rejon</mat-label>
+        <mat-select [(ngModel)]="selectedRegionId">
+            <mat-option *ngFor="let region of regions" [value]="region.id">
+                {{ region.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Wybierz zestaw ryczałtów</mat-label>
+        <mat-select [(ngModel)]="selectedLumpSumsId">
+            <mat-option *ngFor="let lumpSum of lumpSums" [value]="lumpSum.id">
+                {{ lumpSum.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="addHotel()">Dodaj hotel</button>
+</div>
+
+<!-- Hotels List -->
+<h3>Hotele w systemie</h3>
+<ul>
+    <li *ngFor="let hotel of hotels">
+        {{ hotel.name }}
+        <div>
+            <button mat-button color="accent" (click)="goToEditHotel(hotel.id)">Edytuj</button>
+            <button mat-button color="warn" (click)="deleteHotel(hotel.id)">Usuń</button>
+        </div>
+    </li>
+</ul>

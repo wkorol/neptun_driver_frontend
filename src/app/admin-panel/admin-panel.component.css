@@ -1,44 +1,40 @@
-.add-hotel-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-width: 400px;
-    margin-bottom: 32px;
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
 }
 
-.form-field {
-    width: 100%;
-}
-
-button {
-    align-self: flex-start;
-}
-
-.add-lump-sum-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-width: 600px;
-    margin-bottom: 32px;
-}
-
-.form-field {
-    width: 100%;
-}
-
-.fixed-value-group {
-    padding: 16px;
-    border: 1px solid #e0e0e0;
+.dashboard-card {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     border-radius: 8px;
-    margin-bottom: 16px;
+    overflow: hidden;
+    padding: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
-.tariff-group {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-button {
-    align-self: flex-start;
+.dashboard-card mat-card-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #3f51b5; /* Primary color for titles */
+    margin-bottom: 8px;
+}
+
+.dashboard-card mat-card-content {
+    font-size: 1em;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
 }

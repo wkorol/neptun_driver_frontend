@@ -4,19 +4,28 @@
     <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav" [ngClass]="{'open': isSidenavOpen}">
         <ul class="sidenav-links">
             <li>
-                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Home</a>
+                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Rejony</a>
             </li>
             <li>
                 <a routerLink="/hotel" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Hotele</a>
             </li>
             <li>
+                <a routerLink="/"  (click)="closeSidenav()">Głosowanie (W trakcie programowania)</a>
+            </li>
+            <li>
+                <a routerLink="/"  (click)="closeSidenav()">Baza informacji (W trakcie programowania)</a>
+            </li>
+            <li>
+                <a routerLink="/"  (click)="closeSidenav()">Informacja o systemie</a>
+            </li>
+            <li>
                 <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Panel Administratora</a>
             </li>
             <li *ngIf="!(isLoggedIn$ | async)">
-                <a routerLink="/login" routerLinkActive="active" (click)="closeSidenav()">Login</a>
+                <a routerLink="/login" routerLinkActive="active" (click)="closeSidenav()">Zaloguj</a>
             </li>
             <li *ngIf="isLoggedIn$ | async">
-                <a href="javascript:void(0)" (click)="logout()">Logout</a>
+                <a href="javascript:void(0)" (click)="logout()">Wyloguj</a>
             </li>
         </ul>
     </mat-sidenav>

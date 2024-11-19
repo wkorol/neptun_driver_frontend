@@ -8,6 +8,9 @@ import {EditHotelComponent} from "./edit-hotel/edit-hotel.component";
 import {AuthGuard} from "./auth.guard";
 import {LoginComponent} from "./login/login.component";
 import {AuthRedirectGuard} from "./auth-redirect.guard";
+import {ManageRegionsComponent} from "./manage-regions/manage-regions.component";
+import {ManageHotelsComponent} from "./manage-hotels/manage-hotels.component";
+import {ManageLumpSumsComponent} from "./manage-lump-sums/manage-lump-sums.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -15,6 +18,9 @@ export const routes: Routes = [
     {path: 'hotel/:id/edit', component: EditHotelComponent},
     {path: 'hotel', component: HotelListComponent},
     {path: 'login', component: LoginComponent, canActivate: [AuthRedirectGuard]},
+    { path: 'manage-regions', component: ManageRegionsComponent },
+    { path: 'manage-hotels', component: ManageHotelsComponent },
+    { path: 'manage-lump-sums', component: ManageLumpSumsComponent },
     { path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard] } // Protected route
 ];
 

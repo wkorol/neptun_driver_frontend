@@ -11,10 +11,12 @@ import {NgIf} from "@angular/common";
     ReactiveFormsModule,
     NgIf
   ],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  errorMessage: string | null = null;
 
   constructor(
       private fb: FormBuilder,
@@ -31,14 +33,16 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
-          // Navigate to home route on successful login
+          this.errorMessage = null;
           this.router.navigate(['/']);
         },
         error: (error) => {
-          // Handle error (e.g., show an error message to the user)
-          console.error('Login failed', error);
+          // Ensure that errorMessage is being set
+          this.errorMessage = error.error?.message || 'An error occurred during login';
+          console.log('Error message:', this.errorMessage);
         }
       });
     }
   }
+
 }

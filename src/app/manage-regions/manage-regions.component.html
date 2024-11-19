@@ -1,0 +1,18 @@
+<h2>Manage Regions</h2>
+<div class="add-region-form">
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>ID Rejonu</mat-label>
+        <input matInput [(ngModel)]="newRegionId" placeholder="Wprowadź ID">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Nazwa Rejonu</mat-label>
+        <input matInput [(ngModel)]="newRegionName" placeholder="Wprowadź nazwę">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="addRegion()">Dodaj Rejon</button>
+</div>
+
+<ul>
+    <li *ngFor="let region of regions">{{ region.name }}</li>
+</ul>

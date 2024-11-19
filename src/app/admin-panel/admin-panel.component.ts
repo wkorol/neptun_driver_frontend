@@ -12,6 +12,7 @@ import {FormsModule} from "@angular/forms";
 import {MatButton} from "@angular/material/button";
 import {FixedValue} from "../shared/fixed-value.model";
 import {Router} from "@angular/router";
+import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
 
 @Component({
   selector: 'app-admin-panel',
@@ -25,7 +26,10 @@ import {Router} from "@angular/router";
     MatOption,
     FormsModule,
     MatButton,
-      MatLabel
+    MatLabel,
+    MatCard,
+    MatCardTitle,
+    MatCardContent
   ],
   styleUrls: ['./admin-panel.component.css']
 })
@@ -75,6 +79,10 @@ export class AdminPanelComponent implements OnInit {
      })
   }
 
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
+  }
+
   addHotel(): void {
     if (this.selectedRegionId && this.selectedLumpSumsId && this.newHotelName) {
       const newHotel = {
@@ -98,6 +106,8 @@ export class AdminPanelComponent implements OnInit {
       alert('Please fill in all fields.');
     }
   }
+
+
 
   addFixedValue(): void {
     this.fixedValues.push({
