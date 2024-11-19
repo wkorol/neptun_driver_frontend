@@ -19,7 +19,7 @@
 .sticky-navbar {
     position: sticky;
     top: 0;
-    /*z-index: 1000; !* Ensures it stays on top of other elements *!*/
+    z-index: 1000; /* Ensures it stays on top of other elements */
 }
 
 
