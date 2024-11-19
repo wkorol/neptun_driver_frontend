@@ -106,3 +106,115 @@
 .back-button button:hover {
     transform: scale(1.02);
 }
+
+/* Info box styling with looping animation */
+.info-box {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+    margin: 15px 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    animation: fadeInOut 3s ease-in-out infinite; /* Automatically animate every 3 seconds */
+}
+
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Divider and styling for tariff items */
+/* Styling for tariff items with a clean horizontal layout */
+.tariff-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #34495e;
+    padding: 8px 0;
+}
+
+/* Separate styling for Osobowy and Bus */
+.tariff-osobowy, .tariff-bus {
+    text-align: center;
+    flex: 1;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* Divider styling with a subtle line and spacing */
+.tariff-divider {
+    height: auto;
+    width: 1px;
+    background-color: #ddd;
+    margin: 0 15px;
+}
+
+/* Optional styling for the section containing Osobowy and Bus */
+.tariff-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Improved styling for the tariff title */
+.tariff-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0;
+    text-align: center;
+}
+
+/* Improved icon styling for better alignment */
+.icon {
+    font-size: 1.5rem;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+
+/* Optional hover effect if desired */
+.info-box:hover {
+    transform: scale(1.05);
+}
+
+/* Color classes for the cards */
+.red-card {
+    background-color: #f44336; /* Red color for 'Lotnisko' */
+    color: white;
+}
+
+.yellow-card {
+    background-color: #ffeb3b; /* Yellow color for 'Sopot' */
+    color: black;
+}
+
+.blue-card {
+    background-color: #2196f3; /* Blue color for 'Gdynia' */
+    color: white;
+}
+
+/* Additional styling for text color */
+.red-card mat-card-content, .blue-card mat-card-content {
+    color: white;
+}
+
+.yellow-card mat-card-content {
+    color: black;
+}
+
+

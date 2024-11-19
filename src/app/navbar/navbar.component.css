@@ -52,6 +52,7 @@
 /* Navbar */
 /* Navbar */
 .navbar {
+    flex-shrink: 0; /* Prevent shrinking */
     display: flex;
     align-items: center;
     padding: 0 16px;

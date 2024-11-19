@@ -1,11 +1,4 @@
 
-<mat-toolbar color="primary" class="navbar sticky-navbar">
-    <!-- Toggle Button for Sidebar with animation class -->
-    <button mat-icon-button (click)="toggleSidenav()" class="menu-button" [ngClass]="{'rotated': isSidenavOpen}">
-        <mat-icon>menu</mat-icon>
-    </button>
-    <span class="navbar-title">Neptun Taxi - Strefa Kierowcy 2.0</span>
-</mat-toolbar>
 <mat-sidenav-container class="sidenav-container">
     <!-- Side Navigation Drawer -->
     <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav" [ngClass]="{'open': isSidenavOpen}">
@@ -30,9 +23,19 @@
 
     <!-- Main Content with Navbar and Search Bar -->
     <mat-sidenav-content>
-        <div class="page-content">
-                <app-search-bar></app-search-bar>
-            <router-outlet></router-outlet>
-        </div>
+        <mat-toolbar color="primary" class="navbar sticky-navbar">
+            <!-- Toggle Button for Sidebar with animation class -->
+            <button mat-icon-button (click)="toggleSidenav()" class="menu-button" [ngClass]="{'rotated': isSidenavOpen}">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span class="navbar-title">Neptun Taxi - Strefa Kierowcy 2.0</span>
+        </mat-toolbar>
+
+    <div class="page-content">
+
+        <app-search-bar></app-search-bar>
+        <router-outlet></router-outlet>
+    </div>
     </mat-sidenav-content>
+
 </mat-sidenav-container>

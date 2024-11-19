@@ -1,8 +1,21 @@
 <div class="centered-container">
-    <h1>{{hotel?.name}}</h1>
-    Naciśnij w kafelek z miejscem, aby zobaczyć ryczałty
+    <h3>{{hotel?.name}}</h3>
+
+    <!-- Info box with automatic animation -->
+    <div class="info-box animate">
+        Naciśnij w kafelek z miejscem, aby zobaczyć ryczałty
+    </div>
+
     <div class="lump-sum-container">
-        <mat-card *ngFor="let lumpSum of lumpSums" class="lump-sum-card" (click)="toggleLumpSum(lumpSum)">
+        <mat-card
+                *ngFor="let lumpSum of lumpSums"
+                class="lump-sum-card"
+                [ngClass]="{
+                'red-card': lumpSum.name.includes('Lotnisko'),
+                'yellow-card': lumpSum.name.includes('Sopot'),
+                'blue-card': lumpSum.name.includes('Gdynia')
+            }"
+                (click)="toggleLumpSum(lumpSum)">
             <mat-card-content>
                 <!-- Display lump sum name if not expanded, otherwise show fixed prices -->
                 <ng-container *ngIf="!lumpSum.expanded">
@@ -17,9 +30,10 @@
                             <p class="tariff-title">1 Taryfa</p>
                         </div>
                         <ul>
-                            <li *ngFor="let tariff of lumpSum['tariff1']">
-                                Osobowy: {{ tariff.carValue }} zł<br>
-                                Bus: {{ tariff.busValue }} zł
+                            <li *ngFor="let tariff of lumpSum['tariff1']" class="tariff-item">
+                                <div class="tariff-osobowy">Osobowy: {{ tariff.carValue }} zł</div>
+                                <div class="tariff-divider"></div>
+                                <div class="tariff-bus">Bus: {{ tariff.busValue }} zł</div>
                             </li>
                         </ul>
                     </div>
@@ -30,9 +44,10 @@
                             <p class="tariff-title">2 Taryfa</p>
                         </div>
                         <ul>
-                            <li *ngFor="let tariff of lumpSum['tariff2']">
-                                Osobowy: {{ tariff.carValue }} zł<br>
-                                Bus: {{ tariff.busValue }} zł
+                            <li *ngFor="let tariff of lumpSum['tariff2']" class="tariff-item">
+                                <div class="tariff-osobowy">Osobowy: {{ tariff.carValue }} zł</div>
+                                <div class="tariff-divider"></div>
+                                <div class="tariff-bus">Bus: {{ tariff.busValue }} zł</div>
                             </li>
                         </ul>
                     </div>

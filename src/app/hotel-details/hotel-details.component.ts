@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Hotel, HotelService} from '../hotel-services/hotel.service';
 import {MatCard, MatCardContent} from "@angular/material/card";
-import {JsonPipe, NgForOf, NgIf} from "@angular/common";
+import {JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 
 @Component({
@@ -15,7 +15,8 @@ import {MatButton} from "@angular/material/button";
     NgForOf,
     NgIf,
     JsonPipe,
-    MatButton
+    MatButton,
+    NgClass
   ],
   styleUrls: ['./hotel-details.component.css']
 })
