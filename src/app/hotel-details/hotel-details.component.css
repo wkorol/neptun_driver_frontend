@@ -1,9 +1,9 @@
-/* Center everything within the entire container */
 .centered-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: 20px;
 }
 
 /* Grid layout for the cards */
@@ -19,83 +19,92 @@
     cursor: pointer;
     transition: transform 0.2s ease;
     width: 250px;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
     padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .lump-sum-card:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
-.lump-sum-card mat-card-content {
-    padding: 16px;
-}
-
+/* Styling for the main heading inside each card */
 .lump-sum-card h4 {
-    margin: 8px 0 4px;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    margin-bottom: 15px;
+    color: #2c3e50;
 }
 
-.lump-sum-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.lump-sum-card li {
-    padding: 4px 0;
-    font-size: 0.9rem;
-}
-
-/* Styling for tariff sections */
+/* Tariff section styling for better separation */
 .tariff-section {
-    background-color: #f9f9f9;
-    padding: 10px;
+    background-color: #ffffff;
+    padding: 15px;
     border-radius: 8px;
-    margin-top: 10px;
-    text-align: left;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 /* Styling for icon and title */
 .tariff-header {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-bottom: 8px; /* Space between icon/title and tariff details */
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #34495e;
+    margin-bottom: 10px;
 }
 
 .tariff-header .icon {
-    font-size: 2rem;
-    margin-bottom: 4px; /* Space between icon and title text */
+    font-size: 1.8rem;
+    margin-right: 8px;
 }
 
 .sun-icon {
-    color: #FFA500; /* Orange color for sun icon */
+    color: #FFA500;
 }
 
 .moon-icon {
-    color: #4B0082; /* Indigo color for moon icon */
+    color: #4B0082;
 }
 
-.tariff-title {
+/* Styling for individual tariff items with vertical layout */
+.tariff-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #34495e;
+    padding: 8px 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+}
+
+.tariff-item:first-child {
+    border-top: none; /* Remove top border from the first item */
+}
+
+.tariff-osobowy, .tariff-bus {
     font-weight: bold;
-    margin: 0;
-    font-size: 1rem;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin: 5px 0;
 }
 
-/* Center the back button */
+/* Styling for back button */
 .back-button {
     margin-top: 20px;
 }
 
 .back-button button {
     width: 250px;
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 1.1rem;
     color: white;
     background-color: #007bff;
@@ -104,25 +113,22 @@
 }
 
 .back-button button:hover {
-    transform: scale(1.02);
+    transform: scale(1.05);
 }
 
-/* Info box styling with looping animation */
+/* Info box styling */
 .info-box {
     background-color: #3498db;
     color: white;
-    padding: 10px 20px;
+    padding: 15px 25px;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-align: center;
     margin: 15px 0;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-    animation: fadeInOut 3s ease-in-out infinite; /* Automatically animate every 3 seconds */
+    animation: fadeInOut 3s ease-in-out infinite;
 }
 
+/* Animation for the info box */
 @keyframes fadeInOut {
     0%, 100% {
         opacity: 0;
@@ -134,81 +140,22 @@
     }
 }
 
-/* Divider and styling for tariff items */
-/* Styling for tariff items with a clean horizontal layout */
-.tariff-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.95rem;
-    color: #34495e;
-    padding: 8px 0;
-}
-
-/* Separate styling for Osobowy and Bus */
-.tariff-osobowy, .tariff-bus {
-    text-align: center;
-    flex: 1;
-    font-weight: 500;
-    color: #2c3e50;
-}
-
-/* Divider styling with a subtle line and spacing */
-.tariff-divider {
-    height: auto;
-    width: 1px;
-    background-color: #ddd;
-    margin: 0 15px;
-}
-
-/* Optional styling for the section containing Osobowy and Bus */
-.tariff-section {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Improved styling for the tariff title */
-.tariff-title {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 0;
-    text-align: center;
-}
-
-/* Improved icon styling for better alignment */
-.icon {
-    font-size: 1.5rem;
-    margin-right: 5px;
-    vertical-align: middle;
-}
-
-
-/* Optional hover effect if desired */
-.info-box:hover {
-    transform: scale(1.05);
-}
-
-/* Color classes for the cards */
+/* Card color styles */
 .red-card {
-    background-color: #f44336; /* Red color for 'Lotnisko' */
+    background-color: #f44336;
     color: white;
 }
 
 .yellow-card {
-    background-color: #ffeb3b; /* Yellow color for 'Sopot' */
+    background-color: #ffeb3b;
     color: black;
 }
 
 .blue-card {
-    background-color: #2196f3; /* Blue color for 'Gdynia' */
+    background-color: #2196f3;
     color: white;
 }
 
-/* Additional styling for text color */
 .red-card mat-card-content, .blue-card mat-card-content {
     color: white;
 }
@@ -216,5 +163,3 @@
 .yellow-card mat-card-content {
     color: black;
 }
-
-
