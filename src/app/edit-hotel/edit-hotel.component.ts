@@ -9,8 +9,14 @@ import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {MatInput} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle
+} from "@angular/material/expansion";
 
 @Component({
   selector: 'app-edit-hotel',
@@ -24,7 +30,12 @@ import {MatButton} from "@angular/material/button";
     MatInput,
     FormsModule,
     NgForOf,
-    MatButton
+    MatButton,
+    NgIf,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelTitle,
+      MatExpansionPanelHeader
   ],
   styleUrls: ['./edit-hotel.component.css']
 })
@@ -40,6 +51,8 @@ export class EditHotelComponent implements OnInit {
   newLumpSumName = '';
   newLumpSumFixedValues: FixedValue[] = []
 
+  currentLumpSum: LumpSum = {name: '', fixedValues: []};
+
   constructor(
       private route: ActivatedRoute,
       private router: Router,
@@ -49,6 +62,7 @@ export class EditHotelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
     const hotelId = this.route.snapshot.paramMap.get('id');
      this.regionService.getRegionList().subscribe(regions => {
        this.regions = regions;
@@ -61,14 +75,48 @@ export class EditHotelComponent implements OnInit {
     }
   }
 
+  saveLumpSum() {
+    if(this.currentLumpSum) {
+      if (this.selectedLumpSumsId) {
+        this.adminPanelService.updateLumpSum(this.selectedLumpSumsId, this.currentLumpSum).subscribe(() => {
+          this.refreshLumpSums()
+        });
+      } else {
+        this.adminPanelService.addLumpSum(this.currentLumpSum).subscribe(() => {
+          this.refreshLumpSums()
+        });
+      }
+    }
+  }
+
   loadHotel(hotelId: string): void {
     this.hotelService.getHotel(hotelId).subscribe(hotel => {
       this.hotel = hotel;
       this.hotelName = hotel.name;
       this.selectedRegionId = hotel.region.id;
       this.selectedLumpSumsId = hotel.lump_sums.id;
+      this.currentLumpSum = hotel.lump_sums
     });
   }
+
+  onLumpSumSelect() {
+    const selected = this.lumpSums.find(lumpSum => lumpSum.id === this.selectedLumpSumsId);
+    if (selected) {
+      this.currentLumpSum = JSON.parse(JSON.stringify(selected)); // Deep clone
+    }
+  }
+
+  // saveAsNewLumpSum() {
+  //   const clonedLumpSum = {
+  //     ...this.currentLumpSum,
+  //     id: Math.random().toString(36).substr(2, 9), // Generate a new ID
+  //     name: this.currentLumpSum?.name + ' (Copy)'
+  //   };
+  //   this.lumpSums.push(clonedLumpSum);
+  //   this.selectedLumpSumsId = clonedLumpSum.id;
+  //   this.currentLumpSum = JSON.parse(JSON.stringify(clonedLumpSum));
+  // }
+
 
   saveHotel(): void {
     if (this.hotel && this.selectedRegionId && this.selectedLumpSumsId) {
@@ -92,7 +140,7 @@ export class EditHotelComponent implements OnInit {
   }
 
   addFixedValue(): void {
-    this.newLumpSumFixedValues.push({
+    this.currentLumpSum.fixedValues.push({
       name: '',
       tariff1: { tariffType: 1, carValue: 0, busValue: 0 },
       tariff2: { tariffType: 2, carValue: 0, busValue: 0 }
@@ -100,30 +148,7 @@ export class EditHotelComponent implements OnInit {
   }
 
   removeFixedValue(index: number): void {
-    this.newLumpSumFixedValues.splice(index, 1);
-  }
-
-  createNewLumpSum(): void {
-    const newLumpSum: LumpSum = {
-      name: this.newLumpSumName,
-      fixedValues: this.newLumpSumFixedValues
-    };
-
-    this.adminPanelService.addLumpSum(newLumpSum).subscribe({
-      next: response => {
-        this.refreshLumpSums()
-        this.selectedLumpSumsId = response.id; // Set the new LumpSum ID
-        alert('New Lump Sum created and selected!');
-        this.newLumpSumName = ''; // Reset the form fields
-        this.newLumpSumFixedValues = [
-          { name: '', tariff1: { tariffType: 1, carValue: 0, busValue: 0 }, tariff2: { tariffType: 2, carValue: 0, busValue: 0 } }
-        ];
-      },
-      error: error => {
-        console.error('Error creating lump sum:', error);
-        alert('Failed to create new lump sum.');
-      }
-    });
+    this.currentLumpSum.fixedValues.splice(index, 1);
   }
 
   refreshLumpSums(): void {

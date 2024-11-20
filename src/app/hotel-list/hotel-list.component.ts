@@ -4,8 +4,9 @@ import { SharedService } from '../shared/shared.service';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import {NgForOf, NgIf} from "@angular/common";
+import {Location, NgForOf, NgIf} from "@angular/common";
 import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-hotel-list',
@@ -18,7 +19,8 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} f
     MatCardContent,
     NgForOf,
     MatCardTitle,
-    MatCardSubtitle
+    MatCardSubtitle,
+    MatButton
   ],
   styleUrls: ['./hotel-list.component.css']
 })
@@ -34,7 +36,8 @@ export class HotelListComponent implements OnInit, OnDestroy {
       private hotelService: HotelService,
       private sharedService: SharedService,
       private router: Router,
-      private route: ActivatedRoute
+      private route: ActivatedRoute,
+      private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -118,5 +121,9 @@ export class HotelListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

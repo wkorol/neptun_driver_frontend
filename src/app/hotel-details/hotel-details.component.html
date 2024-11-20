@@ -30,10 +30,10 @@
                             <p class="tariff-title">1 Taryfa</p>
                         </div>
                         <ul>
-                            <li *ngFor="let tariff of lumpSum['tariff1']" class="tariff-item">
-                                <div class="tariff-osobowy">Osobowy: {{ tariff.carValue }} zł</div>
+                            <li class="tariff-item">
+                                <div class="tariff-osobowy">Osobowy: {{ lumpSum.tariff1.carValue }} zł</div>
                                 <div class="tariff-divider"></div>
-                                <div class="tariff-bus">Bus: {{ tariff.busValue }} zł</div>
+                                <div class="tariff-bus">Bus: {{ lumpSum.tariff1.busValue }} zł</div>
                             </li>
                         </ul>
                     </div>
@@ -44,10 +44,10 @@
                             <p class="tariff-title">2 Taryfa</p>
                         </div>
                         <ul>
-                            <li *ngFor="let tariff of lumpSum['tariff2']" class="tariff-item">
-                                <div class="tariff-osobowy">Osobowy: {{ tariff.carValue }} zł</div>
+                            <li class="tariff-item">
+                                <div class="tariff-osobowy">Osobowy: {{ lumpSum.tariff2.carValue }} zł</div>
                                 <div class="tariff-divider"></div>
-                                <div class="tariff-bus">Bus: {{ tariff.busValue }} zł</div>
+                                <div class="tariff-bus">Bus: {{ lumpSum.tariff2.busValue }} zł</div>
                             </li>
                         </ul>
                     </div>

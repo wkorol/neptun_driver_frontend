@@ -16,8 +16,7 @@ export class AdminPanelService {
     private addHotelUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel/add';
     private lumpSumAddUrl = 'https://apineptun-ij5mx.ondigitalocean.app/lump_sums/add';
     private hotelEditUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel';
-    private deleteHotelUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel'
-
+    private deleteHotelUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel';
 
     constructor(private http: HttpClient) {}
 
@@ -33,8 +32,18 @@ export class AdminPanelService {
         return this.http.get<Region[]>(this.regionUrl);
     }
 
-    addHotel(hotelData: { regionId: number; lumpSumsId: string; name: string }): Observable<{message: string}> {
-        return this.http.post<{message: string}>(this.addHotelUrl, hotelData);
+    addHotel(hotelData: { regionId: number; lumpSumsId: string; name: string }): Observable<{message: string, error: string}> {
+        return this.http.post<{message: string, error: string}>(this.addHotelUrl, hotelData);
+    }
+
+    updateLumpSum(lumpSumId: string, lumpSum: LumpSum): Observable<void>
+    {
+        return this.http.put<void>(`${this.lumpSumUrl}/${lumpSumId}/edit`, lumpSum);
+    }
+
+    deleteLumpSum(lumpSumId: string): Observable<{message: string}>
+    {
+        return this.http.delete<{message: string}>(`${this.lumpSumUrl}/${lumpSumId}/delete`);
     }
 
     addLumpSum(lumpSum: LumpSum): Observable<{id: string}> {

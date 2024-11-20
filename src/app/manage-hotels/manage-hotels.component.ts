@@ -59,9 +59,9 @@ export class ManageHotelsComponent implements OnInit {
             this.hotels = data;
           });
         },
-        error: (err) => {
+        error: (response) => {
           // Show error message in snackbar
-          this.snackBar.open('Failed to add hotel. Please try again.', 'Close', {
+          this.snackBar.open(`${response.error.error}`, 'Close', {
             duration: 3000,
             panelClass: ['snackbar-error']
           });

@@ -51,8 +51,12 @@ export class NavbarComponent implements OnInit{
     this.router.events.pipe(
         filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      // Hide search bar on the `HotelDetailsComponent` route
-      this.showSearchBar = !event.url.includes('/hotel/');
+      const urlWithoutQueryParams = event.url.split('?')[0]; // Strip query parameters
+
+      // Determine if search bar should be shown
+      this.showSearchBar = urlWithoutQueryParams === '/hotel' || // Matches `/hotel`
+          urlWithoutQueryParams === '/' || // Matches `/`
+          (urlWithoutQueryParams === '/hotel' && event.url.includes('regionId'));
     });
   }
 

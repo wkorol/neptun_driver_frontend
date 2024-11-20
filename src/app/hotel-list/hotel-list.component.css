@@ -81,6 +81,28 @@ mat-card-actions button:hover {
     background-color: #2980b9;
 }
 
+.back-button {
+    grid-column: 1 / -1; /* Make the button span the entire grid width */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    margin-top: 20px;
+}
+
+.back-button button {
+    width: 250px;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #007bff;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.back-button button:hover {
+    transform: scale(1.05);
+}
+
+
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {

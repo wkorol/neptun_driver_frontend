@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Router, NavigationEnd } from '@angular/router';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,14 @@ export class SharedService {
       distinctUntilChanged()
   );
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    // Listen to route changes and clear the search term
+    this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd) // Only react to navigation end events
+    ).subscribe(() => {
+      this.clearSearchTerm(); // Clear the search term on route change
+    });
+  }
 
   updateSearchTerm(term: string): void {
     this.searchTermSubject.next(term);
@@ -26,5 +33,9 @@ export class SharedService {
     } else {
       this.router.navigate(['/']);
     }
+  }
+
+  clearSearchTerm(): void {
+    this.searchTermSubject.next(''); // Reset the search term to an empty string
   }
 }

@@ -1,37 +1,37 @@
-<h2>Manage Lump Sums</h2>
+<h2>Zarządzanie zestawami ryczałtów</h2>
 <div class="add-lump-sum-form">
     <mat-form-field appearance="fill" class="form-field">
         <mat-label>Nazwa zestawu</mat-label>
-        <input matInput [(ngModel)]="newLumpSumName" placeholder="Wprowadź nazwę">
+        <input matInput [(ngModel)]="newLumpSumName" placeholder="Wprowadź nazwę zestawu">
     </mat-form-field>
 
-    <div *ngFor="let fixedValue of fixedValues; let i = index" class="fixed-value-group">
+    <div *ngFor="let fixedValue of newLumpSumFixedValues; let i = index" class="fixed-value-group">
         <mat-form-field appearance="fill" class="form-field">
             <mat-label>Ryczałt z/do hotelu</mat-label>
-            <input matInput [(ngModel)]="fixedValue.name" placeholder="Enter location name (e.g., Gdynia)">
+            <input matInput [(ngModel)]="fixedValue.name" placeholder="Wprowadź miejsce (np. Gdynia)">
         </mat-form-field>
 
         <div class="tariff-group">
             <h4>Taryfa 1</h4>
             <mat-form-field appearance="fill" class="form-field">
-                <mat-label>Car Value</mat-label>
-                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.carValue" placeholder="Enter car value">
+                <mat-label>Ryczałt osobówka</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.carValue" placeholder="Wprowadź ryczałt dla osobówki">
             </mat-form-field>
             <mat-form-field appearance="fill" class="form-field">
-                <mat-label>Bus Value</mat-label>
-                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.busValue" placeholder="Enter bus value">
+                <mat-label>Ryczałt bus</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.busValue" placeholder="Wprowadź ryczałt dla busa">
             </mat-form-field>
         </div>
 
         <div class="tariff-group">
             <h4>Taryfa 2</h4>
             <mat-form-field appearance="fill" class="form-field">
-                <mat-label>Car Value</mat-label>
-                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.carValue" placeholder="Enter car value">
+                <mat-label>Ryczałt osobówka</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.carValue" placeholder="Wprowadź ryczałt dla osobówki">
             </mat-form-field>
             <mat-form-field appearance="fill" class="form-field">
-                <mat-label>Bus Value</mat-label>
-                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.busValue" placeholder="Enter bus value">
+                <mat-label>Ryczałt bus</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.busValue" placeholder="Wprowadź ryczałt dla busa">
             </mat-form-field>
         </div>
 
@@ -39,10 +39,18 @@
     </div>
 
     <button mat-button color="primary" (click)="addFixedValue()">Dodaj ryczałt</button>
-    <button mat-raised-button color="primary" (click)="addLumpSum()">Zapisz zestaw w bazie danych</button>
+    <button mat-raised-button color="primary" (click)="createOrUpdateLumpSum()">
+        {{ selectedLumpSumsId ? 'Zaktualizuj zestaw ryczałtów' : 'Zapisz nowy zestaw ryczałtów' }}
+    </button>
 </div>
 
-<h3>Zestawy ryczałtów</h3>
+<h3>Existing Lump Sums</h3>
 <ul>
-    <li *ngFor="let lumpSum of lumpSums">{{ lumpSum.name }}</li>
+    <li *ngFor="let lumpSum of lumpSums; let i = index">
+        <span>{{ lumpSum.name }}</span>
+        <div>
+            <button mat-button color="accent" (click)="editLumpSum(lumpSum)">Edytuj</button>
+            <button mat-button color="warn" (click)="removeLumpSum(lumpSum.id)">Usuń</button>
+        </div>
+    </li>
 </ul>

@@ -33,5 +33,4 @@ export class HotelService {
   {
     return this.http.get<Hotel[]>(`https://apineptun-ij5mx.ondigitalocean.app/region/${regionId}/hotels`)
   }
-
 }

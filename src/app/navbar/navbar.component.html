@@ -42,7 +42,7 @@
 
     <div class="page-content">
 
-        <app-search-bar></app-search-bar>
+        <app-search-bar *ngIf="showSearchBar"></app-search-bar>
         <router-outlet></router-outlet>
     </div>
     </mat-sidenav-content>

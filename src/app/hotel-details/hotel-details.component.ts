@@ -4,6 +4,8 @@ import {Hotel, HotelService} from '../hotel-services/hotel.service';
 import {MatCard, MatCardContent} from "@angular/material/card";
 import {JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-hotel-details',
@@ -28,7 +30,7 @@ export class HotelDetailsComponent implements OnInit {
   constructor(
       private route: ActivatedRoute,
       private hotelService: HotelService,
-      private router: Router
+      private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -39,11 +41,14 @@ export class HotelDetailsComponent implements OnInit {
   loadLumpSums(): void {
     this.hotelService.getHotel(this.hotelId).subscribe(
         (data: Hotel) => {
+
           this.hotel = data;
           this.lumpSums = (data.lump_sums?.fixedValues || []).map((lumpSum: any) => ({
             ...lumpSum,
             expanded: false// Add an expanded property to each lump sum
           }));
+
+          console.log(this.lumpSums);
         },
         (error) => {
           console.error('Error fetching lump sums:', error);
@@ -57,6 +62,6 @@ export class HotelDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    this.location.back();
   }
 }
