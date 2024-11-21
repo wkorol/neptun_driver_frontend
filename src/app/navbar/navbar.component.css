@@ -92,3 +92,19 @@
     justify-content: center;
     background-color: #f9f9f9;
 }
+
+/* Disable styling for non-functional links */
+.disabled-link a {
+    color: gray;
+    pointer-events: none;
+    text-decoration: none;
+    cursor: not-allowed;
+}
+
+.disabled-link .note {
+    display: block;
+    font-size: 12px;
+    color: red;
+    margin-top: 4px;
+}
+

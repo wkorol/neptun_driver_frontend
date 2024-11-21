@@ -108,6 +108,9 @@ export class AdminPanelComponent implements OnInit {
   }
 
 
+  showAlert() {
+    alert('W trakcie programowania');
+  }
 
   addFixedValue(): void {
     this.fixedValues.push({

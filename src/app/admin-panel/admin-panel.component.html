@@ -1,5 +1,8 @@
 <div class="dashboard">
-    <mat-card class="dashboard-card" (click)="navigateTo('manage-regions')">
+    <mat-card
+            class="dashboard-card"
+            (click)="showAlert()"
+            [class.disabled]="true">
         <mat-card-title>Zarządzaj rejonami</mat-card-title>
         <mat-card-content>
             Dodawaj, edytuj, lub usuwaj rejony.

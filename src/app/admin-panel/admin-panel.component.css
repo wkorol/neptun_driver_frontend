@@ -38,3 +38,8 @@
         padding: 10px;
     }
 }
+
+.dashboard-card.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}

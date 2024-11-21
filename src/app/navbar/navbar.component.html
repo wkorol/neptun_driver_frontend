@@ -1,4 +1,3 @@
-
 <mat-sidenav-container class="sidenav-container">
     <!-- Side Navigation Drawer -->
     <mat-sidenav #sidenav mode="over" [opened]="isSidenavOpen" class="sidenav" [ngClass]="{'open': isSidenavOpen}">
@@ -9,14 +8,17 @@
             <li>
                 <a routerLink="/hotel" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Hotele</a>
             </li>
-            <li>
-                <a routerLink="/"  (click)="closeSidenav()">Głosowanie (W trakcie programowania)</a>
+            <li class="disabled-link">
+                <a href="javascript:void(0)" (click)="showAlert()">Głosowanie walne</a>
+                <small class="note">W trakcie programowania</small>
             </li>
-            <li>
-                <a routerLink="/"  (click)="closeSidenav()">Baza informacji (W trakcie programowania)</a>
+            <li class="disabled-link">
+                <a href="javascript:void(0)" (click)="showAlert()">Baza informacji</a>
+                <small class="note">W trakcie programowania</small>
             </li>
-            <li>
-                <a routerLink="/"  (click)="closeSidenav()">Informacja o systemie</a>
+            <li class="disabled-link">
+                <a routerLink="javascript:void(0)" (click)="closeSidenav()">Informacja o systemie</a>
+                <small class="note">W trakcie programowania</small>
             </li>
             <li>
                 <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Panel Administratora</a>
@@ -40,11 +42,9 @@
             <span class="navbar-title">Neptun Taxi - Strefa Kierowcy 2.0</span>
         </mat-toolbar>
 
-    <div class="page-content">
-
-        <app-search-bar *ngIf="showSearchBar"></app-search-bar>
-        <router-outlet></router-outlet>
-    </div>
+        <div class="page-content">
+            <app-search-bar *ngIf="showSearchBar"></app-search-bar>
+            <router-outlet></router-outlet>
+        </div>
     </mat-sidenav-content>
-
 </mat-sidenav-container>

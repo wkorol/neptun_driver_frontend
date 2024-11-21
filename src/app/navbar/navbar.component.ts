@@ -60,6 +60,10 @@ export class NavbarComponent implements OnInit{
     });
   }
 
+  showAlert() {
+    alert('W trakcie programowania');
+  }
+
   logout() {
     this.closeSidenav();
     this.authService.logout();
