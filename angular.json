@@ -17,7 +17,7 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js",
+              "src/polyfills.ts",
               "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
@@ -32,28 +32,45 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2.5MB",
+                "maximumError": "3MB"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "6kB",
+                "maximumError": "8kB"
+              }
+            ],
+            "outputHashing": "all"
           },
           "configurations": {
             "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractLicenses": true,
+              "outputHashing": "all",
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "1.5MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "6kB"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,
+              "sourceMap": true,
               "extractLicenses": false,
-              "sourceMap": true
+              "outputHashing": "none"
             }
           },
           "defaultConfiguration": "production"
@@ -62,10 +79,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "neptun-driver-frontend:build:production"
+              "browserTarget": "neptun-driver-frontend:build:production"
             },
             "development": {
-              "buildTarget": "neptun-driver-frontend:build:development"
+              "browserTarget": "neptun-driver-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,9 +94,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "polyfills": [
-              "zone.js",
-              "zone.js/testing",
-              "@angular/localize/init"
+              "src/polyfills.ts"
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
