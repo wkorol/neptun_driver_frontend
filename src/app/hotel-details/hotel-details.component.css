@@ -9,7 +9,7 @@
 /* Grid layout for the cards */
 .lump-sum-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Wider cards */
     gap: 24px;
     justify-content: center;
 }
@@ -18,14 +18,13 @@
 .lump-sum-card {
     cursor: pointer;
     transition: transform 0.2s ease;
-    width: 250px;
+    width: 350px; /* Adjust card width */
     padding: 20px;
     text-align: center;
     border-radius: 8px;
     background-color: #f8f9fa;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 
 .lump-sum-card:hover {
     transform: scale(1.03);
@@ -46,90 +45,26 @@
     border-radius: 8px;
     margin-bottom: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    text-align: left; /* Align text to the left */
 }
 
-.tariff-values {
-    display: flex;
-    justify-content: center;
-    font-size: 1.2rem;
-    padding: 8px 0;
-    color: #34495e;
-}
-
-.tariff-osobowy, .tariff-bus {
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.lump-sum-card {
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    text-align: center;
-    border-radius: 8px;
-    background-color: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.lump-sum-card:hover {
-    transform: scale(1.03);
-}
-
-.toggle-container {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.toggle-container button {
-    font-size: 1.1rem;
-    padding: 10px 20px;
-}
-
-
-
-/* Styling for icon and title */
+/* Tariff title */
 .tariff-header {
-    display: flex;
-    align-items: center;
     font-size: 1.2rem;
     font-weight: bold;
     color: #34495e;
     margin-bottom: 10px;
 }
 
-.tariff-header .icon {
-    font-size: 1.8rem;
-    margin-right: 8px;
-}
-
-.sun-icon {
-    color: #FFA500;
-}
-
-.moon-icon {
-    color: #4B0082;
-}
-
-/* Styling for individual tariff items with vertical layout */
-.tariff-item {
+/* Tariff values */
+.tariff-values {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    font-size: 1.2rem;
-    color: #34495e;
-    padding: 8px 0;
-    width: 100%;
-    border-top: 1px solid #ddd;
+    gap: 8px; /* Space between rows */
 }
 
-.tariff-item:first-child {
-    border-top: none; /* Remove top border from the first item */
-}
-
-.tariff-osobowy, .tariff-bus {
+.tariff-osobowy,
+.tariff-bus {
     font-weight: bold;
     font-size: 1.2rem;
     color: #2c3e50;
@@ -142,8 +77,8 @@
 }
 
 .back-button button {
-    width: 250px;
-    padding: 12px 24px;
+    width: 150px; /* Smaller button for better alignment */
+    padding: 10px 20px;
     font-size: 1.1rem;
     color: white;
     background-color: #007bff;
@@ -155,28 +90,24 @@
     transform: scale(1.05);
 }
 
-/* Info box styling */
-.info-box {
-    background-color: #3498db;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.1rem;
+/* Sticky Section Container */
+.sticky-section {
+    position: sticky;
+    top: 100px; /* Height of the navbar */
+    z-index: 999;
+    background-color: white;
+    padding: 15px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin: 15px 0;
-    animation: fadeInOut 3s ease-in-out infinite;
+    width: 100%;
+    margin-bottom: 16px;
 }
 
-/* Animation for the info box */
-@keyframes fadeInOut {
-    0%, 100% {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    50% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Sticky Header */
+.sticky-header h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 0 0 10px;
 }
 
 /* Card color styles */
@@ -195,7 +126,8 @@
     color: white;
 }
 
-.red-card mat-card-content, .blue-card mat-card-content {
+.red-card mat-card-content,
+.blue-card mat-card-content {
     color: white;
 }
 
@@ -203,102 +135,74 @@
     color: black;
 }
 
-.toggle-container {
-    margin: 20px 0;
-    text-align: center;
+/* Badge styling */
+.tariff-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between badge and value */
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #34495e;
 }
 
-.toggle-container {
-    margin: 20px 0;
-    text-align: center;
-}
-
-mat-button-toggle-group {
-    display: inline-flex;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-mat-button-toggle {
-    flex: 1;
-    padding: 10px 20px;
-    text-align: center;
-    border-right: 1px solid #ddd;
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
     font-weight: bold;
-    color: #333;
-}
-
-mat-button-toggle:last-child {
-    border-right: none;
-}
-
-mat-button-toggle.mat-button-toggle-checked {
-    background-color: #4caf50; /* Green background for selected toggle */
-    color: white; /* White text for better contrast */
-}
-
-mat-button-toggle.mat-button-toggle-checked:hover {
-    background-color: #43a047; /* Darker green on hover for the selected toggle */
-}
-
-mat-button-toggle:hover {
-    background-color: #f1f1f1; /* Light gray for hover on non-selected toggle */
-}
-
-/* Sticky Section Container */
-/* Sticky Section */
-.sticky-section {
-    position: sticky;
-    top: 100px; /* Height of the navbar */
-    z-index: 999; /* Below the navbar */
-    background-color: white; /* Match the page background */
-    padding: 15px 0; /* Add padding for breathing room */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
-    text-align: center;
-    width: 100%;
-    margin-bottom: 16px; /* Ensure spacing between sticky section and main content */
-}
-
-/* Sticky Header */
-.sticky-header h3 {
-    font-size: 1.8rem;
-    color: #333;
-    margin: 0 0 10px;
-}
-
-/* Info Box */
-.info-box {
-    background-color: #e8f4ff; /* Softer light blue */
-    color: #333;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Toggle Group Styling */
-.sticky-toggle mat-button-toggle-group {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 10px 0;
-}
-
-.sticky-toggle mat-button-toggle {
-    padding: 10px 20px;
-    font-weight: bold;
-    color: #333;
-}
-
-.sticky-toggle mat-button-toggle.mat-button-toggle-checked {
-    background-color: #4caf50; /* Green for active state */
+    text-transform: uppercase;
     color: white;
 }
 
+.badge.osobowy {
+    background-color: #4caf50; /* Green for Osobowy */
+}
 
+.badge.bus {
+    background-color: #2196f3; /* Blue for Bus */
+}
 
+/* Back button styling */
+.back-button {
+    margin-top: 20px;
+}
 
+.back-button button {
+    width: 150px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #007bff;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.back-button button:hover {
+    transform: scale(1.05);
+}
+
+/* Card color styles */
+.red-card {
+    background-color: #f44336;
+    color: white;
+}
+
+.yellow-card {
+    background-color: #ffeb3b;
+    color: black;
+}
+
+.blue-card {
+    background-color: #2196f3;
+    color: white;
+}
+
+.red-card mat-card-content,
+.blue-card mat-card-content {
+    color: white;
+}
+
+.yellow-card mat-card-content {
+    color: black;
+}

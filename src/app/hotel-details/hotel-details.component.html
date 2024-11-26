@@ -3,24 +3,8 @@
         <div class="sticky-header">
             <h3>{{ hotel?.name }}</h3>
         </div>
-
-        <div class="info-box">
-            Przełącz między stawkami dla busa a osobówki
-        </div>
-
-        <div class="sticky-toggle">
-            <mat-button-toggle-group
-                    appearance="legacy"
-                    [(ngModel)]="showBusPrices"
-                    name="priceToggle"
-                    aria-label="Price Toggle"
-            >
-                <mat-button-toggle [value]="false">Osobowy</mat-button-toggle>
-                <mat-button-toggle [value]="true">Bus</mat-button-toggle>
-            </mat-button-toggle-group>
-            <div class="back-button">
-                <button mat-raised-button (click)="goBack()">Powrót</button>
-            </div>
+        <div class="back-button">
+            <button mat-raised-button (click)="goBack()">Powrót</button>
         </div>
     </div>
 
@@ -43,8 +27,14 @@
                         <p class="tariff-title">1 Taryfa</p>
                     </div>
                     <div class="tariff-values">
-                        <div *ngIf="!showBusPrices">Osobowy: {{ lumpSum.tariff1.carValue }} zł</div>
-                        <div *ngIf="showBusPrices">Bus: {{ lumpSum.tariff1.busValue }} zł</div>
+                        <div class="tariff-badge">
+                            <span class="badge osobowy">Osobowy:</span>
+                            <span>{{ lumpSum.tariff1.carValue }} zł</span>
+                        </div>
+                        <div class="tariff-badge">
+                            <span class="badge bus">Bus:</span>
+                            <span>{{ lumpSum.tariff1.busValue }} zł</span>
+                        </div>
                     </div>
                 </div>
 
@@ -53,8 +43,14 @@
                         <p class="tariff-title">2 Taryfa</p>
                     </div>
                     <div class="tariff-values">
-                        <div *ngIf="!showBusPrices">Osobowy: {{ lumpSum.tariff2.carValue }} zł</div>
-                        <div *ngIf="showBusPrices">Bus: {{ lumpSum.tariff2.busValue }} zł</div>
+                        <div class="tariff-badge">
+                            <span class="badge osobowy">Osobowy:</span>
+                            <span>{{ lumpSum.tariff2.carValue }} zł</span>
+                        </div>
+                        <div class="tariff-badge">
+                            <span class="badge bus">Bus:</span>
+                            <span>{{ lumpSum.tariff2.busValue }} zł</span>
+                        </div>
                     </div>
                 </div>
             </mat-card-content>
