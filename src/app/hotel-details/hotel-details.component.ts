@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Hotel, HotelService} from '../hotel-services/hotel.service';
+import { ActivatedRoute } from '@angular/router';
+import { Hotel, HotelService } from '../hotel-services/hotel.service';
+import {Location, NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatCard, MatCardContent} from "@angular/material/card";
-import {JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
-import { Location } from '@angular/common';
-
+import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-toggle";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-hotel-details',
@@ -13,12 +13,15 @@ import { Location } from '@angular/common';
   standalone: true,
   imports: [
     MatCard,
-    MatCardContent,
     NgForOf,
-    NgIf,
-    JsonPipe,
+    NgClass,
+    MatCardContent,
     MatButton,
-    NgClass
+    NgIf,
+    MatButtonToggle,
+    MatButtonToggleGroup,
+    FormsModule,
+    // Angular Material and Common Modules
   ],
   styleUrls: ['./hotel-details.component.css']
 })
@@ -26,6 +29,7 @@ export class HotelDetailsComponent implements OnInit {
   hotelId: string | null = null;
   hotel: Hotel | null = null;
   lumpSums: any[] = [];
+  showBusPrices: boolean = false; // Toggle between Osobowy and Bus for all
 
   constructor(
       private route: ActivatedRoute,
@@ -41,14 +45,8 @@ export class HotelDetailsComponent implements OnInit {
   loadLumpSums(): void {
     this.hotelService.getHotel(this.hotelId).subscribe(
         (data: Hotel) => {
-
           this.hotel = data;
-          this.lumpSums = (data.lump_sums?.fixedValues || []).map((lumpSum: any) => ({
-            ...lumpSum,
-            expanded: false// Add an expanded property to each lump sum
-          }));
-
-          console.log(this.lumpSums);
+          this.lumpSums = data.lump_sums?.fixedValues || [];
         },
         (error) => {
           console.error('Error fetching lump sums:', error);
@@ -56,9 +54,8 @@ export class HotelDetailsComponent implements OnInit {
     );
   }
 
-
-  toggleLumpSum(lumpSum: any): void {
-    lumpSum.expanded = !lumpSum.expanded; // Toggle the expanded state
+  toggleAllPrices(): void {
+    this.showBusPrices = !this.showBusPrices;
   }
 
   goBack(): void {

@@ -1,15 +1,8 @@
-/*body {*/
-/*    margin: 0;*/
-/*    background-color: #f9f9f9; !* Set background color for the entire page *!*/
-/*    min-height: 100vh; !* Ensure it covers the full height of the viewport *!*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: flex-start;*/
-/*}*/
-
-/*.main-container {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    padding: 20px;*/
-/*}*/
+/* Sticky Navbar */
+.sticky-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensure it's always above other elements */
+    background-color: #3f51b5; /* Same as navbar background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+}

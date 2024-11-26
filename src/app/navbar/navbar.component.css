@@ -16,12 +16,6 @@
     padding: 0;
 }
 
-.sticky-navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000; /* Ensures it stays on top of other elements */
-}
-
 
 .menu-button {
     color: white;
@@ -107,4 +101,44 @@
     color: red;
     margin-top: 4px;
 }
+
+
+/* Sticky Navbar */
+.sticky-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensures it stays above other elements */
+    background-color: #3f51b5; /* Navbar background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+}
+
+
+/* Toggle Button Group */
+mat-button-toggle-group {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+mat-button-toggle {
+    flex: 1;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+mat-button-toggle.mat-button-toggle-checked {
+    background-color: #4caf50; /* Green background for selected toggle */
+    color: white; /* White text for better contrast */
+}
+
+mat-button-toggle.mat-button-toggle-checked:hover {
+    background-color: #43a047; /* Darker green on hover for the selected toggle */
+}
+
+mat-button-toggle:hover {
+    background-color: #f1f1f1; /* Light gray for hover on non-selected toggle */
+}
+
 

@@ -26,6 +26,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 .lump-sum-card:hover {
     transform: scale(1.03);
 }
@@ -50,6 +51,44 @@
     align-items: center;
     text-align: center;
 }
+
+.tariff-values {
+    display: flex;
+    justify-content: center;
+    font-size: 1.2rem;
+    padding: 8px 0;
+    color: #34495e;
+}
+
+.tariff-osobowy, .tariff-bus {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.lump-sum-card {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lump-sum-card:hover {
+    transform: scale(1.03);
+}
+
+.toggle-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.toggle-container button {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+}
+
+
 
 /* Styling for icon and title */
 .tariff-header {
@@ -163,3 +202,103 @@
 .yellow-card mat-card-content {
     color: black;
 }
+
+.toggle-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.toggle-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+mat-button-toggle-group {
+    display: inline-flex;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+mat-button-toggle {
+    flex: 1;
+    padding: 10px 20px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    font-weight: bold;
+    color: #333;
+}
+
+mat-button-toggle:last-child {
+    border-right: none;
+}
+
+mat-button-toggle.mat-button-toggle-checked {
+    background-color: #4caf50; /* Green background for selected toggle */
+    color: white; /* White text for better contrast */
+}
+
+mat-button-toggle.mat-button-toggle-checked:hover {
+    background-color: #43a047; /* Darker green on hover for the selected toggle */
+}
+
+mat-button-toggle:hover {
+    background-color: #f1f1f1; /* Light gray for hover on non-selected toggle */
+}
+
+/* Sticky Section Container */
+/* Sticky Section */
+.sticky-section {
+    position: sticky;
+    top: 100px; /* Height of the navbar */
+    z-index: 999; /* Below the navbar */
+    background-color: white; /* Match the page background */
+    padding: 15px 0; /* Add padding for breathing room */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
+    text-align: center;
+    width: 100%;
+    margin-bottom: 16px; /* Ensure spacing between sticky section and main content */
+}
+
+/* Sticky Header */
+.sticky-header h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+/* Info Box */
+.info-box {
+    background-color: #e8f4ff; /* Softer light blue */
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Toggle Group Styling */
+.sticky-toggle mat-button-toggle-group {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.sticky-toggle mat-button-toggle {
+    padding: 10px 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.sticky-toggle mat-button-toggle.mat-button-toggle-checked {
+    background-color: #4caf50; /* Green for active state */
+    color: white;
+}
+
+
+
+

@@ -1,11 +1,27 @@
 <div class="centered-container">
-    <h3>{{hotel?.name}}</h3>
+    <div class="sticky-section">
+        <div class="sticky-header">
+            <h3>{{ hotel?.name }}</h3>
+        </div>
 
-    <!-- Info box with automatic animation -->
-    <div class="info-box animate">
-        Naciśnij w kafelek z miejscem, aby zobaczyć ryczałty
+        <div class="info-box">
+            Przełącz między stawkami dla busa a osobówki
+        </div>
+
+        <div class="sticky-toggle">
+            <mat-button-toggle-group
+                    appearance="legacy"
+                    [(ngModel)]="showBusPrices"
+                    name="priceToggle"
+                    aria-label="Price Toggle"
+            >
+                <mat-button-toggle [value]="false">Osobowy</mat-button-toggle>
+                <mat-button-toggle [value]="true">Bus</mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
     </div>
 
+    <!-- Main Content -->
     <div class="lump-sum-container">
         <mat-card
                 *ngFor="let lumpSum of lumpSums"
@@ -15,48 +31,33 @@
                 'yellow-card': lumpSum.name.includes('Sopot'),
                 'blue-card': lumpSum.name.includes('Gdynia')
             }"
-                (click)="toggleLumpSum(lumpSum)">
+        >
             <mat-card-content>
-                <!-- Display lump sum name if not expanded, otherwise show fixed prices -->
-                <ng-container *ngIf="!lumpSum.expanded">
-                    <p>{{ lumpSum.name }}</p>
-                </ng-container>
-                <ng-container *ngIf="lumpSum.expanded">
-                    <h4>{{ lumpSum.name }}</h4>
+                <h4>{{ lumpSum.name }}</h4>
 
-                    <div class="tariff-section">
-                        <div class="tariff-header">
-                            <span class="icon sun-icon">☀️</span>
-                            <p class="tariff-title">1 Taryfa</p>
-                        </div>
-                        <ul>
-                            <li class="tariff-item">
-                                <div class="tariff-osobowy">Osobowy: {{ lumpSum.tariff1.carValue }} zł</div>
-                                <div class="tariff-divider"></div>
-                                <div class="tariff-bus">Bus: {{ lumpSum.tariff1.busValue }} zł</div>
-                            </li>
-                        </ul>
+                <div class="tariff-section">
+                    <div class="tariff-header">
+                        <p class="tariff-title">1 Taryfa</p>
                     </div>
+                    <div class="tariff-values">
+                        <div *ngIf="!showBusPrices">Osobowy: {{ lumpSum.tariff1.carValue }} zł</div>
+                        <div *ngIf="showBusPrices">Bus: {{ lumpSum.tariff1.busValue }} zł</div>
+                    </div>
+                </div>
 
-                    <div class="tariff-section">
-                        <div class="tariff-header">
-                            <span class="icon moon-icon">🌙</span>
-                            <p class="tariff-title">2 Taryfa</p>
-                        </div>
-                        <ul>
-                            <li class="tariff-item">
-                                <div class="tariff-osobowy">Osobowy: {{ lumpSum.tariff2.carValue }} zł</div>
-                                <div class="tariff-divider"></div>
-                                <div class="tariff-bus">Bus: {{ lumpSum.tariff2.busValue }} zł</div>
-                            </li>
-                        </ul>
+                <div class="tariff-section">
+                    <div class="tariff-header">
+                        <p class="tariff-title">2 Taryfa</p>
                     </div>
-                </ng-container>
+                    <div class="tariff-values">
+                        <div *ngIf="!showBusPrices">Osobowy: {{ lumpSum.tariff2.carValue }} zł</div>
+                        <div *ngIf="showBusPrices">Bus: {{ lumpSum.tariff2.busValue }} zł</div>
+                    </div>
+                </div>
             </mat-card-content>
         </mat-card>
     </div>
 
-    <!-- Centered button styled like cards -->
     <div class="back-button">
         <button mat-raised-button (click)="goBack()">Powrót</button>
     </div>
