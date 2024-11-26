@@ -18,6 +18,9 @@
                 <mat-button-toggle [value]="false">Osobowy</mat-button-toggle>
                 <mat-button-toggle [value]="true">Bus</mat-button-toggle>
             </mat-button-toggle-group>
+            <div class="back-button">
+                <button mat-raised-button (click)="goBack()">Powrót</button>
+            </div>
         </div>
     </div>
 
@@ -56,9 +59,5 @@
                 </div>
             </mat-card-content>
         </mat-card>
-    </div>
-
-    <div class="back-button">
-        <button mat-raised-button (click)="goBack()">Powrót</button>
     </div>
 </div>
