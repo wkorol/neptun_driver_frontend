@@ -8,6 +8,7 @@ import {AsyncPipe, NgClass, NgIf} from "@angular/common";
 import {SearchBarComponent} from "../search-bar/search-bar.component";
 import {filter, Observable} from "rxjs";
 import {AuthService} from "../services/auth.service";
+import {BouncingInfoBoxComponent} from "../bouncing-info-box/bouncing-info-box.component";
 
 @Component({
   selector: 'app-navbar',
@@ -26,13 +27,15 @@ import {AuthService} from "../services/auth.service";
     RouterOutlet,
     SearchBarComponent,
     NgClass,
-    AsyncPipe
+    AsyncPipe,
+    BouncingInfoBoxComponent
   ],
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit{
   isLoggedIn$: Observable<boolean>;
   showSearchBar: boolean = true;
+  showInfoBox = false;
   constructor(private router: Router, private authService: AuthService) {
     this.isLoggedIn$ = this.authService.isLoggedIn$;
   }
@@ -47,6 +50,7 @@ export class NavbarComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.showNewHotelInfo();
     // Listen to route changes and set search bar visibility
     this.router.events.pipe(
         filter(event => event instanceof NavigationEnd)
@@ -58,6 +62,14 @@ export class NavbarComponent implements OnInit{
           urlWithoutQueryParams === '/' || // Matches `/`
           (urlWithoutQueryParams === '/hotel' && event.url.includes('regionId'));
     });
+  }
+
+  showNewHotelInfo() {
+    this.showInfoBox = true;
+  }
+
+  hideInfoBox() {
+    this.showInfoBox = false;
   }
 
   showAlert() {

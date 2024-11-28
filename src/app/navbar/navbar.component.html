@@ -9,7 +9,7 @@
                 <a routerLink="/hotel" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Hotele</a>
             </li>
             <li class="disabled-link">
-                <a href="javascript:void(0)" (click)="showAlert()">Głosowanie walne</a>
+                <a href="javascript:void(0)" (click)="showAlert()">Głosowania</a>
                 <small class="note">Pomysł przekazany do obrad</small>
             </li>
             <li class="disabled-link">
@@ -55,6 +55,7 @@
         </mat-toolbar>
 
         <div class="page-content">
+            <app-bouncing-info-box *ngIf="showInfoBox" (dismissed)="hideInfoBox()"></app-bouncing-info-box>
             <app-search-bar *ngIf="showSearchBar"></app-search-bar>
             <router-outlet></router-outlet>
         </div>
