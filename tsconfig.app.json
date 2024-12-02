@@ -2,15 +2,15 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "module": "esnext",            // Optimal for Angular's module system.
-    "lib": ["es2018", "dom"],      // Broader compatibility for ES2018 features.
-    "types": ["@angular/localize"],
-    "downlevelIteration": true     // Ensures correct behavior for `for...of` and spread operators.
+    "module": "es2015",              // Compatible with older browsers.
+    "lib": ["es2015", "dom"],        // Broader support for ES2015 features.
+    "types": ["@angular/localize"],  // No change needed.
+    "downlevelIteration": true       // Ensure `for...of` and spreads work.
   },
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true, // Enables strict template checking.
-    "strictInjectionParameters": true, // Ensures dependency injection correctness.
-    "enableIvy": true             // Ivy compiler (default for Angular 9+).
+    "fullTemplateTypeCheck": true,      // No change needed.
+    "strictInjectionParameters": true, // No change needed.
+    "enableIvy": true                   // No change needed.
   },
   "files": [
     "src/main.ts",
