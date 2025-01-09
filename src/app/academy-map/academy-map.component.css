@@ -49,36 +49,22 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    overflow: hidden; /* Zapobiega przewijaniu */
+    overflow: hidden;
+}
+
+.map-modal-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    touch-action: none; /* Wyłącza domyślne przewijanie w mobile */
 }
 
 .map-modal .full-map-image {
-    max-width: 90%;
-    max-height: 90%;
-    border: 2px solid white;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-    object-fit: contain;
-}
-
-@media (max-width: 768px) {
-    .map-modal .full-map-image {
-        width: 200%; /* Powiększenie mapy na urządzeniach mobilnych */
-        height: auto;
-        max-width: none;
-        max-height: none;
-        transform: scale(1.5); /* Zoom mapy */
-        object-fit: cover; /* Dopasowanie do ekranu */
-    }
-
-    .map-modal {
-        background-color: rgba(0, 0, 0, 1); /* Pełne zaciemnienie tła */
-    }
-
-    .zoom-button {
-        top: 15px;
-        right: 15px;
-        font-size: 16px;
-        padding: 12px 24px;
-    }
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    user-select: none;
 }

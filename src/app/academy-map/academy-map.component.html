@@ -5,6 +5,21 @@
 </div>
 
 <!-- Full Map Modal -->
-<div class="map-modal" *ngIf="isMapModalVisible" (click)="closeFullMap()">
-    <img src="mapa-akademia.png" alt="Full Map" class="full-map-image" />
+<div
+        class="map-modal"
+        *ngIf="isMapModalVisible"
+        (click)="closeFullMap()">
+
+    <div
+            class="map-modal-content"
+            #mapContent
+            (touchstart)="onTouchStart($event)"
+            (touchmove)="onTouchMove($event)"
+            (touchend)="onTouchEnd()">
+
+        <img
+                src="mapa-akademia.png"
+                alt="Full Map"
+                class="full-map-image" />
+    </div>
 </div>
