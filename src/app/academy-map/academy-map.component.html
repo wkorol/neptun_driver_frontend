@@ -1,0 +1,10 @@
+<div class="map-container">
+    <!-- Map Image -->
+    <img src="mapa-akademia.png" alt="Map" />
+    <button class="zoom-button" (click)="showFullMap()">Wciśnij w lupkę aby zobaczyć większą mapę 🔍</button>
+</div>
+
+<!-- Full Map Modal -->
+<div class="map-modal" *ngIf="isMapModalVisible" (click)="closeFullMap()">
+    <img src="mapa-akademia.png" alt="Full Map" class="full-map-image" />
+</div>

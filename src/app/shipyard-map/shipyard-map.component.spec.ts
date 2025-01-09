@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InteractiveMapComponent } from './interactive-map.component';
+import { ShipyardMapComponent } from './shipyard-map.component';
 
 describe('InteractiveMapComponent', () => {
-  let component: InteractiveMapComponent;
-  let fixture: ComponentFixture<InteractiveMapComponent>;
+  let component: ShipyardMapComponent;
+  let fixture: ComponentFixture<ShipyardMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InteractiveMapComponent]
+      imports: [ShipyardMapComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InteractiveMapComponent);
+    fixture = TestBed.createComponent(ShipyardMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

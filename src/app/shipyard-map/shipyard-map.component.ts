@@ -3,15 +3,15 @@ import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-interactive-map',
-  templateUrl: './interactive-map.component.html',
+  templateUrl: './shipyard-map.component.html',
   standalone: true,
   imports: [
     NgForOf,
     NgIf
   ],
-  styleUrl: './interactive-map.component.css'
+  styleUrl: './shipyard-map.component.css'
 })
-export class InteractiveMapComponent {
+export class ShipyardMapComponent {
   // List of regions with labels and descriptions
   regions = [
     { label: 'DN', description: 'Prezes Zarządu' },
