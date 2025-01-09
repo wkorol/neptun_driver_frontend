@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, ViewChild} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
@@ -10,23 +10,34 @@ import {NgForOf, NgIf} from "@angular/common";
   templateUrl: './academy-map.component.html',
   styleUrl: './academy-map.component.css'
 })
-export class AcademyMapComponent {
+export class AcademyMapComponent implements AfterViewInit {
     isMapModalVisible: boolean = false;
 
     @ViewChild('mapContent') mapContent!: ElementRef<HTMLDivElement>;
 
-    // Zmienne dla obsługi przesuwania i zoomu
-    private scale: number = 1; // Skalowanie mapy
-    private startX: number = 0; // Początkowa pozycja X
-    private startY: number = 0; // Początkowa pozycja Y
-    private currentX: number = 0; // Aktualna pozycja X
-    private currentY: number = 0; // Aktualna pozycja Y
-    private isDragging: boolean = false; // Czy przeciąganie jest aktywne
-    private previousDistance: number | null = null; // Dla pinch-to-zoom
+    // Zmienne dla obsługi zoomu i przesuwania
+    private scale: number = 1;
+    private startX: number = 0;
+    private startY: number = 0;
+    private currentX: number = 0;
+    private currentY: number = 0;
+    private isDragging: boolean = false;
+    private previousDistance: number | null = null;
+
+    ngAfterViewInit() {
+        // Nic do inicjalizacji na start
+    }
 
     showFullMap() {
         this.isMapModalVisible = true;
         this.resetZoomAndPosition();
+
+        // Automatyczny zoom dla widoku mobilnego
+        if (window.innerWidth <= 768) {
+            this.scale = 2; // Ustaw zoom na wartość 2x
+            const mapElement = this.mapContent.nativeElement;
+            mapElement.style.transform = `translate(0px, 0px) scale(${this.scale})`;
+        }
     }
 
     closeFullMap() {
@@ -54,7 +65,7 @@ export class AcademyMapComponent {
         const mapElement = this.mapContent.nativeElement;
 
         if (event.touches.length === 1 && this.isDragging) {
-            // Przesuwanie mapy
+            // Dragging
             this.currentX = event.touches[0].clientX - this.startX;
             this.currentY = event.touches[0].clientY - this.startY;
             mapElement.style.transform = `translate(${this.currentX}px, ${this.currentY}px) scale(${this.scale})`;
@@ -75,7 +86,7 @@ export class AcademyMapComponent {
             }
 
             const scaleChange = distance / this.previousDistance;
-            this.scale = Math.min(Math.max(this.scale * scaleChange, 1), 3); // Zoom w zakresie od 1 do 3
+            this.scale = Math.min(Math.max(this.scale * scaleChange, 1), 3); // Limit zoom between 1 and 3
             mapElement.style.transform = `translate(${this.currentX}px, ${this.currentY}px) scale(${this.scale})`;
 
             this.previousDistance = distance;
@@ -84,6 +95,6 @@ export class AcademyMapComponent {
 
     onTouchEnd() {
         this.isDragging = false;
-        this.previousDistance = null; // Resetuj odległość po zakończeniu zoomu
+        this.previousDistance = null; // Reset distance after touch ends
     }
 }
