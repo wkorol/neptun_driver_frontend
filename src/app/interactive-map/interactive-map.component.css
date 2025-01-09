@@ -19,10 +19,22 @@
     color: #fff; /* White text for contrast */
     padding: 15px;
     border-radius: 10px;
-    max-width: 300px; /* Restored smaller width */
+    max-width: 300px;
     font-size: 14px;
     overflow-y: auto;
     max-height: 300px; /* Adds scroll if content is too long */
+}
+
+/* Mobile: Move the legend below the map */
+@media (max-width: 768px) {
+    .legend-overlay {
+        position: relative; /* Move it out of the absolute flow */
+        margin-top: 20px; /* Add space between the map and legend */
+        max-width: 90%; /* Take most of the screen width */
+        margin-left: auto;
+        margin-right: auto;
+        max-height: 60vh; /* Make it bigger and scrollable */
+    }
 }
 
 .legend-overlay h3 {

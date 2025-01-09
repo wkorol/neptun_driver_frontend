@@ -4,7 +4,7 @@
 
     <!-- Overlayed Legend -->
     <div class="legend-overlay" #legendContainer (scroll)="onScroll(legendContainer)">
-        <h3>Legend</h3>
+        <h3>Legenda</h3>
         <ul>
             <li *ngFor="let region of regions">
                 <strong>{{ region.label }}:</strong> {{ region.description }}
