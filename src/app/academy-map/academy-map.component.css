@@ -49,6 +49,7 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow: hidden; /* Zapobiega przewijaniu */
 }
 
 .map-modal .full-map-image {
@@ -57,24 +58,27 @@
     border: 2px solid white;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    object-fit: contain;
 }
 
 @media (max-width: 768px) {
     .map-modal .full-map-image {
-        max-width: 100%; /* Używamy całej szerokości ekranu */
-        max-height: 100%; /* Używamy całej wysokości ekranu */
-        width: auto; /* Utrzymujemy proporcje obrazu */
+        width: 200%; /* Powiększenie mapy na urządzeniach mobilnych */
         height: auto;
+        max-width: none;
+        max-height: none;
+        transform: scale(1.5); /* Zoom mapy */
+        object-fit: cover; /* Dopasowanie do ekranu */
     }
 
     .map-modal {
-        background-color: rgba(0, 0, 0, 0.9); /* Trochę ciemniejsze tło, by lepiej widzieć obraz */
+        background-color: rgba(0, 0, 0, 1); /* Pełne zaciemnienie tła */
     }
 
     .zoom-button {
-        top: 15px; /* Większy margines w wersji mobilnej */
+        top: 15px;
         right: 15px;
-        font-size: 16px; /* Większy tekst na przycisku */
-        padding: 12px 24px; /* Większy przycisk dla dotyku */
+        font-size: 16px;
+        padding: 12px 24px;
     }
 }
