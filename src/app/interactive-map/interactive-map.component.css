@@ -29,11 +29,11 @@
 @media (max-width: 768px) {
     .legend-overlay {
         position: relative; /* Move it out of the absolute flow */
-        margin-top: 20px; /* Add space between the map and legend */
-        max-width: 90%; /* Take most of the screen width */
+        margin-top: 50px; /* Add space between the map and legend */
+        max-width: 300px; /* Keep the same width as desktop */
         margin-left: auto;
         margin-right: auto;
-        max-height: 60vh; /* Make it bigger and scrollable */
+        max-height: 30vh; /* Make it bigger and scrollable */
     }
 }
 
