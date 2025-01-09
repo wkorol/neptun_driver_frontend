@@ -1,0 +1,70 @@
+.map-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.legend-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+    color: #fff; /* White text for contrast */
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 300px; /* Restored smaller width */
+    font-size: 14px;
+    overflow-y: auto;
+    max-height: 300px; /* Adds scroll if content is too long */
+}
+
+.legend-overlay h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.legend-overlay ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.legend-overlay li {
+    margin: 8px 0;
+}
+
+.legend-overlay li strong {
+    font-weight: bold;
+}
+
+.scroll-indicator {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent white */
+    color: #000; /* Black text for contrast */
+    text-align: center;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}

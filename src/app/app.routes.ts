@@ -11,6 +11,7 @@ import {AuthRedirectGuard} from "./auth-redirect.guard";
 import {ManageRegionsComponent} from "./manage-regions/manage-regions.component";
 import {ManageHotelsComponent} from "./manage-hotels/manage-hotels.component";
 import {ManageLumpSumsComponent} from "./manage-lump-sums/manage-lump-sums.component";
+import {InteractiveMapComponent} from "./interactive-map/interactive-map.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -21,7 +22,7 @@ export const routes: Routes = [
     { path: 'manage-regions', component: ManageRegionsComponent },
     { path: 'manage-hotels', component: ManageHotelsComponent },
     { path: 'manage-lump-sums', component: ManageLumpSumsComponent },
-    { path: 'admin', component: AdminPanelComponent, canActivate: [AuthGuard] } // Protected route
+    { path: 'mapa-stoczni', component: InteractiveMapComponent } // Protected route
 ];
 
 @NgModule({
