@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, HostListener} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
@@ -12,6 +12,17 @@ import {NgForOf, NgIf} from "@angular/common";
 })
 export class AcademyMapComponent {
     isMapModalVisible: boolean = false;
+    isMobile: boolean = false;
+
+    // Słuchaj zmiany rozmiaru okna
+    @HostListener('window:resize', [])
+    onResize() {
+        this.isMobile = window.innerWidth <= 768;
+    }
+
+    constructor() {
+        this.onResize(); // Ustaw początkowy stan
+    }
 
     showFullMap() {
         this.isMapModalVisible = true;

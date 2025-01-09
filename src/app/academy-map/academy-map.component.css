@@ -58,3 +58,23 @@
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
+
+@media (max-width: 768px) {
+    .map-modal .full-map-image {
+        max-width: 100%; /* Używamy całej szerokości ekranu */
+        max-height: 100%; /* Używamy całej wysokości ekranu */
+        width: auto; /* Utrzymujemy proporcje obrazu */
+        height: auto;
+    }
+
+    .map-modal {
+        background-color: rgba(0, 0, 0, 0.9); /* Trochę ciemniejsze tło, by lepiej widzieć obraz */
+    }
+
+    .zoom-button {
+        top: 15px; /* Większy margines w wersji mobilnej */
+        right: 15px;
+        font-size: 16px; /* Większy tekst na przycisku */
+        padding: 12px 24px; /* Większy przycisk dla dotyku */
+    }
+}
