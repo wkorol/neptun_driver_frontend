@@ -1,0 +1,116 @@
+/* General container styles */
+.table-container {
+    margin: 24px 0;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Mat-card styling */
+mat-card {
+    margin: 16px auto;
+    padding: 24px;
+    max-width: 800px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+/* Logo container */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.logo {
+    height: 60px;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* Mat-toolbar styling */
+mat-toolbar {
+    font-size: 20px;
+    font-weight: bold;
+    justify-content: center;
+    color: #ffffff;
+    background-color: #1976d2; /* Deep blue for primary toolbar */
+    border-radius: 8px 8px 0 0;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+/* Header row styling */
+mat-header-row {
+    background-color: #f5f5f5;
+}
+
+th.mat-header-cell {
+    font-weight: 600;
+    font-size: 16px;
+    color: #424242;
+    padding: 12px;
+    border-bottom: 2px solid #dcdcdc;
+}
+
+/* Alternating row colors */
+tr.mat-row:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray for even rows */
+}
+
+tr.mat-row:nth-child(odd) {
+    background-color: #ffffff; /* White for odd rows */
+}
+
+/* Hover effect for rows */
+tr.mat-row:hover {
+    background-color: #e3f2fd; /* Light blue hover */
+    transition: background-color 0.3s ease;
+}
+
+/* Price column styling */
+td.mat-cell {
+    font-size: 15px;
+    color: #616161;
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+td.mat-cell:nth-child(2),
+td.mat-cell:nth-child(3) {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1976d2; /* Primary blue for prices */
+    background-color: #e3f2fd; /* Light blue background for price columns */
+}
+
+/* Mobile responsive design */
+@media screen and (max-width: 600px) {
+    table {
+        font-size: 14px;
+    }
+
+    mat-card {
+        padding: 16px;
+        margin: 8px;
+    }
+
+    th.mat-header-cell,
+    td.mat-cell {
+        padding: 8px;
+    }
+
+    td.mat-cell:nth-child(2),
+    td.mat-cell:nth-child(3) {
+        font-size: 16px;
+    }
+}

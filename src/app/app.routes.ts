@@ -13,6 +13,7 @@ import {ManageHotelsComponent} from "./manage-hotels/manage-hotels.component";
 import {ManageLumpSumsComponent} from "./manage-lump-sums/manage-lump-sums.component";
 import {ShipyardMapComponent} from "./shipyard-map/shipyard-map.component";
 import {AcademyMapComponent} from "./academy-map/academy-map.component";
+import {LumpSumCancellationsComponent} from "./lump-sum-cancellations/lump-sum-cancellations.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -24,7 +25,9 @@ export const routes: Routes = [
     { path: 'manage-hotels', component: ManageHotelsComponent },
     { path: 'manage-lump-sums', component: ManageLumpSumsComponent },
     { path: 'mapa-stocznia', component: ShipyardMapComponent },
-    { path: 'mapa-akademia', component: AcademyMapComponent }
+    { path: 'mapa-akademia', component: AcademyMapComponent },
+    { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
+
 ];
 
 @NgModule({
