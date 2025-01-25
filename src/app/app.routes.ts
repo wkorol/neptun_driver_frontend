@@ -27,6 +27,7 @@ export const routes: Routes = [
     { path: 'mapa-stocznia', component: ShipyardMapComponent },
     { path: 'mapa-akademia', component: AcademyMapComponent },
     { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
+    { path: 'admin', component: AdminPanelComponent },
 
 ];
 
