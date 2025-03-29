@@ -24,15 +24,8 @@ export class MamTaxiLoginComponent {
   constructor(private authService: MamTaxiAuthService) {
   }
 
-  sendSms() {
-    this.authService.sendSms(this.phone).subscribe({
-      next: () => this.message = 'SMS wysłany!',
-      error: () => this.error = 'Nie udało się wysłać SMS-a',
-    });
-  }
-
   login() {
-    this.authService.login(this.phone, this.code).subscribe({
+    this.authService.login().subscribe({
       next: () => {
         this.message = 'Zalogowano!';
         this.error = '';

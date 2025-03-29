@@ -8,12 +8,8 @@ import { of } from 'rxjs';
 export class MamTaxiAuthService {
     constructor(private http: HttpClient) {}
 
-    sendSms(phone: string) {
-        return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/send-sms/${phone}`, { withCredentials: true });
-    }
-
-    login(phone: string, code: string) {
-        return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login/${phone}/${code}`, { withCredentials: true });
+    login() {
+        return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login/`, { withCredentials: true });
     }
 
     getActualOrders() {
@@ -40,9 +36,16 @@ export class MamTaxiAuthService {
     }
 
     checkSession(): Observable<boolean> {
-        return this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/session/check', { withCredentials: true }).pipe(
+        return this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/session/check', {
+            withCredentials: true
+        }).pipe(
             map(() => true),
-            catchError(() => of(false))
+            catchError(() =>
+                this.login().pipe(
+                    map(() => true),
+                    catchError(() => of(false))
+                )
+            )
         );
     }
 }

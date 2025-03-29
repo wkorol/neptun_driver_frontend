@@ -63,11 +63,6 @@ export class OrderListComponent {
     this.loadOrdersForNext5Days();
   }
 
-  onLoginSuccess() {
-    this.isAuthenticated = true;
-    this.import(25);
-  }
-
   formatDate(dateStr?: string): string {
     return dateStr ? new Date(dateStr).toLocaleString() : 'brak';
   }
