@@ -1,0 +1,43 @@
+<div class="orders-container">
+    <app-mam-taxi-login></app-mam-taxi-login>
+    <div class="import-container">
+        <h2>Import zamówień</h2>
+
+        <div class="buttons">
+            <button mat-raised-button color="primary" (click)="import(5)">Zaimportuj 5 zleceń</button>
+            <button mat-raised-button color="accent" (click)="import(100)">Zaimportuj 100 zleceń</button>
+            <button mat-raised-button color="warn" (click)="import(500)">Zaimportuj 500 zleceń</button>
+            <button mat-raised-button color="primary" (click)="import(1000)">Zaimportuj 1000 zleceń</button>
+        </div>
+
+        <div *ngIf="isLoading" class="loading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <span>Importuję...</span>
+        </div>
+
+        <p *ngIf="message" class="message">{{ message }}</p>
+    </div>
+    <ng-container *ngIf="!isLoading; else loading">
+        <mat-card *ngFor="let order of orders" class="order-card" appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>Zamówienie – {{ order.city }}</mat-card-title>
+                <mat-card-subtitle>Status: {{ order.status || 'brak' }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <p><strong>Adres:</strong> {{ order.street || 'brak' }} {{ order.house || '' }}</p>
+                <p><strong>Z:</strong> {{ order.from }}</p>
+                <p><strong>Do:</strong> {{ order.destination || 'brak' }}</p>
+                <p><strong>Planowany przyjazd:</strong> {{ formatDate(order.plannedArrivalDate) }}</p>
+                <p><strong>Numer telefonu:</strong> {{ order.phoneNumber || 'brak' }}</p>
+                <p><strong>Taxi:</strong> {{ order.taxiNumber || 'brak' }} | Pasażerów: {{ order.passengerCount || '?' }}</p>
+                <p><strong>Firma:</strong> {{ order.companyName || 'brak' }}</p>
+                <p><strong>Cena:</strong> {{ order.price ? order.price + ' zł' : 'brak' }}</p>
+                <p *ngIf="order.notes"><strong>Notatki:</strong> {{ order.notes }}</p>
+            </mat-card-content>
+        </mat-card>
+    </ng-container>
+
+    <ng-template #loading>
+        <p>Ładowanie zamówień...</p>
+    </ng-template>
+</div>
