@@ -13,7 +13,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>('https://apineptun-ij5mx.ondigitalocean.app/login', credentials).pipe(
+    return this.http.post<{ token: string }>('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login', credentials).pipe(
         tap(response => {
           const token = response.token;
           localStorage.setItem('authToken', token);
