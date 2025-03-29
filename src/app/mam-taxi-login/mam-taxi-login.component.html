@@ -1,10 +1,21 @@
 <div class="login-form">
-    <input type="text" placeholder="Numer telefonu" [(ngModel)]="phone">
-    <input type="text" placeholder="Kod SMS" [(ngModel)]="code">
+    <h3>Zaloguj się do MamTaxi</h3>
 
-    <button (click)="sendSms()">Wyślij SMS</button>
-    <button (click)="login()">Zaloguj</button>
+    <label for="phone">Numer telefonu</label>
+    <select id="phone" [(ngModel)]="phone">
+        <option value="">-- Wybierz numer --</option>
+        <option value="537523437">537 523 437</option>
+        <option value="781014217">781 014 217</option>
+    </select>
 
-    <p *ngIf="message" style="color: green;">{{ message }}</p>
-    <p *ngIf="error" style="color: red;">{{ error }}</p>
+    <label for="code">Kod SMS</label>
+    <input id="code" type="text" placeholder="Kod SMS" [(ngModel)]="code">
+
+    <div class="buttons">
+        <button (click)="sendSms()">Wyślij SMS</button>
+        <button (click)="login()">Zaloguj</button>
+    </div>
+
+    <p *ngIf="message" class="message">{{ message }}</p>
+    <p *ngIf="error" class="error">{{ error }}</p>
 </div>

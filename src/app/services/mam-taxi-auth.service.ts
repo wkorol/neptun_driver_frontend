@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import {catchError, map, Observable} from "rxjs";
+import { of } from 'rxjs';
+
 
 @Injectable({ providedIn: 'root' })
 export class MamTaxiAuthService {
@@ -13,10 +16,20 @@ export class MamTaxiAuthService {
         return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login/${phone}/${code}`, { withCredentials: true });
     }
 
-    getOrders() {
-        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled`, {
+    getActualOrders() {
+        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/now`, {
             withCredentials: true
         });
+    }
+
+    getOrdersForToday() {
+        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/today`, {
+            withCredentials: true
+        });
+    }
+
+    getOrdersForNext5Days() {
+        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/next5days`)
     }
 
     importOrders(howMany: number) {
@@ -24,5 +37,12 @@ export class MamTaxiAuthService {
             withCredentials: true,
             responseType: 'text'
         });
+    }
+
+    checkSession(): Observable<boolean> {
+        return this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/session/check', { withCredentials: true }).pipe(
+            map(() => true),
+            catchError(() => of(false))
+        );
     }
 }

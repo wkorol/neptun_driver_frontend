@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {MamTaxiAuthService} from "../services/mam-taxi-auth.service";
 import {NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
@@ -19,7 +19,10 @@ export class MamTaxiLoginComponent {
   message = '';
   error = '';
 
-  constructor(private authService: MamTaxiAuthService) {}
+  @Output() loginSuccess = new EventEmitter<void>();
+
+  constructor(private authService: MamTaxiAuthService) {
+  }
 
   sendSms() {
     this.authService.sendSms(this.phone).subscribe({
@@ -30,8 +33,15 @@ export class MamTaxiLoginComponent {
 
   login() {
     this.authService.login(this.phone, this.code).subscribe({
-      next: () => this.message = 'Zalogowano!',
-      error: () => this.error = 'Błąd logowania',
+      next: () => {
+        this.message = 'Zalogowano!';
+        this.error = '';
+        this.loginSuccess.emit();
+      },
+      error: () => {
+        this.error = 'Błąd logowania';
+        this.message = '';
+      }
     });
   }
 }

@@ -28,7 +28,7 @@ export const routes: Routes = [
     { path: 'mapa-akademia', component: AcademyMapComponent },
     { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
     { path: 'admin', component: AdminPanelComponent },
-    { path: 'testt', component: OrderListComponent },
+    { path: 'test', component: OrderListComponent },
 
 ];
 
