@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import {MamTaxiAuthService} from "../services/mam-taxi-auth.service";
 import { Order } from '../shared/order.model';
-import {MatCard, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardHeader} from "@angular/material/card";
 import {NgForOf, NgIf} from "@angular/common";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatButton} from "@angular/material/button";
-import {LoginComponent} from "../login/login.component";
-import {MamTaxiLoginComponent} from "../mam-taxi-login/mam-taxi-login.component";
 import {
   MatAccordion,
   MatExpansionPanel,
@@ -23,7 +20,6 @@ import {
     NgForOf,
     MatProgressSpinner,
     MatButton,
-    MamTaxiLoginComponent,
     MatExpansionPanel,
     MatExpansionPanelTitle,
     MatAccordion
