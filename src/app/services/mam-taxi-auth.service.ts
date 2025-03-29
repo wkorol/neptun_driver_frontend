@@ -9,7 +9,7 @@ export class MamTaxiAuthService {
     constructor(private http: HttpClient) {}
 
     login() {
-        return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login/`, { withCredentials: true });
+        return this.http.get<any>(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login`, { withCredentials: true });
     }
 
     getActualOrders() {
