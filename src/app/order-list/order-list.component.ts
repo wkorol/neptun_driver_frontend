@@ -46,7 +46,7 @@ export class OrderListComponent {
         this.sessionChecked = true;
 
         if (valid) {
-          this.import(25);
+          this.import(5);
         }
       },
       error: () => {
