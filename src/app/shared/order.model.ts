@@ -1,16 +1,16 @@
 export interface Order {
-    createdAt: string;
-    plannedArrivalDate?: string;
-    status?: string;
-    city: string;
-    street?: string;
-    house?: string;
-    from: string;
-    taxiNumber?: string;
-    destination?: string;
-    notes?: string;
-    phoneNumber?: string;
-    companyName?: string;
-    price?: number;
-    passengerCount?: number;
+    CreatedAt: string;
+    PlannedArrivalDate?: string;
+    Status?: string;
+    City: string;
+    Street?: string;
+    House?: string;
+    From: string;
+    TaxiNumber?: string;
+    Destination?: string;
+    Notes?: string;
+    PhoneNumber?: string;
+    CompanyName?: string;
+    Price?: number;
+    PassengersCount?: number;
 }
