@@ -1,3 +1,4 @@
+/* Globalne poprawki overlay */
 ::ng-deep .cdk-overlay-container,
 ::ng-deep .cdk-overlay-pane {
     z-index: 1000 !important;
@@ -5,11 +6,53 @@
     pointer-events: auto !important;
 }
 
+/* Poprawka pozycji kalendarza */
 ::ng-deep .mat-datepicker-content {
     z-index: 1000 !important;
-    position: relative;
 }
 
+/* Inputy szerokie i responsywne */
+mat-form-field {
+    width: 100%;
+}
+
+/* Poprawki na inputy, aby były wygodne w użyciu */
+::ng-deep .mat-form-field-infix {
+    min-width: 250px;
+    width: 100%;
+}
+
+/* Input tekstowy Google Autocomplete - wygodne paddingi */
+::ng-deep input.mat-input-element {
+    padding: 10px 12px;
+    font-size: 16px;
+}
+
+/* Responsywny kontener karty Material */
+mat-card {
+    width: 100%;
+    overflow: visible;
+}
+
+/* Responsywność formularza na mniejszych ekranach */
+@media (max-width: 768px) {
+    .grid-cols-1.md\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    mat-card-content {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+/* Zapobieganie niepożądanym scrollom */
 html, body {
-    overflow: visible !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+}
+
+/* Globalny spinner overlay */
+.fixed.inset-0.bg-white\/60 {
+    backdrop-filter: blur(4px);
 }

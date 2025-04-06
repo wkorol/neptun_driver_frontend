@@ -60,7 +60,7 @@ export class TaxiFormComponent implements OnDestroy {
 
   @ViewChild('pickup') pickupInput!: ElementRef;
   @ViewChild('dropoff') dropoffInput!: ElementRef;
-  @ViewChild('picker') picker!: MatDatepicker<Date>;
+  @ViewChild('picker') picker?: MatDatepicker<Date>;
   @ViewChild(AppMapComponent) mapComponent!: AppMapComponent;
 
   private overlayClickSubscription?: Subscription;
@@ -76,7 +76,7 @@ export class TaxiFormComponent implements OnDestroy {
       private cdr: ChangeDetectorRef
   ) {
     this.taxiForm = this.fb.group({
-      immediate: [false],
+      immediate: [true],
       date: [new Date()],
       time: [null],
       pickupAddress: ['', Validators.required],
@@ -91,23 +91,25 @@ export class TaxiFormComponent implements OnDestroy {
           this.routeWasCalculated = false;
           this.updateMapRoute();
         });
-    this.picker.openedStream.subscribe(() => {
-      this.ngZone.runOutsideAngular(() => {
-        queueMicrotask(() => {
-          const overlayPane = document.querySelector('.cdk-overlay-pane');
-          this.overlayClickSubscription = fromEvent<MouseEvent>(document, 'click').subscribe(event => {
-            const target = event.target as HTMLElement;
-            if (this.picker.opened && overlayPane && !overlayPane.contains(target)) {
-              this.ngZone.run(() => this.picker.close());
-            }
+    if (this.picker) {
+      this.picker.openedStream.subscribe(() => {
+        this.ngZone.runOutsideAngular(() => {
+          queueMicrotask(() => {
+            const overlayPane = document.querySelector('.cdk-overlay-pane');
+            this.overlayClickSubscription = fromEvent<MouseEvent>(document, 'click').subscribe(event => {
+              const target = event.target as HTMLElement;
+              if (this.picker?.opened && overlayPane && !overlayPane.contains(target)) {
+                this.ngZone.run(() => this.picker?.close());
+              }
+            });
           });
         });
       });
-    });
 
-    this.picker.closedStream.subscribe(() => {
-      this.overlayClickSubscription?.unsubscribe();
-    });
+      this.picker.closedStream.subscribe(() => {
+        this.overlayClickSubscription?.unsubscribe();
+      });
+    }
 
     const bounds = new google.maps.LatLngBounds(
         { lat: 49.0, lng: 14.0 },
@@ -246,7 +248,28 @@ export class TaxiFormComponent implements OnDestroy {
         (dropoffInAirport && (pickupInGdansk || pickupInSopot));
 
     if (fixedAirportToCityPrice) {
-      this.price = 100;
+      const startDate = new Date(this.taxiForm.get('date')?.value);
+      const isImmediate = this.taxiForm.get('immediate')?.value;
+      const startTime: Date = isImmediate ? new Date() : this.taxiForm.get('time')?.value;
+
+      if (!startTime) {
+        console.warn('[DEBUG] Brak startTime!');
+        this.price = null;
+        return;
+      }
+
+      startDate.setHours(startTime.getHours(), startTime.getMinutes());
+
+      const isSunday = startDate.getDay() === 0;
+      const isNight = startDate.getHours() >= 22 || startDate.getHours() < 6;
+
+      if ((pickupInAirport && dropoffInSopot) || (dropoffInAirport && pickupInSopot)) {
+        this.price = (isSunday || isNight) ? 140 : 100;
+      } else if ((pickupInAirport && dropoffInGdansk) || (dropoffInAirport && pickupInGdansk)) {
+        this.price = (isSunday || isNight) ? 130 : 100;
+      }
+
+      console.log('[DEBUG] Ustawiono fixedAirportToCityPrice:', this.price);
       return;
     }
 
