@@ -4,7 +4,7 @@
     "outDir": "./out-tsc/app",
     "module": "esnext",            // Optimal for Angular's module system.
     "lib": ["es2018", "dom"],      // Broader compatibility for ES2018 features.
-    "types": ["@angular/localize"],
+    "types": ["@angular/localize", "google.maps"],
     "downlevelIteration": true     // Ensures correct behavior for `for...of` and spread operators.
   },
   "angularCompilerOptions": {

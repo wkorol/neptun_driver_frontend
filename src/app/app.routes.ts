@@ -5,6 +5,7 @@ import {NgModule} from "@angular/core";
 import {RegionComponent} from "./region/region.component";
 import {AdminPanelComponent} from "./admin-panel/admin-panel.component";
 import {EditHotelComponent} from "./edit-hotel/edit-hotel.component";
+import {AuthGuard} from "./auth.guard";
 import {LoginComponent} from "./login/login.component";
 import {AuthRedirectGuard} from "./auth-redirect.guard";
 import {ManageRegionsComponent} from "./manage-regions/manage-regions.component";
@@ -13,6 +14,7 @@ import {ManageLumpSumsComponent} from "./manage-lump-sums/manage-lump-sums.compo
 import {ShipyardMapComponent} from "./shipyard-map/shipyard-map.component";
 import {AcademyMapComponent} from "./academy-map/academy-map.component";
 import {LumpSumCancellationsComponent} from "./lump-sum-cancellations/lump-sum-cancellations.component";
+import {TaxiFormComponent} from "./taxi-form/taxi-form.component";
 import {OrderListComponent} from "./order-list/order-list.component";
 
 export const routes: Routes = [
@@ -29,6 +31,7 @@ export const routes: Routes = [
     { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
     { path: 'admin', component: AdminPanelComponent },
     { path: 'test', component: OrderListComponent },
+    {path: 'taxii', component: TaxiFormComponent}
 
 ];
 
