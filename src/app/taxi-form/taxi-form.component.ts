@@ -23,6 +23,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged } from 'rxjs/operators';
+import {GoogleGeocodingService} from "../services/google-geocoding.service";
 
 @Component({
   selector: 'app-taxi-form',
@@ -66,6 +67,8 @@ export class TaxiFormComponent implements OnDestroy {
   private overlayClickSubscription?: Subscription;
   private pickupAutocomplete!: google.maps.places.Autocomplete;
   private dropoffAutocomplete!: google.maps.places.Autocomplete;
+  private pickupAutocompleteUsed = false;
+  private dropoffAutocompleteUsed = false;
 
   polygonCoords: google.maps.LatLngLiteral[] = [];
 
@@ -73,7 +76,8 @@ export class TaxiFormComponent implements OnDestroy {
       private fb: FormBuilder,
       private overlayContainer: OverlayContainer,
       private ngZone: NgZone,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private geocoder: GoogleGeocodingService
   ) {
     this.taxiForm = this.fb.group({
       immediate: [true],
@@ -123,21 +127,28 @@ export class TaxiFormComponent implements OnDestroy {
 
     this.pickupAutocomplete = new google.maps.places.Autocomplete(this.pickupInput.nativeElement, autocompleteOptions);
     this.pickupAutocomplete.addListener('place_changed', () => {
-      const place = this.pickupAutocomplete.getPlace();
-      this.pickupCoords = place.geometry?.location
-          ? { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() }
-          : null;
-      this.updateMapRoute();
+      this.ngZone.run(() => {
+        const place = this.pickupAutocomplete.getPlace();
+        this.pickupCoords = place.geometry?.location
+            ? { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() }
+            : null;
+        this.pickupAutocompleteUsed = true;
+        this.updateMapRoute();
+      });
     });
 
     this.dropoffAutocomplete = new google.maps.places.Autocomplete(this.dropoffInput.nativeElement, autocompleteOptions);
     this.dropoffAutocomplete.addListener('place_changed', () => {
-      const place = this.dropoffAutocomplete.getPlace();
-      this.dropoffCoords = place.geometry?.location
-          ? { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() }
-          : null;
-      this.updateMapRoute();
+      this.ngZone.run(() => {
+        const place = this.dropoffAutocomplete.getPlace();
+        this.dropoffCoords = place.geometry?.location
+            ? { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() }
+            : null;
+        this.dropoffAutocompleteUsed = true;
+        this.updateMapRoute();
+      });
     });
+
 
     this.taxiForm.get('pickupAddress')?.valueChanges
         .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
@@ -154,6 +165,34 @@ export class TaxiFormComponent implements OnDestroy {
           this.price = null;
           this.mapComponent.clearRoute();
         });
+  }
+
+  async onPickupBlur(): Promise<void> {
+    if (!this.pickupAutocompleteUsed) {
+      const address = this.taxiForm.get('pickupAddress')?.value;
+      if (address) {
+        const coords = await this.geocoder.geocodeAddress(address);
+        if (coords) {
+          this.pickupCoords = coords;
+          this.updateMapRoute();
+        }
+      }
+    }
+    this.pickupAutocompleteUsed = false;
+  }
+
+  async onDropoffBlur(): Promise<void> {
+    if (!this.dropoffAutocompleteUsed) {
+      const address = this.taxiForm.get('dropoffAddress')?.value;
+      if (address) {
+        const coords = await this.geocoder.geocodeAddress(address);
+        if (coords) {
+          this.dropoffCoords = coords;
+          this.updateMapRoute();
+        }
+      }
+    }
+    this.dropoffAutocompleteUsed = false;
   }
 
   get formattedTravelTime(): string | null {
