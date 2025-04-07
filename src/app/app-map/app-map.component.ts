@@ -212,13 +212,15 @@ export class AppMapComponent {
         .catch(err => console.error('[MAP] Błąd ładowania polygonów:', err));
   }
 
+  private isCalculatingRoute = false;
+
+
   recalculateRoute(): void {
-    if (this.origin && this.destination) {
-      this.calculateRoute();
-    } else {
-      this.directions = null;
-      this.distanceCalculated.emit(null);
-    }
+    if (this.isCalculatingRoute) return;
+
+    this.isCalculatingRoute = true;
+    this.routeLoading.emit(true);
+    this.calculateRoute();
   }
 
   private calculateRoute(): void {
@@ -239,21 +241,29 @@ export class AppMapComponent {
         {
           origin: this.origin,
           destination: this.destination,
-          travelMode: google.maps.TravelMode.DRIVING
+          travelMode: google.maps.TravelMode.DRIVING,
+          provideRouteAlternatives: true // Żądanie alternatywnych tras
         },
         (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK && result) {
-            this.directions = result;
+          if (status === google.maps.DirectionsStatus.OK && result && result.routes.length > 0) {
+            const shortestRoute = result.routes.reduce((prev, curr) => {
+              const prevDistance = prev.legs[0].distance?.value ?? Infinity;
+              const currDistance = curr.legs[0].distance?.value ?? Infinity;
+              return currDistance < prevDistance ? curr : prev;
+            });
 
-            const route = result.routes[0];
-            const leg = route.legs[0];
+            this.directions = {
+              ...result,
+              routes: [shortestRoute] // Ustawiamy tylko najkrótszą trasę
+            };
 
-            // Emitujemy czas trwania przejazdu
+            const leg = shortestRoute.legs[0];
+
             if (leg.duration?.value != null) {
-              this.travelTimeCalculated.emit(leg.duration.value); // w sekundach
+              this.travelTimeCalculated.emit(leg.duration.value);
             }
 
-            const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+            const path = google.maps.geometry.encoding.decodePath(shortestRoute.overview_polyline);
             const literalPath = path.map(p => ({ lat: p.lat(), lng: p.lng() }));
             this.distanceCalculated.emit(literalPath);
           } else {
@@ -261,7 +271,9 @@ export class AppMapComponent {
             this.directions = null;
             this.distanceCalculated.emit(null);
           }
+
           this.isLoadingRoute = false;
+          this.isCalculatingRoute = false;
           this.routeLoading.emit(false);
         }
     );
