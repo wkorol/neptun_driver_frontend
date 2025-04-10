@@ -16,6 +16,7 @@ import {AcademyMapComponent} from "./academy-map/academy-map.component";
 import {LumpSumCancellationsComponent} from "./lump-sum-cancellations/lump-sum-cancellations.component";
 import {TaxiFormComponent} from "./taxi-form/taxi-form.component";
 import {OrderListComponent} from "./order-list/order-list.component";
+import {DriverStatusComponent} from "./driver-status/driver-status.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -31,7 +32,8 @@ export const routes: Routes = [
     { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
     { path: 'admin', component: AdminPanelComponent },
     { path: 'test', component: OrderListComponent },
-    {path: 'taxii', component: TaxiFormComponent}
+    {path: 'taxii', component: TaxiFormComponent},
+    {path: 'driver', component: DriverStatusComponent}
 
 ];
 
