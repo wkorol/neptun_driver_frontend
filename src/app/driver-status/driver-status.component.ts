@@ -32,7 +32,7 @@ export class DriverStatusComponent {
   }
 
   ngOnInit() {
-    this.subscription = interval(2000).subscribe(() => {
+    this.subscription = interval(6000).subscribe(() => {
       this.loadTaxis();
     });
 
