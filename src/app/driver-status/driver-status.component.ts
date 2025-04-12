@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {interval, Subscription} from "rxjs";
+import {expand, interval, of, Subscription, switchMap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {GoogleMap, MapMarker} from "@angular/google-maps";
 import {NgForOf} from "@angular/common";
@@ -28,25 +28,23 @@ export class DriverStatusComponent {
   private subscription?: Subscription;
 
   constructor(private http: HttpClient) {
-    
+
   }
 
   ngOnInit() {
-    this.subscription = interval(2000).subscribe(() => {
-      this.loadTaxis();
-    });
-
-    this.loadTaxis();
+    this.subscription = of(null).pipe(
+        expand(() =>
+            this.http.get<TaxiStatus[]>('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/drivers/status').pipe(
+                switchMap(data => {
+                  this.taxis = data;
+                  return of(null);
+                })
+            )
+        )
+    ).subscribe();
   }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
-  }
-
-  loadTaxis() {
-    this.http.get<TaxiStatus[]>('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/drivers/status')
-        .subscribe(data => {
-          this.taxis = data;
-        });
   }
 }
