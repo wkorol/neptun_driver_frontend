@@ -89,22 +89,77 @@
                 </div>
 
                 <!-- Cena i czas -->
-                <div
-                        *ngIf="price !== null"
-                        class="text-center text-2xl font-bold text-emerald-600 animate-pulse"
-                >
-                    Osobówka: {{ price | number: '1.2-2' }} PLN<br />
-                    VIP: {{ price * 1.2 | number: '1.2-2' }} PLN<br />
-                    BUS: {{ price * 1.5 | number: '1.2-2' }} PLN<br />
-                    Zwierzęta: {{ price + 20 | number: '1.2-2' }} PLN<br />
-                    Przesyłka: ALGORYTM DO ZROBIENIA ... PLN<br />
-                    Gabaryt: ALGORYTM DO ZROBIENIA ... PLN<br />
+                <!-- Cena i czas jako mat-cards -->
+                <!-- Cena i czas jako kwadratowe mat-cards -->
+                <div *ngIf="price !== null" class="row g-3 mt-3">
+                    <!-- Osobówka -->
+                    <div class="col-12 col-md-4">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black hover:shadow-lg transition">
+                            <mat-icon class="custom-icon text-primary">local_taxi</mat-icon>
+                            <div class="fw-bold text-dark fs-5">Osobówka</div>
+                            <div class="text-success fw-semibold fs-6">{{ price | number: '1.2-2' }} PLN</div>
+                        </mat-card>
+                    </div>
 
-                    <div *ngIf="formattedTravelTime">
-                        ⏱️ Szacowany czas przejazdu:
-                        <strong>{{ formattedTravelTime }}</strong><br />
+                    <!-- VIP -->
+                    <div class="col-12 col-md-4">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black transition">
+                            <mat-icon class="custom-icon text-info">star</mat-icon>
+                            <div class="fw-bold text-dark fs-5">VIP</div>
+                            <div class="text-success fw-semibold fs-6">{{ price * 1.2 | number: '1.2-2' }} PLN</div>
+                        </mat-card>
+                    </div>
+
+                    <!-- BUS -->
+                    <div class="col-12 col-md-4">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black transition">
+                            <mat-icon class="custom-icon text-danger">airport_shuttle</mat-icon>
+                            <div class="fw-bold text-dark fs-5">BUS</div>
+                            <div class="text-success fw-semibold fs-6">{{ price * 1.5 | number: '1.2-2' }} PLN</div>
+                        </mat-card>
+                    </div>
+
+                    <!-- Zwierzęta -->
+                    <div class="col-12 col-md-4">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black transition">
+                            <mat-icon class="custom-icon text-primary">pets</mat-icon>
+                            <div class="fw-bold text-dark fs-5">Zwierzęta</div>
+                            <div class="text-success fw-semibold fs-6">{{ price + 20 | number: '1.2-2' }} PLN</div>
+                        </mat-card>
+                    </div>
+
+                    <!-- Przesyłka -->
+                    <div class="col-12 col-md-4">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black transition">
+                            <mat-icon class="custom-icon text-warning">package</mat-icon>
+                            <div class="fw-bold text-dark fs-5">Przesyłka</div>
+                            <div class="text-muted fw-semibold">ALGORYTM DO ZROBIENIA</div>
+                        </mat-card>
+                    </div>
+
+                    <!-- Gabaryt -->
+                    <div class="col-12 col-md-4">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black transition">
+                            <mat-icon class="custom-icon text-warning">inventory_2</mat-icon>
+                            <div class="fw-bold text-dark fs-5">Gabaryt</div>
+                            <div class="text-muted fw-semibold">ALGORYTM DO ZROBIENIA</div>
+                        </mat-card>
+                    </div>
+
+                    <!-- Czas przejazdu -->
+                    <div *ngIf="formattedTravelTime" class="col-12">
+                        <mat-card class="text-center py-4 bg-light shadow rounded-4 border border-transparent hover:border-black transition">
+                            <mat-icon class="custom-icon text-secondary">schedule</mat-icon>
+                            <div class="fw-bold text-dark fs-5">Szacowany czas przejazdu</div>
+                            <div class="text-primary fw-bold fs-4">~{{ formattedTravelTime }}</div>
+                        </mat-card>
                     </div>
                 </div>
+
+
+
+
+
 
                 <!-- Przycisk -->
                 <div class="text-center">

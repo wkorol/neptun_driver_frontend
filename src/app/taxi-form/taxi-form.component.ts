@@ -24,6 +24,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged } from 'rxjs/operators';
 import {GoogleGeocodingService} from "../services/google-geocoding.service";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-taxi-form',
@@ -44,7 +45,8 @@ import {GoogleGeocodingService} from "../services/google-geocoding.service";
     GoogleMapsModule,
     CommonModule,
     AppMapComponent,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIcon
   ],
   templateUrl: './taxi-form.component.html',
   styleUrl: './taxi-form.component.css'
