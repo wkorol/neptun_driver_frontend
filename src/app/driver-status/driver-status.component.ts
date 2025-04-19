@@ -112,12 +112,20 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   filterMarkers() {
     const term = this.searchTerm.trim().toLowerCase();
 
+    // Jeśli pole jest puste — pokaż wszystkie markery
+    if (term === '') {
+      this.markers.forEach((marker) => {
+        marker.map = this.map;
+      });
+      return;
+    }
+
+    // Inaczej: pokaż tylko te dokładnie dopasowane
     let firstVisibleTaxiPosition: google.maps.LatLngLiteral | null = null;
-    let anyVisible = false;
 
     this.markers.forEach((marker, index) => {
       const taxi = this.taxis[index];
-      const visible = taxi.TaxiNo.toLowerCase().includes(term);
+      const visible = taxi.TaxiNo.toLowerCase() === term;
       marker.map = visible ? this.map : null;
 
       if (visible && !firstVisibleTaxiPosition) {
@@ -125,16 +133,17 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
           lat: taxi.Latitude,
           lng: taxi.Longitude
         };
-        anyVisible = true;
       }
     });
 
-    // Jeśli coś faktycznie wyszukujemy i znaleźliśmy przynajmniej jeden wynik:
-    if (term !== '' && anyVisible && firstVisibleTaxiPosition) {
+    // Zoomuj tylko jeśli coś znaleziono
+    if (firstVisibleTaxiPosition) {
       this.map.panTo(firstVisibleTaxiPosition);
       this.map.setZoom(15);
     }
   }
+
+
 
 
 
