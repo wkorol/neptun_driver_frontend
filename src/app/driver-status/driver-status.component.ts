@@ -72,7 +72,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     });
 
     // Every 30 seconds: ask backend to refresh cache
-    this.refreshSub = timer(30000, 30000).pipe(
+    this.refreshSub = timer(10000, 10000).pipe(
         switchMap(() =>
             this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/drivers/status').pipe(
                 catchError(() => of(null))
