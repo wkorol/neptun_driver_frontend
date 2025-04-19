@@ -41,6 +41,8 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   private markers: google.maps.marker.AdvancedMarkerElement[] = [];
   private userLocationMarker?: google.maps.marker.AdvancedMarkerElement;
   searchTerm: string = '';
+  notFound: boolean = false;
+
 
 
   constructor(private http: HttpClient) {}
@@ -119,12 +121,15 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
 
     // Jeśli nic nie wpisane – nie zoomuj
     if (term === '') {
+      this.notFound = false;
       return;
     }
 
     // Znajdź dokładnie dopasowaną taksówkę
     const index = this.taxis.findIndex(t => t.TaxiNo.toLowerCase() === term);
     if (index !== -1) {
+      this.notFound = false;
+
       const taxi = this.taxis[index];
       const position = {
         lat: taxi.Latitude,
@@ -133,7 +138,10 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
 
       this.map.panTo(position);
       this.map.setZoom(15);
+    } else {
+      this.notFound = true;
     }
+
   }
 
 
