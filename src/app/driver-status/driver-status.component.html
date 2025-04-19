@@ -1,5 +1,30 @@
-<div #mapContainer style="height: 500px; width: 100%"></div>
-<button (click)="locateMe()" style="position: absolute; z-index: 1; margin: 10px;">
-    📍 Moja lokalizacja
-</button>
-<div #mapContainer style="height: 500px; width: 100%"></div>
+<div style="position: relative; height: 500px; width: 100%;">
+    <!-- Wyszukiwarka -->
+    <div style="position: absolute; top: 10px; left: 10px; z-index: 10;">
+        <div style="position: relative;">
+            <input
+                    type="text"
+                    placeholder="Szukaj taksówki po numerze"
+                    [(ngModel)]="searchTerm"
+                    (input)="filterMarkers()"
+                    style="padding: 6px 30px 6px 8px; border-radius: 4px; border: 1px solid #ccc; width: 200px;"
+            />
+            <button
+                    *ngIf="searchTerm"
+                    (click)="clearSearch()"
+                    style="position: absolute; top: 50%; right: 6px; transform: translateY(-50%); border: none; background: transparent; cursor: pointer; font-size: 14px; color: #888;">
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <!-- Przycisk lokalizacji -->
+    <button
+            (click)="locateMe()"
+            style="position: absolute; top: 50px; left: 10px; z-index: 10; padding: 6px 10px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">
+        📍 Moja lokalizacja
+    </button>
+
+    <!-- Mapa -->
+    <div #mapContainer style="height: 100%; width: 100%;"></div>
+</div>

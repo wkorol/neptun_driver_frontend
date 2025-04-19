@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of, Subscription, timer, switchMap } from 'rxjs';
+import {FormsModule} from "@angular/forms";
+import {NgIf} from "@angular/common";
 
 interface TaxiStatus {
   TaxiNo: string;
@@ -21,7 +23,10 @@ declare const google: any;
 @Component({
   selector: 'app-driver-status',
   standalone: true,
-  imports: [],
+  imports: [
+    FormsModule,
+    NgIf
+  ],
   templateUrl: './driver-status.component.html',
   styleUrl: './driver-status.component.css'
 })
@@ -35,6 +40,8 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   private refreshSub?: Subscription;
   private markers: google.maps.marker.AdvancedMarkerElement[] = [];
   private userLocationMarker?: google.maps.marker.AdvancedMarkerElement;
+  searchTerm: string = '';
+
 
   constructor(private http: HttpClient) {}
 
@@ -80,13 +87,12 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   }
 
   private updateMarkers() {
-    // Remove old markers
     this.markers.forEach((marker) => marker.map = null);
     this.markers = [];
 
     for (const taxi of this.taxis) {
       const marker = new google.maps.marker.AdvancedMarkerElement({
-        position: {lat: taxi.Latitude, lng: taxi.Longitude},
+        position: { lat: taxi.Latitude, lng: taxi.Longitude },
         map: this.map,
         title: `Taxi ${taxi.TaxiNo}`,
         content: this.createMarkerLabel(taxi.TaxiNo, taxi.Status)
@@ -94,7 +100,43 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
 
       this.markers.push(marker);
     }
+
+    this.filterMarkers(); // od razu zastosuj filtr
   }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.filterMarkers(); // pokaż wszystkie taksówki
+  }
+
+  filterMarkers() {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    let firstVisibleTaxiPosition: google.maps.LatLngLiteral | null = null;
+    let anyVisible = false;
+
+    this.markers.forEach((marker, index) => {
+      const taxi = this.taxis[index];
+      const visible = taxi.TaxiNo.toLowerCase().includes(term);
+      marker.map = visible ? this.map : null;
+
+      if (visible && !firstVisibleTaxiPosition) {
+        firstVisibleTaxiPosition = {
+          lat: taxi.Latitude,
+          lng: taxi.Longitude
+        };
+        anyVisible = true;
+      }
+    });
+
+    // Jeśli coś faktycznie wyszukujemy i znaleźliśmy przynajmniej jeden wynik:
+    if (term !== '' && anyVisible && firstVisibleTaxiPosition) {
+      this.map.panTo(firstVisibleTaxiPosition);
+      this.map.setZoom(15);
+    }
+  }
+
+
 
 
   private createMarkerLabel(taxiNo: string, status?: number): HTMLElement {
