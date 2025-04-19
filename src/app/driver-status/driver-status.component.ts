@@ -112,33 +112,26 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   filterMarkers() {
     const term = this.searchTerm.trim().toLowerCase();
 
-    // Jeśli pole jest puste — pokaż wszystkie markery
+    // Pokaż zawsze wszystkie taksówki
+    this.markers.forEach((marker) => {
+      marker.map = this.map;
+    });
+
+    // Jeśli nic nie wpisane – nie zoomuj
     if (term === '') {
-      this.markers.forEach((marker) => {
-        marker.map = this.map;
-      });
       return;
     }
 
-    // Inaczej: pokaż tylko te dokładnie dopasowane
-    let firstVisibleTaxiPosition: google.maps.LatLngLiteral | null = null;
-
-    this.markers.forEach((marker, index) => {
+    // Znajdź dokładnie dopasowaną taksówkę
+    const index = this.taxis.findIndex(t => t.TaxiNo.toLowerCase() === term);
+    if (index !== -1) {
       const taxi = this.taxis[index];
-      const visible = taxi.TaxiNo.toLowerCase() === term;
-      marker.map = visible ? this.map : null;
+      const position = {
+        lat: taxi.Latitude,
+        lng: taxi.Longitude
+      };
 
-      if (visible && !firstVisibleTaxiPosition) {
-        firstVisibleTaxiPosition = {
-          lat: taxi.Latitude,
-          lng: taxi.Longitude
-        };
-      }
-    });
-
-    // Zoomuj tylko jeśli coś znaleziono
-    if (firstVisibleTaxiPosition) {
-      this.map.panTo(firstVisibleTaxiPosition);
+      this.map.panTo(position);
       this.map.setZoom(15);
     }
   }
