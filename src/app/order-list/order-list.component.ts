@@ -1,28 +1,39 @@
 import { Component } from '@angular/core';
 import {MamTaxiAuthService} from "../services/mam-taxi-auth.service";
 import { Order } from '../shared/order.model';
-import {NgForOf, NgIf} from "@angular/common";
+import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatButton} from "@angular/material/button";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 import {
   MatAccordion,
   MatExpansionPanel,
   MatExpansionPanelHeader,
   MatExpansionPanelTitle
 } from "@angular/material/expansion";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatInput} from "@angular/material/input";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
   imports: [
-      MatExpansionPanelHeader,
+    MatExpansionPanelHeader,
     NgIf,
     NgForOf,
     MatProgressSpinner,
     MatButton,
     MatExpansionPanel,
     MatExpansionPanelTitle,
-    MatAccordion
+    MatAccordion,
+    MatFormFieldModule,
+    MatInput,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    NgClass
   ],
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.css'
@@ -38,6 +49,58 @@ export class OrderListComponent {
 
 
   constructor(private authService: MamTaxiAuthService) {}
+
+  searchTerm: string = '';
+  testValue: string = '';
+
+  panelOpenState = {
+    actual: false,
+    today: false,
+    next5days: false
+  };
+
+
+
+  updatePanelStates() {
+    const hasSearch = this.searchTerm.trim().length > 0;
+
+    this.panelOpenState.actual = hasSearch && this.filteredActualOrders.length > 0;
+    this.panelOpenState.today = hasSearch && this.filteredTodayOrders.length > 0;
+    this.panelOpenState.next5days = hasSearch && this.filteredOrdersForNext5Days.length > 0;
+  }
+
+
+  get filteredActualOrders(): Order[] {
+    return this.filterOrders(this.actualOrders);
+  }
+
+  get filteredTodayOrders(): Order[] {
+    return this.filterOrders(this.todayOrders);
+  }
+
+  get filteredOrdersForNext5Days(): Order[] {
+    return this.filterOrders(this.ordersForNext5Days);
+  }
+
+  private fieldsToSearch = [
+    'City', 'Street', 'House', 'From', 'Destination',
+    'PhoneNumber', 'TaxiNumber', 'CompanyName', 'Notes', 'Status'
+  ];
+
+  private filterOrders(orders: Order[]): Order[] {
+    if (!this.searchTerm.trim()) return orders;
+
+    const term = this.searchTerm.toLowerCase();
+
+    return orders.filter(order =>
+        this.fieldsToSearch.some(key => {
+          const value = (order as any)[key];
+          return value && value.toString().toLowerCase().includes(term);
+        })
+    );
+  }
+
+
 
   ngOnInit(): void {
     this.authService.checkSession().subscribe({
@@ -63,6 +126,16 @@ export class OrderListComponent {
     return dateStr ? new Date(dateStr).toLocaleString() : 'brak';
   }
 
+  confirmCancel(order: Order) {
+    const confirmed = window.confirm('Czy na pewno chcesz anulować to zlecenie?');
+
+    if (confirmed) {
+      // tu można wysłać API call do anulowania
+      alert('Zlecenie zostało anulowane (symulacja).');
+      // np. this.authService.cancelOrder(order.id).subscribe(...)
+    }
+  }
+
   loadTodayOrders() {
     this.authService.getOrdersForToday().subscribe({
       next: (orders) => this.todayOrders = orders,
@@ -82,6 +155,11 @@ export class OrderListComponent {
       next: (orders) => this.actualOrders = orders,
       error: (err) => console.error('Błąd podczas pobierania aktualnych zamówień:', err)
     });
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.updatePanelStates();
   }
 
   import(howMany: number) {

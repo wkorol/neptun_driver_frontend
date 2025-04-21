@@ -1,4 +1,145 @@
 <div class="orders-container">
+    <div class="search-container">
+        <mat-form-field appearance="outline">
+            <mat-label>Wyszukaj w zleceniach...</mat-label>
+            <input
+                    matInput
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="updatePanelStates()"
+                    placeholder="np. Gdańsk, 501..." />
+
+            <button
+                    *ngIf="searchTerm"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Wyczyść"
+                    (click)="clearSearch()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+
+    <!-- ZWIJANE SEKCJE -->
+    <mat-accordion multi="true">
+
+        <!-- Sekcja: Aktualne zlecenia -->
+        <mat-expansion-panel [expanded]="panelOpenState.actual">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Aktualne zlecenia ({{ actualOrders.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngIf="actualOrders.length === 0" class="no-orders">Brak aktywnych zleceń</div>
+
+            <div
+                    *ngFor="let order of filteredActualOrders"
+                    class="order-box"
+                    [ngClass]="{
+    'airport-order': order.From && order.From.toLowerCase().includes('lotnisko'),
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+  }"
+            >
+            <div class="order-header">
+                    <h3>{{ order.City || 'Miasto nieznane' }}</h3>
+                    <span class="status">{{ order.Status || 'brak' }}</span>
+                </div>
+                <div class="order-content">
+                    <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
+                    <p><strong>Z:</strong> {{ order.From }}</p>
+                    <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
+                    <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
+                    <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
+                    <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
+                    <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
+                    <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
+                    <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                    <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
+                        Anuluj
+                    </button>
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <!-- Sekcja: Terminy na dziś -->
+        <mat-expansion-panel [expanded]="panelOpenState.today">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Terminy na dziś ({{ todayOrders.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngIf="!isLoading; else loading">
+                <div
+                        *ngFor="let order of filteredTodayOrders"
+                        class="order-box"
+                        [ngClass]="{
+    'airport-order': order.From && order.From.toLowerCase().includes('lotnisko'),
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+  }"
+                >
+                    <div class="order-header">
+                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
+                        <span class="status">{{ order.Status || 'brak' }}</span>
+                    </div>
+                    <div class="order-content">
+                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
+                        <p><strong>Z:</strong> {{ order.From }}</p>
+                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
+                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
+                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
+                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
+                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
+                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
+                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                        <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
+                            Anuluj
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <!-- Sekcja: Terminy na kolejne 5 dni -->
+        <mat-expansion-panel [expanded]="panelOpenState.next5days">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Terminy na następne 5 dni ({{ ordersForNext5Days.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngIf="!isLoading; else loading">
+                <div
+                    *ngFor="let order of filteredOrdersForNext5Days"
+                    class="order-box"
+                    [ngClass]="{
+    'airport-order': order.From && order.From.toLowerCase().includes('lotnisko'),
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+  }"
+            >
+                    <div class="order-header">
+                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
+                        <span class="status">{{ order.Status || 'brak' }}</span>
+                    </div>
+                    <div class="order-content">
+                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
+                        <p><strong>Z:</strong> {{ order.From }}</p>
+                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
+                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
+                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
+                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
+                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
+                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
+                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                        <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
+                            Anuluj
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+
+    <ng-template #loading>
+        <p>Ładowanie zamówień...</p>
+    </ng-template>
+
     <div class="import-container">
         <h2>Import zamówień</h2>
 
@@ -16,94 +157,4 @@
 
         <p *ngIf="message" class="message">{{ message }}</p>
     </div>
-
-    <!-- ZWIJANE SEKCJE -->
-    <mat-accordion multi="true">
-
-        <!-- Sekcja: Aktualne zlecenia -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Aktualne zlecenia ({{ actualOrders.length }})</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <div *ngIf="actualOrders.length === 0" class="no-orders">Brak aktywnych zleceń</div>
-
-            <div *ngFor="let order of actualOrders" class="order-box">
-                <div class="order-header">
-                    <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                    <span class="status">{{ order.Status || 'brak' }}</span>
-                </div>
-                <div class="order-content">
-                    <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
-                    <p><strong>Z:</strong> {{ order.From }}</p>
-                    <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
-                    <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
-                    <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
-                    <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
-                    <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
-                    <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
-                    <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                </div>
-            </div>
-        </mat-expansion-panel>
-
-        <!-- Sekcja: Terminy na dziś -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Terminy na dziś ({{ todayOrders.length }})</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <div *ngIf="!isLoading; else loading">
-                <div *ngFor="let order of todayOrders" class="order-box">
-                    <div class="order-header">
-                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                        <span class="status">{{ order.Status || 'brak' }}</span>
-                    </div>
-                    <div class="order-content">
-                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
-                        <p><strong>Z:</strong> {{ order.From }}</p>
-                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
-                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
-                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
-                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
-                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
-                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
-                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                    </div>
-                </div>
-            </div>
-        </mat-expansion-panel>
-
-        <!-- Sekcja: Terminy na kolejne 5 dni -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Terminy na następne 5 dni ({{ ordersForNext5Days.length }})</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <div *ngIf="!isLoading; else loading">
-                <div *ngFor="let order of ordersForNext5Days" class="order-box">
-                    <div class="order-header">
-                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                        <span class="status">{{ order.Status || 'brak' }}</span>
-                    </div>
-                    <div class="order-content">
-                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
-                        <p><strong>Z:</strong> {{ order.From }}</p>
-                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
-                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
-                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
-                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
-                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
-                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
-                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                    </div>
-                </div>
-            </div>
-        </mat-expansion-panel>
-
-    </mat-accordion>
-
-    <ng-template #loading>
-        <p>Ładowanie zamówień...</p>
-    </ng-template>
 </div>

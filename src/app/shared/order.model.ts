@@ -1,4 +1,5 @@
 export interface Order {
+    Id: number,
     CreatedAt: string;
     PlannedArrivalDate?: string;
     Status?: string;
