@@ -48,4 +48,13 @@ export class MamTaxiAuthService {
             )
         );
     }
+
+    cancelOrder(payload: {
+        InternalOrderId: number;
+        CorporationId: number;
+        ReasonCode: string;
+        ReasonMessage: string | null;
+    }) {
+        return this.http.post('https://api.mamtaxi.pl/api/ExtAppV1/CancelOrder', payload);
+    }
 }

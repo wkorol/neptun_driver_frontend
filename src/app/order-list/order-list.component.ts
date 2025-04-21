@@ -51,7 +51,6 @@ export class OrderListComponent {
   constructor(private authService: MamTaxiAuthService) {}
 
   searchTerm: string = '';
-  testValue: string = '';
 
   panelOpenState = {
     actual: false,
@@ -130,11 +129,25 @@ export class OrderListComponent {
     const confirmed = window.confirm('Czy na pewno chcesz anulować to zlecenie?');
 
     if (confirmed) {
-      // tu można wysłać API call do anulowania
-      alert('Zlecenie zostało anulowane (symulacja).');
-      // np. this.authService.cancelOrder(order.id).subscribe(...)
+      const payload = {
+        InternalOrderId: order.Id, // czyli internalExternalId
+        CorporationId: 124,
+        ReasonCode: 'WaitedTooLong', // możesz to zmieniać w zależności od sytuacji
+        ReasonMessage: null
+      };
+
+      this.authService.cancelOrder(payload).subscribe({
+        next: () => {
+          alert('Zlecenie zostało pomyślnie anulowane.');
+        },
+        error: (err) => {
+          console.error('Błąd anulowania zlecenia:', err);
+          alert('Wystąpił błąd podczas anulowania zlecenia.');
+        }
+      });
     }
   }
+
 
   loadTodayOrders() {
     this.authService.getOrdersForToday().subscribe({
