@@ -137,7 +137,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
       };
 
       this.map.panTo(position);
-      this.map.setZoom(15);
+      this.map.setZoom(14);
     } else {
       this.notFound = true;
     }
