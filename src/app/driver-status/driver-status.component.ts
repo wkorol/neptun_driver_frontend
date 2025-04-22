@@ -52,6 +52,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
       center: this.center,
       zoom: this.zoom,
+      disableDefaultUI: true,
       mapId: 'DEMO_MAP_ID' // Optional, but helps if you use styling
     });
 
@@ -175,46 +176,48 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   }
 
   locateMe(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const latLng = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-
-            this.map.panTo(latLng);
-            this.map.setZoom(15);
-
-            // Remove old user marker if it exists
-            if (this.userLocationMarker) {
-              this.userLocationMarker.map = null;
-            }
-
-            // Create a styled marker for the user's location
-            const markerContent = document.createElement('div');
-            markerContent.style.width = '16px';
-            markerContent.style.height = '16px';
-            markerContent.style.borderRadius = '50%';
-            markerContent.style.backgroundColor = '#4285F4';
-            markerContent.style.border = '2px solid white';
-            markerContent.style.boxShadow = '0 0 6px rgba(0, 0, 0, 0.3)';
-            markerContent.style.pointerEvents = 'none'; // allow click-through
-
-            this.userLocationMarker = new google.maps.marker.AdvancedMarkerElement({
-              position: latLng,
-              map: this.map,
-              title: 'You are here',
-              content: markerContent,
-            });
-          },
-          (error) => {
-            alert('Geolocation failed: ' + error.message);
-          }
-      );
-    } else {
-      alert('Geolocation is not supported by your browser.');
-    }
+    this.searchTerm = '253';
   }
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //         (position) => {
+  //           const latLng = {
+  //             lat: position.coords.latitude,
+  //             lng: position.coords.longitude,
+  //           };
+  //
+  //           this.map.panTo(latLng);
+  //           this.map.setZoom(15);
+  //
+  //           // Remove old user marker if it exists
+  //           if (this.userLocationMarker) {
+  //             this.userLocationMarker.map = null;
+  //           }
+  //
+  //           // Create a styled marker for the user's location
+  //           const markerContent = document.createElement('div');
+  //           markerContent.style.width = '16px';
+  //           markerContent.style.height = '16px';
+  //           markerContent.style.borderRadius = '50%';
+  //           markerContent.style.backgroundColor = '#4285F4';
+  //           markerContent.style.border = '2px solid white';
+  //           markerContent.style.boxShadow = '0 0 6px rgba(0, 0, 0, 0.3)';
+  //           markerContent.style.pointerEvents = 'none'; // allow click-through
+  //
+  //           this.userLocationMarker = new google.maps.marker.AdvancedMarkerElement({
+  //             position: latLng,
+  //             map: this.map,
+  //             title: 'You are here',
+  //             content: markerContent,
+  //           });
+  //         },
+  //         (error) => {
+  //           alert('Geolocation failed: ' + error.message);
+  //         }
+  //     );
+  //   } else {
+  //     alert('Geolocation is not supported by your browser.');
+  //   }
+  // }
 
 }
