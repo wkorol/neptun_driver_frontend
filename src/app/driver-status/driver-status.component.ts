@@ -53,7 +53,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
       center: this.center,
       zoom: this.zoom,
       disableDefaultUI: true,
-      mapId: 'DEMO_MAP_ID' // Optional, but helps if you use styling
+      mapId: '63516a0a42b74a67?v=1337'
     });
 
 
