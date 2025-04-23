@@ -35,7 +35,7 @@
                     *ngFor="let order of filteredActualOrders"
                     class="order-box"
                     [ngClass]="{
-    'airport-order': order.From && order.From.toLowerCase().includes('lotnisko') && order.From.toLowerCase().includes('juliusza słowackiego 200'),
+    'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
   }"
             >
@@ -71,7 +71,7 @@
                         *ngFor="let order of filteredTodayOrders"
                         class="order-box"
                         [ngClass]="{
-    'airport-order': order.From && order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200'),
+    'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
   }"
                 >
@@ -108,7 +108,7 @@
                     *ngFor="let order of filteredOrdersForNext5Days"
                     class="order-box"
                     [ngClass]="{
-    'airport-order': order.From || order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200'),
+    'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
   }"
             >
