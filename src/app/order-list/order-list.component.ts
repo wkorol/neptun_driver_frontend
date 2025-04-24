@@ -132,7 +132,7 @@ export class OrderListComponent {
       const payload = {
         InternalOrderId: order.Id, // czyli internalExternalId
         CorporationId: 124,
-        ReasonCode: 'WaitedTooLong', // możesz to zmieniać w zależności od sytuacji
+        ReasonCode: 'CancelledBySystem', // możesz to zmieniać w zależności od sytuacji
         ReasonMessage: null
       };
 
