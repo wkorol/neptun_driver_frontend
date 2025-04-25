@@ -94,14 +94,15 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     this.markers = [];
 
     for (const taxi of this.taxis) {
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        position: { lat: taxi.Latitude, lng: taxi.Longitude },
-        map: this.map,
-        title: `Taxi ${taxi.TaxiNo}`,
-        content: this.createMarkerLabel(taxi.TaxiNo, taxi.Status)
-      });
-
-      this.markers.push(marker);
+      if (taxi !== null) {
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          position: { lat: taxi.Latitude, lng: taxi.Longitude },
+          map: this.map,
+          title: `Taxi ${taxi.TaxiNo}`,
+          content: this.createMarkerLabel(taxi.TaxiNo, taxi.Status)
+        });
+        this.markers.push(marker);
+      }
     }
 
     this.filterMarkers(); // od razu zastosuj filtr
