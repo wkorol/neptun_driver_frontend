@@ -122,7 +122,11 @@ export class OrderListComponent {
   }
 
   formatDate(dateStr?: string): string {
-    return dateStr ? new Date(dateStr).toLocaleString() : 'brak';
+    if (!dateStr) return 'brak';
+
+    // Remove timezone offset if present, just for consistent substring
+    const clean = dateStr.replace('T', ' ').substring(0, 16);
+    return clean;
   }
 
   confirmCancel(order: Order) {
