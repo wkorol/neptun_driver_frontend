@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, of, Subscription, timer, switchMap } from 'rxjs';
 import {FormsModule} from "@angular/forms";
 import {NgIf} from "@angular/common";
+import {isNumber} from "@ng-bootstrap/ng-bootstrap/util/util";
 
 interface TaxiStatus {
   TaxiNo: string;
@@ -94,7 +95,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     this.markers = [];
 
     for (const taxi of this.taxis) {
-      if (taxi !== null) {
+      if (taxi !== null && isNumber(taxi.Latitude) && isNumber(taxi.Longitude) ) {
         const marker = new google.maps.marker.AdvancedMarkerElement({
           position: { lat: taxi.Latitude, lng: taxi.Longitude },
           map: this.map,
