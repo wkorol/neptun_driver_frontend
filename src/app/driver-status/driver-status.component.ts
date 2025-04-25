@@ -133,7 +133,9 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     }
 
     // Znajdź dokładnie dopasowaną taksówkę
-    const index = this.taxis.findIndex(t => t.TaxiNo.toLowerCase() === term);
+    const index = this.taxis.findIndex(t => {
+      return typeof t.TaxiNo === 'string' && t.TaxiNo.toLowerCase() === term;
+    });
     if (index !== -1) {
       this.notFound = false;
 
