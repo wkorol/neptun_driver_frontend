@@ -9,7 +9,6 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, of, Subscription, timer, switchMap } from 'rxjs';
 import {FormsModule} from "@angular/forms";
 import {NgIf} from "@angular/common";
-import {isNumber} from "@ng-bootstrap/ng-bootstrap/util/util";
 
 interface TaxiStatus {
   TaxiNo: string;
@@ -90,12 +89,13 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     this.refreshSub?.unsubscribe();
   }
 
+
   private updateMarkers() {
     this.markers.forEach((marker) => marker.map = null);
     this.markers = [];
 
     for (const taxi of this.taxis) {
-      if (taxi !== null && isNumber(taxi.Latitude) && isNumber(taxi.Longitude) ) {
+      if (taxi && this.isValidNumber(taxi.Latitude) && this.isValidNumber(taxi.Longitude)) {
         const marker = new google.maps.marker.AdvancedMarkerElement({
           position: { lat: taxi.Latitude, lng: taxi.Longitude },
           map: this.map,
@@ -107,6 +107,10 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     }
 
     this.filterMarkers(); // od razu zastosuj filtr
+  }
+
+  private isValidNumber(val: any): val is number {
+    return typeof val === 'number' && !isNaN(val);
   }
 
   clearSearch() {
