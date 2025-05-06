@@ -17,4 +17,17 @@ export class GoogleGeocodingService {
             });
         });
     }
+
+    async reverseGeocode(coords: { lat: number; lng: number }): Promise<unknown> {
+        const geocoder = new google.maps.Geocoder();
+        return new Promise((resolve) => {
+            geocoder.geocode({ location: coords }, (results, status) => {
+                if (status === 'OK' && results && results[0]) {
+                    resolve(results[0].formatted_address);
+                } else {
+                    resolve(null);
+                }
+            });
+        });
+    }
 }

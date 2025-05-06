@@ -9,7 +9,7 @@ import {
   DestroyRef
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import {MatFormField, MatLabel, MatSuffix} from '@angular/material/form-field';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatInput } from '@angular/material/input';
@@ -29,25 +29,26 @@ import {MatIcon} from "@angular/material/icon";
 @Component({
   selector: 'app-taxi-form',
   standalone: true,
-  imports: [
-    MatFormField,
-    MatCard,
-    MatCardTitle,
-    MatCardContent,
-    MatLabel,
-    ReactiveFormsModule,
-    MatSlideToggle,
-    MatInput,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatButton,
-    GoogleMapsModule,
-    CommonModule,
-    AppMapComponent,
-    MatProgressSpinnerModule,
-    MatIcon
-  ],
+    imports: [
+        MatFormField,
+        MatCard,
+        MatCardTitle,
+        MatCardContent,
+        MatLabel,
+        ReactiveFormsModule,
+        MatSlideToggle,
+        MatInput,
+        MatDatepickerInput,
+        MatDatepickerToggle,
+        MatDatepicker,
+        MatButton,
+        GoogleMapsModule,
+        CommonModule,
+        AppMapComponent,
+        MatProgressSpinnerModule,
+        MatIcon,
+        MatSuffix
+    ],
   templateUrl: './taxi-form.component.html',
   styleUrl: './taxi-form.component.css'
 })
@@ -90,6 +91,39 @@ export class TaxiFormComponent implements OnDestroy {
     });
   }
 
+  useCurrentLocation(): void {
+    if (!navigator.geolocation) {
+      alert('Twoja przeglądarka nie obsługuje geolokalizacji.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async position => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          // Ustaw współrzędne
+          this.pickupCoords = coords;
+
+          // Zamień współrzędne na adres (jeśli masz GoogleGeocodingService)
+          const address = await this.geocoder.reverseGeocode(coords);
+          if (address) {
+            this.taxiForm.patchValue({ pickupAddress: address });
+          }
+
+          // Przelicz trasę na mapie
+          this.updateMapRoute();
+        },
+        error => {
+          console.error('Błąd geolokalizacji:', error);
+          alert('Nie udało się pobrać lokalizacji.');
+        },
+        { enableHighAccuracy: true }
+    );
+  }
+
   ngAfterViewInit(): void {
     this.taxiForm.get('immediate')?.valueChanges
         .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
@@ -116,6 +150,7 @@ export class TaxiFormComponent implements OnDestroy {
         this.overlayClickSubscription?.unsubscribe();
       });
     }
+
 
     const bounds = new google.maps.LatLngBounds(
         { lat: 49.0, lng: 14.0 },
