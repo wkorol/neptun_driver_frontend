@@ -142,8 +142,8 @@ export class EditHotelComponent implements OnInit {
   addFixedValue(): void {
     this.currentLumpSum.fixedValues.push({
       name: '',
-      tariff1: { tariffType: 1, carValue: 0, busValue: 0 },
-      tariff2: { tariffType: 2, carValue: 0, busValue: 0 }
+      tariff1: { tariffType: 1, carValue: 0, bus5_6Value: 0, bus7_8Value: 0 },
+      tariff2: { tariffType: 2, carValue: 0, bus5_6Value: 0, bus7_8Value: 0}
     });
   }
 

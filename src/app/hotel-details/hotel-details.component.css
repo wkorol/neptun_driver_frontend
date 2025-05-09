@@ -159,8 +159,13 @@
     background-color: #4caf50; /* Green for Osobowy */
 }
 
-.badge.bus {
+.badge.bus5-6 {
     background-color: #2196f3; /* Blue for Bus */
+}
+
+.badge.bus7-8 {
+    background-color: #8e44ad; /* ładny fiolet */
+    font-weight: bold;
 }
 
 /* Back button styling */

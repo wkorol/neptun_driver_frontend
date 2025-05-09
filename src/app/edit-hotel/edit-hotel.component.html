@@ -50,8 +50,12 @@
                 <input matInput type="number" [(ngModel)]="fixedValue.tariff1.carValue" placeholder="Wprowadź ryczałt dla osobówki">
             </mat-form-field>
             <mat-form-field appearance="fill" class="form-field">
-                <mat-label>Ryczałt bus</mat-label>
-                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.busValue" placeholder="Wprowadź ryczałt dla busa">
+                <mat-label>Ryczałt bus 5-6</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.bus5_6Value" placeholder="Wprowadź ryczałt dla busa 5-6">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Ryczałt bus 5-6</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff1.bus7_8Value" placeholder="Wprowadź ryczałt dla busa 7-8">
             </mat-form-field>
 
             <h4>Taryfa 2</h4>
@@ -60,8 +64,12 @@
                 <input matInput type="number" [(ngModel)]="fixedValue.tariff2.carValue" placeholder="Wprowadź ryczałt dla osobówki">
             </mat-form-field>
             <mat-form-field appearance="fill" class="form-field">
-                <mat-label>Ryczałt bus</mat-label>
-                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.busValue" placeholder="Wprowadź ryczałt dla busa">
+                <mat-label>Ryczałt bus 5-6</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.bus5_6Value" placeholder="Wprowadź ryczałt dla busa 5-6">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Ryczałt bus 7-8</mat-label>
+                <input matInput type="number" [(ngModel)]="fixedValue.tariff2.bus7_8Value" placeholder="Wprowadź ryczałt dla busa 7-8">
             </mat-form-field>
 
             <button mat-button color="warn" (click)="removeFixedValue(i)">Usuń ryczałt</button>
