@@ -32,7 +32,7 @@
                             <span>{{ lumpSum.tariff1.carValue }} zł</span>
                         </div>
                         <div class="tariff-badge">
-                            <span class="badge bus5-6">Bus 5-6:</span>
+                            <span class="badge bus5-6">{{lumpSum.tariff1.bus7_8Value ? 'Bus 5-6:' : 'Bus:'}}</span>
                             <span>{{ lumpSum.tariff1.bus5_6Value }} zł</span>
                         </div>
                         <div *ngIf="lumpSum.tariff1.bus7_8Value" class="tariff-badge">
@@ -52,7 +52,7 @@
                             <span>{{ lumpSum.tariff2.carValue }} zł</span>
                         </div>
                         <div class="tariff-badge">
-                            <span class="badge bus5-6">Bus 5-6:</span>
+                            <span class="badge bus5-6">{{lumpSum.tariff2.bus7_8Value ? 'Bus 5-6:' : 'Bus:'}}</span>
                             <span>{{ lumpSum.tariff2.bus5_6Value }} zł</span>
                         </div>
                         <div *ngIf="lumpSum.tariff2.bus7_8Value" class="tariff-badge">

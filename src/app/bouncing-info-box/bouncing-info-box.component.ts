@@ -10,10 +10,8 @@ export class BouncingInfoBoxComponent implements OnInit {
   @Output() dismissed = new EventEmitter<void>();
 
   ngOnInit() {
-
-  }
-
-  openPdf() {
-    window.open('walne.pdf', '_blank');
+    setTimeout(() => {
+      this.dismissed.emit();
+    }, 8000);
   }
 }
