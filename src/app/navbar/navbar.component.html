@@ -33,9 +33,9 @@
                 <a routerLink="javascript:void(0)" (click)="closeSidenav()">Cennik dodatkowe usługi</a>
                 <small class="note">W trakcie programowania</small>
             </li>
-            <li>
-                <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Panel Administratora</a>
-            </li>
+<!--            <li>-->
+<!--                <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Panel Administratora</a>-->
+<!--            </li>-->
             <li *ngIf="!(isLoggedIn$ | async)">
                 <a routerLink="/login" routerLinkActive="active" (click)="closeSidenav()">Zaloguj</a>
             </li>
