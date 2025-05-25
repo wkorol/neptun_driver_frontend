@@ -17,6 +17,7 @@ import {LumpSumCancellationsComponent} from "./lump-sum-cancellations/lump-sum-c
 import {TaxiFormComponent} from "./taxi-form/taxi-form.component";
 import {OrderListComponent} from "./order-list/order-list.component";
 import {DriverStatusComponent} from "./driver-status/driver-status.component";
+import {SendSocketMessageComponent} from "./components/send-socket-message/send-socket-message.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -33,7 +34,8 @@ export const routes: Routes = [
     { path: 'admin', component: AdminPanelComponent },
     { path: 'test', component: OrderListComponent },
     {path: 'taxii', component: TaxiFormComponent},
-    {path: 'driver', component: DriverStatusComponent}
+    {path: 'driver', component: DriverStatusComponent},
+    {path: 'doplata', component: SendSocketMessageComponent}
 
 ];
 
