@@ -32,7 +32,7 @@ export const routes: Routes = [
     { path: 'mapa-akademia', component: AcademyMapComponent },
     { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
     { path: 'admin', component: AdminPanelComponent },
-    { path: 'test', component: OrderListComponent },
+    { path: 'test21', component: OrderListComponent },
     {path: 'taxii', component: TaxiFormComponent},
     {path: 'driver', component: DriverStatusComponent},
     {path: 'doplata', component: SendSocketMessageComponent}
