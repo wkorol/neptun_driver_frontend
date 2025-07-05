@@ -1,16 +1,31 @@
-<table>
-    <thead>
-    <tr>
-        <th>Usługa</th>
-        <th>Opis</th>
-        <th>Cena</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let service of services">
-        <td data-label="Usługa">{{ service.name }}</td>
-        <td data-label="Opis">{{ service.description || '-' }}</td>
-        <td data-label="Cena">{{ service.price }}</td>
-    </tr>
-    </tbody>
-</table>
+<!-- Desktop: tabela -->
+<ng-container *ngIf="!isMobile">
+    <table class="services-table">
+        <thead>
+        <tr>
+            <th>Usługa</th>
+            <th>Opis</th>
+            <th>Cena</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let service of services">
+            <td>{{ service.name }}</td>
+            <td>{{ service.description || '-' }}</td>
+            <td><span class="price-badge">{{ service.price }}</span></td>
+        </tr>
+        </tbody>
+    </table>
+</ng-container>
+
+
+<ng-container *ngIf="isMobile">
+    <div class="service-card" *ngFor="let service of services">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>{{ service.name }}</h3>
+            <span class="price-badge">{{ service.price }}</span>
+        </div>
+        <p><strong>Opis:</strong> {{ service.description || '–' }}</p>
+    </div>
+</ng-container>
+

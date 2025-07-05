@@ -11,10 +11,13 @@ import { Service, ServiceService } from './service.service';
 })
 export class AdditionalServicesComponent implements OnInit {
   services: Service[] = [];
+  isMobile = false;
 
   constructor(private serviceService: ServiceService) {}
 
   ngOnInit(): void {
+    this.isMobile = window.innerWidth <= 12000;
+
     this.serviceService.getServices().subscribe(data => {
       this.services = data;
     });
