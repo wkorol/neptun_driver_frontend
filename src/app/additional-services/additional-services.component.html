@@ -1,0 +1,16 @@
+<table>
+    <thead>
+    <tr>
+        <th>Usługa</th>
+        <th>Opis</th>
+        <th>Cena</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let service of services">
+        <td data-label="Usługa">{{ service.name }}</td>
+        <td data-label="Opis">{{ service.description || '-' }}</td>
+        <td data-label="Cena">{{ service.price }}</td>
+    </tr>
+    </tbody>
+</table>

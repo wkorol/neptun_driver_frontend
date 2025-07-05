@@ -18,6 +18,7 @@ import {TaxiFormComponent} from "./taxi-form/taxi-form.component";
 import {OrderListComponent} from "./order-list/order-list.component";
 import {DriverStatusComponent} from "./driver-status/driver-status.component";
 import {SendSocketMessageComponent} from "./components/send-socket-message/send-socket-message.component";
+import {AdditionalServicesComponent} from "./additional-services/additional-services.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -31,6 +32,7 @@ export const routes: Routes = [
     { path: 'mapa-stocznia', component: ShipyardMapComponent },
     { path: 'mapa-akademia', component: AcademyMapComponent },
     { path: 'odwolane-loty', component: LumpSumCancellationsComponent },
+    { path: 'uslugi-dodatkowe', component: AdditionalServicesComponent },
     { path: 'admin', component: AdminPanelComponent },
     { path: 'test', component: OrderListComponent },
     {path: 'taxii', component: TaxiFormComponent},
