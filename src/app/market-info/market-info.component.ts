@@ -15,7 +15,19 @@ import {FormsModule} from "@angular/forms";
 export class MarketInfoComponent {
   imageSrc = 'zmiana-organizacji.png';
   modalOpen = false;
-  zoomLevel = 1;
+
+  set zoomLevel(value: number) {
+    const clamped = Math.max(1, Math.min(3, value));
+    if (this._zoomLevel === 1 && clamped > 1) {
+      this.centerOnFirstZoom(clamped);
+    } else {
+      this._zoomLevel = clamped;
+    }
+  }
+  get zoomLevel(): number {
+    return this._zoomLevel;
+  }
+  private _zoomLevel = 1;
 
   isDragging = false;
   dragStartX = 0;
@@ -38,61 +50,42 @@ export class MarketInfoComponent {
   }
 
   zoomIn(): void {
-    if (this.zoomLevel < 3) {
-      this.zoomLevel = parseFloat((this.zoomLevel + 0.1).toFixed(1));
-      this.centerImage();
+    if (this.zoomLevel >= 3) return;
+
+    const newZoom = parseFloat((this.zoomLevel + 0.1).toFixed(2));
+
+    if (this.zoomLevel === 1 && newZoom > 1) {
+      this.centerOnFirstZoom(newZoom);
+    } else {
+      this.zoomLevel = newZoom;
     }
   }
+
 
   zoomOut(): void {
-    if (this.zoomLevel > 1) {
-      this.zoomLevel = parseFloat((this.zoomLevel - 0.1).toFixed(1));
-      if (this.zoomLevel === 1) {
-        this.translateX = 0;
-        this.translateY = 0;
-      } else {
-        this.centerImage();
-      }
-    }
-  }
+    if (this.zoomLevel <= 1) return;
 
-  centerImage(): void {
-    const wrapper = document.querySelector('.modal-image-wrapper') as HTMLElement;
-    const image = document.querySelector('.modal-image') as HTMLImageElement;
-
-    if (!wrapper || !image) return;
-
-    const wrapperRect = wrapper.getBoundingClientRect();
-
-    // Ustal proporcje dopasowanego obrazka
-    const naturalWidth = image.naturalWidth;
-    const naturalHeight = image.naturalHeight;
-    const wrapperWidth = wrapperRect.width;
-    const wrapperHeight = wrapperRect.height;
-
-    const imageAspect = naturalWidth / naturalHeight;
-    const wrapperAspect = wrapperWidth / wrapperHeight;
-
-    let fittedWidth: number, fittedHeight: number;
-
-    if (imageAspect > wrapperAspect) {
-      // Dopasowujemy szerokość
-      fittedWidth = wrapperWidth;
-      fittedHeight = wrapperWidth / imageAspect;
-    } else {
-      // Dopasowujemy wysokość
-      fittedHeight = wrapperHeight;
-      fittedWidth = wrapperHeight * imageAspect;
+    const newZoom = parseFloat((this.zoomLevel - 0.1).toFixed(2));
+    if (newZoom < 1) {
+      this.zoomLevel = 1;
+      this.translateX = 0;
+      this.translateY = 0;
+      return;
     }
 
-    // Powiększone rozmiary
-    const scaledWidth = fittedWidth * this.zoomLevel;
-    const scaledHeight = fittedHeight * this.zoomLevel;
+    const wrapper = document.querySelector('.modal-image-wrapper')?.getBoundingClientRect();
+    if (!wrapper) return;
 
-    // Centrowanie
-    this.translateX = (wrapperWidth - scaledWidth) / 2;
-    this.translateY = (wrapperHeight - scaledHeight) / 2;
+    const originX = wrapper.width / 2;
+    const originY = wrapper.height / 2;
+
+    const ratio = newZoom / this.zoomLevel;
+    this.translateX = originX - (originX - this.translateX) * ratio;
+    this.translateY = originY - (originY - this.translateY) * ratio;
+
+    this.zoomLevel = newZoom;
   }
+
 
 
 
@@ -154,20 +147,90 @@ export class MarketInfoComponent {
     }
   }
 
-  onTouchMovePinch(event: TouchEvent): void {
-    if (event.touches.length === 2) {
-      const newDistance = this.getPinchDistance(event);
-      const scaleChange = newDistance / this.initialPinchDistance;
-      const newZoom = this.initialZoomLevel * scaleChange;
+  centerOnFirstZoom(newZoom: number): void {
+    const wrapper = document.querySelector('.modal-image-wrapper')?.getBoundingClientRect();
+    const image = document.querySelector('.modal-image') as HTMLImageElement;
+    if (!wrapper || !image) return;
 
-      // ogranicz zoom
-      this.zoomLevel = Math.min(3, Math.max(1, parseFloat(newZoom.toFixed(2))));
-      this.centerImage();
+    // Wyliczamy aktualne dopasowanie (contain)
+    const naturalWidth = image.naturalWidth;
+    const naturalHeight = image.naturalHeight;
+    const aspectImage = naturalWidth / naturalHeight;
+    const aspectWrapper = wrapper.width / wrapper.height;
+
+    let fittedWidth, fittedHeight;
+
+    if (aspectImage > aspectWrapper) {
+      fittedWidth = wrapper.width;
+      fittedHeight = wrapper.width / aspectImage;
+    } else {
+      fittedHeight = wrapper.height;
+      fittedWidth = wrapper.height * aspectImage;
+    }
+
+    const scaledWidth = fittedWidth * newZoom;
+    const scaledHeight = fittedHeight * newZoom;
+
+    this.translateX = (wrapper.width - scaledWidth) / 2;
+    this.translateY = (wrapper.height - scaledHeight) / 2;
+    this._zoomLevel = newZoom;
+  }
+
+
+  onTouchMovePinch(event: TouchEvent): void {
+    if (event.touches.length !== 2) return;
+
+    const touches = Array.from(event.touches);
+    const [touch1, touch2] = touches;
+    const centerX = (touch1.clientX + touch2.clientX) / 2;
+    const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+    const wrapper = document.querySelector('.modal-image-wrapper')?.getBoundingClientRect();
+    if (!wrapper) return;
+
+    const originX = centerX - wrapper.left;
+    const originY = centerY - wrapper.top;
+
+    const newDistance = this.getPinchDistance(event);
+    const scaleChange = newDistance / this.initialPinchDistance;
+    const newZoom = this.initialZoomLevel * scaleChange;
+
+    const clampedZoom = Math.min(3, Math.max(1, parseFloat(newZoom.toFixed(2))));
+    if (clampedZoom === this.zoomLevel) return;
+
+    // Adjust translateX/Y so the center of the pinch stays fixed
+    const ratio = clampedZoom / this.zoomLevel;
+    this.translateX = originX - (originX - this.translateX) * ratio;
+    this.translateY = originY - (originY - this.translateY) * ratio;
+    this.zoomLevel = clampedZoom;
+
+    event.preventDefault();
+  }
+
+
+  onWheelZoom(event: WheelEvent): void {
+    if (!event.ctrlKey && event.deltaY !== 0) {
       event.preventDefault();
-    } else if (event.touches.length === 1 && this.zoomLevel > 1) {
-      this.onTouchMove(event); // przesuwanie jednym palcem
+
+      const wrapper = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      const originX = event.clientX - wrapper.left;
+      const originY = event.clientY - wrapper.top;
+
+      const zoomDirection = event.deltaY < 0 ? 1 : -1;
+      const zoomFactor = 0.1;
+      const newZoom = Math.min(3, Math.max(1, this.zoomLevel + zoomDirection * zoomFactor));
+
+      if (newZoom === this.zoomLevel) return;
+
+      // przeliczenie przesunięcia tak, by punkt (originX, originY) pozostał w miejscu
+      const scaleChange = newZoom / this.zoomLevel;
+
+      this.translateX = originX - (originX - this.translateX) * scaleChange;
+      this.translateY = originY - (originY - this.translateY) * scaleChange;
+      this.zoomLevel = parseFloat(newZoom.toFixed(2));
     }
   }
+
 
   getPinchDistance(event: TouchEvent): number {
     const touches = Array.from(event.touches);

@@ -20,6 +20,7 @@
                     (touchstart)="onTouchStart($event)"
                     (touchmove)="onTouchMovePinch($event)"
                     (touchend)="endDrag()"
+                    (wheel)="onWheelZoom($event)"
                     [style.cursor]="zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'"
             >
 
