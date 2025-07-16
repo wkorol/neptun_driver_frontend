@@ -23,6 +23,9 @@ export class MarketInfoComponent {
   translateX = 0;
   translateY = 0;
 
+  initialPinchDistance = 0;
+  initialZoomLevel = 1;
+
   openModal(): void {
     this.modalOpen = true;
     this.zoomLevel = 1;
@@ -138,4 +141,39 @@ export class MarketInfoComponent {
     this.translateX = touch.clientX - this.dragStartX;
     this.translateY = touch.clientY - this.dragStartY;
   }
+
+  onTouchStart(event: TouchEvent): void {
+    if (event.touches.length === 1) {
+      // pojedynczy palec — drag
+      this.startTouch(event);
+    } else if (event.touches.length === 2) {
+      // gest pinch
+      const distance = this.getPinchDistance(event);
+      this.initialPinchDistance = distance;
+      this.initialZoomLevel = this.zoomLevel;
+    }
+  }
+
+  onTouchMovePinch(event: TouchEvent): void {
+    if (event.touches.length === 2) {
+      const newDistance = this.getPinchDistance(event);
+      const scaleChange = newDistance / this.initialPinchDistance;
+      const newZoom = this.initialZoomLevel * scaleChange;
+
+      // ogranicz zoom
+      this.zoomLevel = Math.min(3, Math.max(1, parseFloat(newZoom.toFixed(2))));
+      this.centerImage();
+      event.preventDefault();
+    } else if (event.touches.length === 1 && this.zoomLevel > 1) {
+      this.onTouchMove(event); // przesuwanie jednym palcem
+    }
+  }
+
+  getPinchDistance(event: TouchEvent): number {
+    const [touch1, touch2] = event.touches;
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
 }
