@@ -102,6 +102,7 @@
     width: 36px;
     height: 36px;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 

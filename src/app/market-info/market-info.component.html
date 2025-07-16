@@ -9,8 +9,6 @@
 
     <div class="modal-bg" *ngIf="modalOpen" (click)="closeModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
-
-            <!-- Viewport z overflow hidden -->
             <div
                     class="modal-image-wrapper"
                     (mousedown)="startDrag($event)"
@@ -25,7 +23,8 @@
                     [style.cursor]="zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'"
             >
 
-            <button class="close-button" (click)="closeModal()">✕</button>
+                <button class="close-button" (click)="closeModal()">✕</button>
+
                 <img
                         [src]="imageSrc"
                         alt="Jarmark"
@@ -34,7 +33,6 @@
                         [style.left.px]="translateX"
                         [style.top.px]="translateY"
                         [style.position]="zoomLevel > 1 ? 'absolute' : 'static'"
-
                 />
             </div>
 
