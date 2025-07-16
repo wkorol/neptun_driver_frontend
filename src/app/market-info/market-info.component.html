@@ -9,6 +9,7 @@
 
     <div class="modal-bg" *ngIf="modalOpen" (click)="closeModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="close-button" (click)="closeModal()">✕</button>
             <div
                     class="modal-image-wrapper"
                     (mousedown)="startDrag($event)"
@@ -22,8 +23,6 @@
                     (wheel)="onWheelZoom($event)"
                     [style.cursor]="zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'"
             >
-
-                <button class="close-button" (click)="closeModal()">✕</button>
 
                 <img
                         [src]="imageSrc"
