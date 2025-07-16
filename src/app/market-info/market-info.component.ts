@@ -113,6 +113,13 @@ export class MarketInfoComponent {
     }
   }
 
+  @HostListener('touchmove', ['$event'])
+  onDocumentTouchMove(event: TouchEvent): void {
+    if (this.modalOpen) {
+      event.preventDefault(); // blokuje scroll całej strony na mobile
+    }
+  }
+
   getTransform(): string {
     if (this.zoomLevel === 1) {
       return `translate(0px, 0px)`; // brak skalowania, brak przesunięcia
@@ -126,6 +133,7 @@ export class MarketInfoComponent {
     const touch = event.touches[0];
     this.dragStartX = touch.clientX - this.translateX;
     this.dragStartY = touch.clientY - this.translateY;
+    event.preventDefault(); // ⬅️ ZATRZYMAJ DOMYŚLNE ZACHOWANIE
   }
 
   onTouchMove(event: TouchEvent): void {
