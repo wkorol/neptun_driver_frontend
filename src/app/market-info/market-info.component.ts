@@ -123,4 +123,19 @@ export class MarketInfoComponent {
     }
     return `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoomLevel})`;
   }
+
+  startTouch(event: TouchEvent): void {
+    if (this.zoomLevel <= 1) return;
+    this.isDragging = true;
+    const touch = event.touches[0];
+    this.dragStartX = touch.clientX - this.translateX;
+    this.dragStartY = touch.clientY - this.translateY;
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (!this.isDragging || this.zoomLevel <= 1) return;
+    const touch = event.touches[0];
+    this.translateX = touch.clientX - this.dragStartX;
+    this.translateY = touch.clientY - this.dragStartY;
+  }
 }
