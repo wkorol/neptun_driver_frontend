@@ -113,12 +113,12 @@ export class MarketInfoComponent {
     }
   }
 
-  @HostListener('touchmove', ['$event'])
-  onDocumentTouchMove(event: TouchEvent): void {
-    if (this.modalOpen) {
-      event.preventDefault(); // blokuje scroll całej strony na mobile
-    }
-  }
+  // @HostListener('touchmove', ['$event'])
+  // onDocumentTouchMove(event: TouchEvent): void {
+  //   if (this.modalOpen) {
+  //     event.preventDefault(); // blokuje scroll całej strony na mobile
+  //   }
+  // }
 
   getTransform(): string {
     if (this.zoomLevel === 1) {
