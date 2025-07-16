@@ -18,8 +18,9 @@
                     (mouseup)="endDrag()"
                     (mouseleave)="endDrag()"
                     (touchstart)="onTouchStart($event)"
-                    (touchmove)="onTouchMovePinch($event)"
+                    (touchmove)="onTouchMovePinch($event); onTouchMove($event)"
                     (touchend)="endDrag()"
+                    (touchcancel)="endDrag()"
                     (wheel)="onWheelZoom($event)"
                     [style.cursor]="zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'"
             >
