@@ -170,10 +170,14 @@ export class MarketInfoComponent {
   }
 
   getPinchDistance(event: TouchEvent): number {
-    const [touch1, touch2] = event.touches;
+    const touches = Array.from(event.touches);
+    if (touches.length < 2) return 0;
+
+    const touch1 = touches[0];
+    const touch2 = touches[1];
     const dx = touch2.clientX - touch1.clientX;
     const dy = touch2.clientY - touch1.clientY;
+
     return Math.sqrt(dx * dx + dy * dy);
   }
-
 }
