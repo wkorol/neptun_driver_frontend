@@ -20,6 +20,15 @@
             <li>
                 <a routerLink="/uslugi-dodatkowe" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidenav()">Cennik usług dodatkowych</a>
             </li>
+            <li>
+                <a
+                        routerLink="/jarmark"
+                        routerLinkActive="jarmark-active"
+                        [routerLinkActiveOptions]="{ exact: true }"
+                        class="jarmark-link"
+                        (click)="closeSidenav()"
+                >Organizacja podczas Jarmarku</a>
+            </li>
             <li class="disabled-link">
                 <a href="javascript:void(0)" (click)="showAlert()">Baza informacji</a>
                 <small class="note">W trakcie programowania</small>
@@ -55,7 +64,8 @@
         </mat-toolbar>
 
         <div class="page-content">
-            <app-bouncing-info-box *ngIf="showInfoBox" (dismissed)="hideInfoBox()"></app-bouncing-info-box>
+               <!--(dismissed)="hideInfoBox()"-->
+            <app-bouncing-info-box *ngIf="showInfoBox"></app-bouncing-info-box>
             <app-search-bar *ngIf="showSearchBar"></app-search-bar>
             <router-outlet></router-outlet>
         </div>

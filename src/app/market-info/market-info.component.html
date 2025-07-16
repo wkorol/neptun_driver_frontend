@@ -1,0 +1,13 @@
+<div class="image-container">
+    <p class="hint">Kliknij, aby powiększyć</p>
+
+    <img
+            [src]="imageSrc"
+            alt="Jarmark"
+            class="thumbnail"
+            (click)="openModal()" />
+
+    <div class="modal-bg" *ngIf="modalOpen" (click)="closeModal()">
+        <img [src]="imageSrc" alt="Jarmark" class="modal-image" />
+    </div>
+</div>
