@@ -1,15 +1,14 @@
 <div class="image-container">
-    <p class="hint">Kliknij tutaj, aby powiększyć</p>
+    <p class="hint" (click)="openModal()">Kliknij tutaj, aby powiększyć mapę</p>
 
     <img
             [src]="imageSrc"
-            alt="Jarmark"
+            alt="Mapa Sol Marina"
             class="thumbnail"
             (click)="openModal()" />
 
     <app-zoomable-image
             *ngIf="modalOpen"
             [src]="imageSrc"
-            (closed)="modalOpen = false"
-    />
+            (closed)="modalOpen = false" />
 </div>

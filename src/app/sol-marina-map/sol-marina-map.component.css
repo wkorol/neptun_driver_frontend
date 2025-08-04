@@ -7,11 +7,13 @@
     font-size: 1rem;
     color: #555;
     margin-bottom: 10px;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .thumbnail {
-    max-width: 80vw;
-    max-height: 400px;
+    max-width: 60vw;       /* zmniejszona z 80vw */
+    max-height: 300px;     /* ograniczenie wysokości */
     cursor: pointer;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);

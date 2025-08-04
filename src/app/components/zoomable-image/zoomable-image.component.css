@@ -1,0 +1,71 @@
+.modal-bg {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    text-align: center;
+}
+
+.modal-image-wrapper {
+    position: relative;
+    width: 95vw;
+    height: 80vh;
+    overflow: hidden;
+    touch-action: none;
+    background: #000;
+}
+
+.modal-image {
+    pointer-events: none;
+    z-index: 0;
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.controls {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 10;
+}
+
+.controls button {
+    padding: 6px 12px;
+    font-size: 1.2rem;
+    border: none;
+    background-color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.controls input[type='range'] {
+    width: 150px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    pointer-events: auto;
+}

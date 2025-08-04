@@ -20,6 +20,7 @@ import {DriverStatusComponent} from "./driver-status/driver-status.component";
 import {SendSocketMessageComponent} from "./components/send-socket-message/send-socket-message.component";
 import {AdditionalServicesComponent} from "./additional-services/additional-services.component";
 import {MarketInfoComponent} from "./market-info/market-info.component";
+import {SolMarinaMapComponent} from "./sol-marina-map/sol-marina-map.component";
 
 export const routes: Routes = [
     { path: '', component: RegionComponent },
@@ -39,7 +40,8 @@ export const routes: Routes = [
     { path: 'test', component: OrderListComponent },
     {path: 'taxii', component: TaxiFormComponent},
     {path: 'driver', component: DriverStatusComponent},
-    {path: 'doplata', component: SendSocketMessageComponent}
+    {path: 'doplata', component: SendSocketMessageComponent},
+    {path: 'sol-marina', component: SolMarinaMapComponent},
 
 ];
 
