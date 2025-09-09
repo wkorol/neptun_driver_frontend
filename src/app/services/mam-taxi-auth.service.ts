@@ -52,7 +52,7 @@ export class MamTaxiAuthService {
     cancelOrder(payload: {
         InternalOrderId: number;
         CorporationId: number;
-        StatusCode: string;
+        StatusCode: number;
         ReasonCode: string;
         ReasonMessage: string | null;
     }) {
