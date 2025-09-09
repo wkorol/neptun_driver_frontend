@@ -52,8 +52,8 @@ export class MamTaxiAuthService {
     cancelOrder(payload: {
         InternalOrderId: number;
         CorporationId: number;
-        StatusCode: number;
-        ReasonCode: string;
+        StatusCode: string;
+        ReasonCode: number;
         ReasonMessage: string | null;
     }) {
         return this.http.post('https://api.mamtaxi.pl/api/ExtAppV1/CancelOrder', payload);
