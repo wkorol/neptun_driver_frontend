@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
 import {WebSocketService} from "../../services/web-socket.service";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-send-socket-message',
@@ -8,11 +9,20 @@ import {WebSocketService} from "../../services/web-socket.service";
   standalone: true
 })
 export class SendSocketMessageComponent implements OnInit {
-  constructor(private socketService: WebSocketService) {}
 
-  ngOnInit(): void {
-    this.socketService.isConnected$.pipe(first((v) => v)).subscribe(() => {
-      this.socketService.send('Dopłata +10 PLN');
-    });
-  }
+    private readonly apiUrl = 'https://apineptun-ij5mx.ondigitalocean.app/api/price-update'; // Zmień na swój URL Symfony
+
+    constructor(private http: HttpClient) {}
+
+    ngOnInit(): void {
+        // Automatycznie wyślij dopłatę przy inicjalizacji (jak WebSocket w oryginalnym kodzie)
+        this.http.post(this.apiUrl, {}).subscribe({
+            next: (response) => {
+                console.log('✅ Dopłata +10 PLN wysłana pomyślnie:', response);
+            },
+            error: (error) => {
+                console.error('❌ Błąd podczas wysyłania dopłaty:', error);
+            }
+        });
+    }
 }
