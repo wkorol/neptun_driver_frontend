@@ -1,7 +1,10 @@
 <div class="main-container">
     <div class="region-container">
-        <mat-card *ngFor="let region of regions" class="region-card" (click)="viewHotelsByRegion(region.id)">
-            <mat-card-header>
+        <mat-card *ngFor="let region of regions"
+                  class="region-card"
+                  [ngStyle]="region.imgLink ? {'background-image': 'url(' + region.imgLink + ')'} : {}"
+                  (click)="viewHotelsByRegion(region.id)">
+            <mat-card-header *ngIf="!region.imgLink">
                 <mat-card-title>{{ region.name }}</mat-card-title>
             </mat-card-header>
         </mat-card>

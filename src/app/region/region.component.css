@@ -54,6 +54,17 @@ body {
     height: auto;
     overflow: hidden;
     text-align: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.region-card mat-card-header {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.9); /* Optional: semi-transparent overlay */
+    border-radius: 4px;
 }
 
 

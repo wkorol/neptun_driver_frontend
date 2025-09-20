@@ -6,6 +6,7 @@ import {Hotel} from "../hotel-services/hotel.service";
 export interface Region {
   id: number;
   name: string;
+  imgLink: string;
 }
 
 @Injectable({
@@ -18,7 +19,7 @@ export class RegionService {
 
   getRegionList(): Observable<Region[]>
   {
-    return this.http.get<Region[]>(`https://apineptun-ij5mx.ondigitalocean.app/region`);
+    return this.http.get<Region[]>(`http://localhost:8000/region`);
   }
 
   addRegion(regionData: { name: string | undefined, id: number | undefined }): Observable<void>
