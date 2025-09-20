@@ -19,7 +19,7 @@ export class RegionService {
 
   getRegionList(): Observable<Region[]>
   {
-    return this.http.get<Region[]>(`http://localhost:8000/region`);
+    return this.http.get<Region[]>(`https://apineptun-ij5mx.ondigitalocean.app/region`);
   }
 
   addRegion(regionData: { name: string | undefined, id: number | undefined }): Observable<void>
