@@ -51,10 +51,10 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center; /* Center horizontally */
-    height: auto;
+    height: 200px; /* Ustaw stałą wysokość */
     overflow: hidden;
     text-align: center;
-    background-size: cover;
+    background-size: cover; /* Zmienione z cover na contain */
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
