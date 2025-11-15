@@ -28,15 +28,10 @@ export class MamTaxiAuthService {
         return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/next5days`)
     }
 
-    get3LastOrdersForPhoneNumber(phoneNumber: string, externalId: number) {
-        return this.http.get<any[]>(
-            'https://apineptun-ij5mx.ondigitalocean.app/orders/find-by-phone',
-            {
-                params: {
-                    phoneNumber: phoneNumber,
-                    externalId: externalId
-                }
-            }
+    getBatchPhoneHistory(payload: { [phone: string]: number[] }) {
+        return this.http.post<any>(
+            'https://apineptun-ij5mx.ondigitalocean.app/orders/find-history-batch',
+            { phones: payload }
         );
     }
 
