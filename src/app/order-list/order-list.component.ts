@@ -46,11 +46,30 @@ export class OrderListComponent {
   message = '';
   isAuthenticated = false;
   sessionChecked = false;
-
+  phoneHistoryCache: { [phoneNumber: string]: Order[] } = {};
 
   constructor(private authService: MamTaxiAuthService) {}
 
-  searchTerm: string = '';
+    loadPhoneHistory(phoneNumber: string, order: Order) {
+        if (!phoneNumber) return;
+
+        if (this.phoneHistoryCache[phoneNumber]) {
+            (order as any)._lastOrders = this.phoneHistoryCache[phoneNumber];
+            return;
+        }
+
+        this.authService.get3LastOrdersForPhoneNumber(phoneNumber, order.Id).subscribe({
+            next: (orders) => {
+                this.phoneHistoryCache[phoneNumber] = orders;
+                (order as any)._lastOrders = orders;
+            },
+            error: (err) => {
+                console.error('Błąd pobierania historii telefonu:', err);
+            }
+        });
+    }
+
+    searchTerm: string = '';
 
   panelOpenState = {
     actual: false,
@@ -154,26 +173,35 @@ export class OrderListComponent {
   }
 
 
-  loadTodayOrders() {
-    this.authService.getOrdersForToday().subscribe({
-      next: (orders) => this.todayOrders = orders,
-      error: (err) => console.error('Błąd podczas pobierania zamówień na dziś:', err)
-    });
-  }
+    loadTodayOrders() {
+        this.authService.getOrdersForToday().subscribe({
+            next: (orders) => {
+                this.todayOrders = orders;
+                orders.forEach(order => this.loadPhoneHistory(order.PhoneNumber, order));
+            },
+            error: (err) => console.error('Błąd podczas pobierania zamówień na dziś:', err)
+        });
+    }
 
-  loadOrdersForNext5Days() {
-    this.authService.getOrdersForNext5Days().subscribe({
-      next: (orders) => this.ordersForNext5Days = orders,
-      error: (err) => console.error('Błąd podczas pobierania zamówień na 5 dni w przód:', err)
-    });
-  }
+    loadOrdersForNext5Days() {
+        this.authService.getOrdersForNext5Days().subscribe({
+            next: (orders) => {
+                this.ordersForNext5Days = orders;
+                orders.forEach(order => this.loadPhoneHistory(order.PhoneNumber, order));
+            },
+            error: (err) => console.error('Błąd podczas pobierania zamówień na 5 dni w przód:', err)
+        });
+    }
 
-  loadActualOrders() {
-    this.authService.getActualOrders().subscribe({
-      next: (orders) => this.actualOrders = orders,
-      error: (err) => console.error('Błąd podczas pobierania aktualnych zamówień:', err)
-    });
-  }
+    loadActualOrders() {
+        this.authService.getActualOrders().subscribe({
+            next: (orders) => {
+                this.actualOrders = orders;
+                orders.forEach(order => this.loadPhoneHistory(order.PhoneNumber, order));
+            },
+            error: (err) => console.error('Błąd podczas pobierania aktualnych zamówień:', err)
+        });
+    }
 
   clearSearch() {
     this.searchTerm = '';

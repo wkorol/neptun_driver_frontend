@@ -28,6 +28,18 @@ export class MamTaxiAuthService {
         return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/next5days`)
     }
 
+    get3LastOrdersForPhoneNumber(phoneNumber: string, externalId: number) {
+        return this.http.get<any[]>(
+            'http://localhost:8000/orders/find-by-phone',
+            {
+                params: {
+                    phoneNumber: phoneNumber,
+                    externalId: externalId
+                }
+            }
+        );
+    }
+
     importOrders(howMany: number) {
         return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/import-orders/${howMany}`, {
             withCredentials: true,

@@ -156,3 +156,15 @@ mat-form-field .mat-icon {
     background-color: #e3f2fd; /* bardzo jasny niebieski */
     border-left-color: #2196f3; /* niebieski */
 }
+
+.history-box {
+    margin-top: 8px;
+    padding: 8px;
+    background: #f4f4f4;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.history-item {
+    padding-left: 4px;
+}
