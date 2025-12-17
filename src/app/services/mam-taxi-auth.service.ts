@@ -28,6 +28,13 @@ export class MamTaxiAuthService {
         return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/next5days`)
     }
 
+    getBatchPhoneHistory(payload: { [phone: string]: number[] }) {
+        return this.http.post<any>(
+            'https://apineptun-ij5mx.ondigitalocean.app/orders/find-history-batch',
+            { phones: payload }
+        );
+    }
+
     importOrders(howMany: number) {
         return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/import-orders/${howMany}`, {
             withCredentials: true,

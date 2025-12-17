@@ -6,6 +6,7 @@ import {Hotel} from "../hotel-services/hotel.service";
 export interface Region {
   id: number;
   name: string;
+  imgLink: string;
 }
 
 @Injectable({

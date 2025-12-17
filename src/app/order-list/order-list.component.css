@@ -156,3 +156,68 @@ mat-form-field .mat-icon {
     background-color: #e3f2fd; /* bardzo jasny niebieski */
     border-left-color: #2196f3; /* niebieski */
 }
+
+/* Kompaktowy panel historii */
+.history-panel {
+    margin-top: 8px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    background: #f5f5f5 !important;
+}
+
+/* Mniejszy header */
+.history-panel .mat-expansion-panel-header {
+    padding: 6px 10px !important;
+    min-height: 36px !important;
+}
+
+.history-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+    font-size: 13px !important;
+}
+
+/* Wewnętrzne elementy */
+.history-item p {
+    font-size: 12px;
+    margin: 4px 0;
+}
+
+/* Zmniejszamy padding w środku panelu */
+.history-panel .mat-expansion-panel-body {
+    padding: 6px 10px !important;
+}
+
+/* --- MOBILE OPTIMIZACJA --- */
+@media (max-width: 500px) {
+    .order-box {
+        padding: 0.8rem;
+        border-radius: 0.7rem;
+    }
+
+    .order-header h3 {
+        font-size: 1rem;
+    }
+
+    .order-content {
+        font-size: 0.8rem;
+    }
+
+    .history-panel {
+        margin-top: 6px !important;
+    }
+
+    .history-panel .mat-expansion-panel-header {
+        padding: 4px 8px !important;
+    }
+
+    .history-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+        font-size: 12px !important;
+    }
+
+    .history-panel .mat-expansion-panel-body {
+        padding: 4px 8px !important;
+    }
+
+    .history-item p {
+        font-size: 11px;
+    }
+}

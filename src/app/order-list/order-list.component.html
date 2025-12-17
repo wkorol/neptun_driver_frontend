@@ -53,6 +53,19 @@
                     <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
                     <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                     <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                    <mat-expansion-panel *ngIf="order._lastOrders" class="history-panel">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                📞 Ostatnie 3 zlecenia dla tego numeru
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div *ngFor="let prev of order._lastOrders" class="history-item">
+                            <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                | {{ prev.From }} → {{ prev.Destination }}
+                            </p>
+                        </div>
+                    </mat-expansion-panel>
                     <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
                         Anuluj
                     </button>
@@ -89,6 +102,19 @@
                         <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
                         <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                         <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                        <mat-expansion-panel *ngIf="order._lastOrders" class="history-panel">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    📞 Ostatnie 3 zlecenia dla tego numeru
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div *ngFor="let prev of order._lastOrders" class="history-item">
+                                <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                    | {{ prev.From }} → {{ prev.Destination }}
+                                </p>
+                            </div>
+                        </mat-expansion-panel>
                         <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
                             Anuluj
                         </button>
@@ -126,6 +152,19 @@
                         <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
                         <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                         <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                        <mat-expansion-panel *ngIf="order._lastOrders" class="history-panel">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    📞 Ostatnie 3 zlecenia dla tego numeru
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div *ngFor="let prev of order._lastOrders" class="history-item">
+                                <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                    | {{ prev.From }} → {{ prev.Destination }}
+                                </p>
+                            </div>
+                        </mat-expansion-panel>
                         <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
                             Anuluj
                         </button>
