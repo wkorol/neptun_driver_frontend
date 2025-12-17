@@ -37,7 +37,7 @@ export const routes: Routes = [
     { path: 'uslugi-dodatkowe', component: AdditionalServicesComponent },
     { path: 'jarmark', component: MarketInfoComponent },
     { path: 'admin', component: AdminPanelComponent },
-    { path: 'qwertyuiop', component: OrderListComponent },
+    { path: 'zxcvbnm', component: OrderListComponent },
     {path: 'taxii', component: TaxiFormComponent},
     {path: 'driver', component: DriverStatusComponent},
     {path: 'doplata', component: SendSocketMessageComponent},
