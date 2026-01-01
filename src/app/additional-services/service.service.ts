@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { apiConfig } from '../config/api.config';
 
 export interface Service {
     id: string;
@@ -13,7 +14,7 @@ export interface Service {
     providedIn: 'root'
 })
 export class ServiceService {
-    private readonly baseUrl = 'https://apineptun-ij5mx.ondigitalocean.app';
+    private readonly baseUrl = apiConfig.baseUrl;
 
     constructor(private http: HttpClient) {}
 

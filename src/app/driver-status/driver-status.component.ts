@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, of, Subscription, timer, switchMap } from 'rxjs';
 import {FormsModule} from "@angular/forms";
 import {NgIf} from "@angular/common";
+import { apiConfig } from '../config/api.config';
 
 interface TaxiStatus {
   TaxiNo: string;
@@ -42,6 +43,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   private userLocationMarker?: google.maps.marker.AdvancedMarkerElement;
   searchTerm: string = '';
   notFound: boolean = false;
+  private readonly baseUrl = apiConfig.baseUrl;
 
 
 
@@ -58,14 +60,14 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
 
 
     // Trigger cache refresh once
-    this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/drivers/status')
+    this.http.get(`${this.baseUrl}/api/proxy/drivers/status`)
         .pipe(catchError(() => of(null)))
         .subscribe();
 
     // Every 2 seconds: get taxi data from cache
     this.latestSub = timer(0, 2000).pipe(
         switchMap(() =>
-            this.http.get<TaxiStatus[]>('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/drivers/status/latest').pipe(
+            this.http.get<TaxiStatus[]>(`${this.baseUrl}/api/proxy/drivers/status/latest`).pipe(
                 catchError(() => of([]))
             )
         )
@@ -77,7 +79,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
     // Every 30 seconds: ask backend to refresh cache
     this.refreshSub = timer(10000, 10000).pipe(
         switchMap(() =>
-            this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/proxy/drivers/status').pipe(
+            this.http.get(`${this.baseUrl}/api/proxy/drivers/status`).pipe(
                 catchError(() => of(null))
             )
         )

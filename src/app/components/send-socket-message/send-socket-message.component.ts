@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
 import {WebSocketService} from "../../services/web-socket.service";
 import {HttpClient} from "@angular/common/http";
+import { apiConfig } from '../../config/api.config';
 
 @Component({
   selector: 'app-send-socket-message',
@@ -10,7 +11,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class SendSocketMessageComponent implements OnInit {
 
-    private readonly apiUrl = 'https://apineptun-ij5mx.ondigitalocean.app/api/price-update'; // Zmień na swój URL Symfony
+    private readonly apiUrl = `${apiConfig.baseUrl}/api/price-update`; // Zmień na swój URL Symfony
 
     constructor(private http: HttpClient) {}
 

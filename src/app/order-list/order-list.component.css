@@ -83,6 +83,12 @@ mat-expansion-panel .order-box {
     margin-bottom: 0.5rem;
 }
 
+.order-header-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .order-header h3 {
     margin: 0;
     font-size: 1.2rem;
@@ -97,6 +103,16 @@ mat-expansion-panel .order-box {
     text-transform: uppercase;
     font-weight: bold;
     color: #555;
+}
+
+.new-badge {
+    background: #2e7d32;
+    color: #fff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    font-weight: 700;
 }
 
 .order-content {
@@ -155,6 +171,24 @@ mat-form-field .mat-icon {
 .non-gdansk-order {
     background-color: #e3f2fd; /* bardzo jasny niebieski */
     border-left-color: #2196f3; /* niebieski */
+}
+
+.new-order {
+    background-color: #e8f5e9;
+    border-left-color: #43a047;
+    animation: newOrderPulse 1s ease-in-out infinite;
+}
+
+@keyframes newOrderPulse {
+    0% {
+        box-shadow: 0 0 0 rgba(67, 160, 71, 0.0);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(67, 160, 71, 0.35);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(67, 160, 71, 0.0);
+    }
 }
 
 /* Kompaktowy panel historii */

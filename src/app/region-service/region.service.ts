@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Hotel} from "../hotel-services/hotel.service";
+import { apiConfig } from '../config/api.config';
 
 export interface Region {
   id: number;
@@ -19,11 +20,11 @@ export class RegionService {
 
   getRegionList(): Observable<Region[]>
   {
-    return this.http.get<Region[]>(`https://apineptun-ij5mx.ondigitalocean.app/region`);
+    return this.http.get<Region[]>(`${apiConfig.baseUrl}/region`);
   }
 
   addRegion(regionData: { name: string | undefined, id: number | undefined }): Observable<void>
   {
-    return this.http.post<void>(`https://apineptun-ij5mx.ondigitalocean.app/region/add`, regionData);
+    return this.http.post<void>(`${apiConfig.baseUrl}/region/add`, regionData);
   }
 }

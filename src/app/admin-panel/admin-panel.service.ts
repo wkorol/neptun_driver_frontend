@@ -4,19 +4,21 @@ import { Observable } from 'rxjs';
 import {Hotel} from "../hotel-services/hotel.service";
 import {LumpSum} from "../shared/lump-sums.model";
 import {Region} from "../region-service/region.service";
+import { apiConfig } from '../config/api.config';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class AdminPanelService {
-    private hotelUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel';
-    private lumpSumUrl = 'https://apineptun-ij5mx.ondigitalocean.app/lump_sums';
-    private regionUrl = 'https://apineptun-ij5mx.ondigitalocean.app/region';
-    private addHotelUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel/add';
-    private lumpSumAddUrl = 'https://apineptun-ij5mx.ondigitalocean.app/lump_sums/add';
-    private hotelEditUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel';
-    private deleteHotelUrl = 'https://apineptun-ij5mx.ondigitalocean.app/hotel';
+    private baseUrl = apiConfig.baseUrl;
+    private hotelUrl = `${this.baseUrl}/hotel`;
+    private lumpSumUrl = `${this.baseUrl}/lump_sums`;
+    private regionUrl = `${this.baseUrl}/region`;
+    private addHotelUrl = `${this.baseUrl}/hotel/add`;
+    private lumpSumAddUrl = `${this.baseUrl}/lump_sums/add`;
+    private hotelEditUrl = `${this.baseUrl}/hotel`;
+    private deleteHotelUrl = `${this.baseUrl}/hotel`;
 
     constructor(private http: HttpClient) {}
 

@@ -32,16 +32,20 @@
             <div *ngIf="actualOrders.length === 0" class="no-orders">Brak aktywnych zleceń</div>
 
             <div
-                    *ngFor="let order of filteredActualOrders"
+                    *ngFor="let order of filteredActualOrders; trackBy: trackByOrderId"
                     class="order-box"
                     [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
-    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
+    'new-order': isNewOrder(order.Id)
   }"
             >
             <div class="order-header">
                     <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                    <span class="status">{{ order.Status || 'brak' }}</span>
+                    <div class="order-header-tags">
+                        <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
+                        <span class="status">{{ order.Status || 'brak' }}</span>
+                    </div>
                 </div>
                 <div class="order-content">
                     <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
@@ -53,14 +57,19 @@
                     <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
                     <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                     <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                    <mat-expansion-panel *ngIf="order._lastOrders" class="history-panel">
+                    <mat-expansion-panel
+                        *ngIf="order._lastOrders"
+                        class="history-panel"
+                        [expanded]="isHistoryOpen(order.Id)"
+                        (opened)="setHistoryOpen(order.Id, true)"
+                        (closed)="setHistoryOpen(order.Id, false)">
                         <mat-expansion-panel-header>
                             <mat-panel-title>
                                 📞 Ostatnie 3 zlecenia dla tego numeru
                             </mat-panel-title>
                         </mat-expansion-panel-header>
 
-                        <div *ngFor="let prev of order._lastOrders" class="history-item">
+                        <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
                             <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
                                 | {{ prev.From }} → {{ prev.Destination }}
                             </p>
@@ -81,16 +90,20 @@
 
             <div *ngIf="!isLoading; else loading">
                 <div
-                        *ngFor="let order of filteredTodayOrders"
+                        *ngFor="let order of filteredTodayOrders; trackBy: trackByOrderId"
                         class="order-box"
-                        [ngClass]="{
+                    [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
-    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
+    'new-order': isNewOrder(order.Id)
   }"
                 >
                     <div class="order-header">
                         <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                        <span class="status">{{ order.Status || 'brak' }}</span>
+                        <div class="order-header-tags">
+                            <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
+                            <span class="status">{{ order.Status || 'brak' }}</span>
+                        </div>
                     </div>
                     <div class="order-content">
                         <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
@@ -102,14 +115,19 @@
                         <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
                         <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                         <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                        <mat-expansion-panel *ngIf="order._lastOrders" class="history-panel">
+                        <mat-expansion-panel
+                            *ngIf="order._lastOrders"
+                            class="history-panel"
+                            [expanded]="isHistoryOpen(order.Id)"
+                            (opened)="setHistoryOpen(order.Id, true)"
+                            (closed)="setHistoryOpen(order.Id, false)">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
                                     📞 Ostatnie 3 zlecenia dla tego numeru
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
 
-                            <div *ngFor="let prev of order._lastOrders" class="history-item">
+                            <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
                                 <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
                                     | {{ prev.From }} → {{ prev.Destination }}
                                 </p>
@@ -131,16 +149,20 @@
 
             <div *ngIf="!isLoading; else loading">
                 <div
-                    *ngFor="let order of filteredOrdersForNext5Days"
+                    *ngFor="let order of filteredOrdersForNext5Days; trackBy: trackByOrderId"
                     class="order-box"
                     [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
-    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
+    'new-order': isNewOrder(order.Id)
   }"
             >
                     <div class="order-header">
                         <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                        <span class="status">{{ order.Status || 'brak' }}</span>
+                        <div class="order-header-tags">
+                            <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
+                            <span class="status">{{ order.Status || 'brak' }}</span>
+                        </div>
                     </div>
                     <div class="order-content">
                         <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
@@ -152,14 +174,19 @@
                         <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
                         <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                         <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                        <mat-expansion-panel *ngIf="order._lastOrders" class="history-panel">
+                        <mat-expansion-panel
+                            *ngIf="order._lastOrders"
+                            class="history-panel"
+                            [expanded]="isHistoryOpen(order.Id)"
+                            (opened)="setHistoryOpen(order.Id, true)"
+                            (closed)="setHistoryOpen(order.Id, false)">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
                                     📞 Ostatnie 3 zlecenia dla tego numeru
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
 
-                            <div *ngFor="let prev of order._lastOrders" class="history-item">
+                            <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
                                 <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
                                     | {{ prev.From }} → {{ prev.Destination }}
                                 </p>

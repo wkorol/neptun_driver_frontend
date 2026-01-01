@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {catchError, map, Observable} from "rxjs";
 import { of } from 'rxjs';
+import { apiConfig } from '../config/api.config';
 
 
 @Injectable({ providedIn: 'root' })
@@ -9,41 +10,41 @@ export class MamTaxiAuthService {
     constructor(private http: HttpClient) {}
 
     login() {
-        return this.http.get<any>(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/login`, { withCredentials: true });
+        return this.http.get<any>(`${apiConfig.baseUrl}/api/proxy/login`, { withCredentials: true });
     }
 
     getActualOrders() {
-        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/now`, {
+        return this.http.get<any[]>(`${apiConfig.baseUrl}/orders/now`, {
             withCredentials: true
         });
     }
 
     getOrdersForToday() {
-        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/today`, {
+        return this.http.get<any[]>(`${apiConfig.baseUrl}/orders/scheduled/today`, {
             withCredentials: true
         });
     }
 
     getOrdersForNext5Days() {
-        return this.http.get<any[]>(`https://apineptun-ij5mx.ondigitalocean.app/orders/scheduled/next5days`)
+        return this.http.get<any[]>(`${apiConfig.baseUrl}/orders/scheduled/next5days`)
     }
 
     getBatchPhoneHistory(payload: { [phone: string]: number[] }) {
         return this.http.post<any>(
-            'https://apineptun-ij5mx.ondigitalocean.app/orders/find-history-batch',
+            `${apiConfig.baseUrl}/orders/find-history-batch`,
             { phones: payload }
         );
     }
 
     importOrders(howMany: number) {
-        return this.http.get(`https://apineptun-ij5mx.ondigitalocean.app/api/proxy/import-orders/${howMany}`, {
+        return this.http.get(`${apiConfig.baseUrl}/api/proxy/import-orders/${howMany}`, {
             withCredentials: true,
             responseType: 'text'
         });
     }
 
     checkSession(): Observable<boolean> {
-        return this.http.get('https://apineptun-ij5mx.ondigitalocean.app/api/session/check', {
+        return this.http.get(`${apiConfig.baseUrl}/api/session/check`, {
             withCredentials: true
         }).pipe(
             map(() => true),

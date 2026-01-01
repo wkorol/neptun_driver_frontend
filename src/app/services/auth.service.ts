@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {BehaviorSubject, map, Observable} from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {Router} from "@angular/router";
+import { apiConfig } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>('https://apineptun-ij5mx.ondigitalocean.app/login', credentials).pipe(
+    return this.http.post<{ token: string }>(`${apiConfig.baseUrl}/login`, credentials).pipe(
         tap(response => {
           const token = response.token;
           localStorage.setItem('authToken', token);

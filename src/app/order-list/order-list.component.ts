@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MamTaxiAuthService } from "../services/mam-taxi-auth.service";
+import { apiConfig } from '../config/api.config';
 import { Order } from '../shared/order.model';
 import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
@@ -39,7 +40,7 @@ import { forkJoin } from 'rxjs';
     templateUrl: './order-list.component.html',
     styleUrl: './order-list.component.css'
 })
-export class OrderListComponent {
+export class OrderListComponent implements OnInit, OnDestroy {
     todayOrders: Order[] = [];
     actualOrders: Order[] = [];
     ordersForNext5Days: Order[] = [];
@@ -47,6 +48,13 @@ export class OrderListComponent {
     message = '';
     isAuthenticated = false;
     sessionChecked = false;
+    private eventSource: EventSource | null = null;
+    private realtimeReloadHandle: ReturnType<typeof setTimeout> | null = null;
+    private readonly realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream`;
+    private historyOpenIds = new Set<number>();
+    private knownOrderIds = new Set<number>();
+    private newOrderIds = new Set<number>();
+    private hasLoadedOnce = false;
 
     constructor(private authService: MamTaxiAuthService) {}
 
@@ -149,6 +157,7 @@ export class OrderListComponent {
 
                 if (valid) {
                     this.import(5);
+                    this.startRealtime();
                 }
             },
             error: () => {
@@ -157,22 +166,7 @@ export class OrderListComponent {
             }
         });
 
-        /** 🔥 Załaduj wszystkie listy równolegle */
-        forkJoin([
-            this.authService.getOrdersForToday(),
-            this.authService.getActualOrders(),
-            this.authService.getOrdersForNext5Days()
-        ]).subscribe({
-            next: ([today, actual, next5]) => {
-                this.todayOrders = today;
-                this.actualOrders = actual;
-                this.ordersForNext5Days = next5;
-
-                // 🔥 wykonaj tylko JEDEN batch request
-                this.loadAllPhoneHistories();
-            },
-            error: err => console.error("Error loading orders:", err)
-        });
+        this.reloadOrders();
     }
 
     formatDate(dateStr?: string): string {
@@ -213,18 +207,7 @@ export class OrderListComponent {
 
         this.authService.importOrders(howMany).subscribe({
             next: () => {
-                forkJoin([
-                    this.authService.getOrdersForToday(),
-                    this.authService.getActualOrders(),
-                    this.authService.getOrdersForNext5Days()
-                ]).subscribe(([today, actual, next5]) => {
-                    this.todayOrders = today;
-                    this.actualOrders = actual;
-                    this.ordersForNext5Days = next5;
-
-                    this.loadAllPhoneHistories();
-                    this.isLoading = false;
-                });
+                this.reloadOrders();
             },
             error: err => {
                 console.error('Import error', err);
@@ -235,5 +218,107 @@ export class OrderListComponent {
                 }
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        if (this.eventSource) {
+            this.eventSource.close();
+            this.eventSource = null;
+        }
+        if (this.realtimeReloadHandle) {
+            clearTimeout(this.realtimeReloadHandle);
+            this.realtimeReloadHandle = null;
+        }
+    }
+
+    private reloadOrders() {
+        /** 🔥 Załaduj wszystkie listy równolegle */
+        forkJoin([
+            this.authService.getOrdersForToday(),
+            this.authService.getActualOrders(),
+            this.authService.getOrdersForNext5Days()
+        ]).subscribe({
+            next: ([today, actual, next5]) => {
+                const currentIds = new Set<number>();
+                [...today, ...actual, ...next5].forEach(order => currentIds.add(order.Id));
+
+                if (this.hasLoadedOnce) {
+                    currentIds.forEach(id => {
+                        if (!this.knownOrderIds.has(id)) {
+                            this.markOrderAsNew(id);
+                        }
+                    });
+                } else {
+                    this.hasLoadedOnce = true;
+                }
+
+                this.knownOrderIds = currentIds;
+                this.todayOrders = today;
+                this.actualOrders = actual;
+                this.ordersForNext5Days = next5;
+
+                // 🔥 wykonaj tylko JEDEN batch request
+                this.loadAllPhoneHistories();
+                this.isLoading = false;
+            },
+            error: err => {
+                console.error("Error loading orders:", err);
+                this.isLoading = false;
+            }
+        });
+    }
+
+    private startRealtime() {
+        if (this.eventSource) return;
+        if (typeof EventSource === 'undefined') {
+            console.warn('EventSource is not supported in this browser.');
+            return;
+        }
+
+        this.eventSource = new EventSource(this.realtimeUrl, { withCredentials: true });
+
+        this.eventSource.addEventListener('orders_updated', () => {
+            if (!this.isAuthenticated) return;
+            this.scheduleRealtimeReload();
+        });
+
+        this.eventSource.onerror = () => {
+            if (!this.eventSource) return;
+            console.warn('SSE connection error. Browser will retry automatically.');
+        };
+    }
+
+    private scheduleRealtimeReload() {
+        if (this.realtimeReloadHandle) return;
+        this.realtimeReloadHandle = setTimeout(() => {
+            this.realtimeReloadHandle = null;
+            this.reloadOrders();
+        }, 500);
+    }
+
+    trackByOrderId(_index: number, order: Order): number {
+        return order.Id;
+    }
+
+    isHistoryOpen(orderId: number): boolean {
+        return this.historyOpenIds.has(orderId);
+    }
+
+    setHistoryOpen(orderId: number, open: boolean): void {
+        if (open) {
+            this.historyOpenIds.add(orderId);
+        } else {
+            this.historyOpenIds.delete(orderId);
+        }
+    }
+
+    isNewOrder(orderId: number): boolean {
+        return this.newOrderIds.has(orderId);
+    }
+
+    private markOrderAsNew(orderId: number): void {
+        if (this.newOrderIds.has(orderId)) return;
+        this.newOrderIds.add(orderId);
+        setTimeout(() => this.newOrderIds.delete(orderId), 5000);
     }
 }
