@@ -55,6 +55,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     private knownOrderIds = new Set<number>();
     private newOrderIds = new Set<number>();
     private hasLoadedOnce = false;
+    private lastOrdersById = new Map<number, Order[]>();
 
     constructor(private authService: MamTaxiAuthService, private zone: NgZone) {}
 
@@ -96,6 +97,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
                     const phone = order.PhoneNumber;
                     if (phone && data[phone]) {
                         order._lastOrders = data[phone];
+                        this.lastOrdersById.set(order.Id, data[phone]);
                     }
                 });
             },
@@ -203,12 +205,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
     }
 
     import(howMany: number) {
-        this.isLoading = true;
         this.message = '';
 
         this.authService.importOrders(howMany).subscribe({
             next: () => {
-                this.reloadOrders();
+                this.reloadOrders(true);
             },
             error: err => {
                 console.error('Import error', err);
@@ -232,7 +233,18 @@ export class OrderListComponent implements OnInit, OnDestroy {
         }
     }
 
-    private reloadOrders() {
+    private reloadOrders(setLoading = false) {
+        if (setLoading) {
+            this.isLoading = true;
+        }
+        const scrollY = window.scrollY;
+        const previousHistory = new Map<number, Order[]>();
+        [...this.todayOrders, ...this.actualOrders, ...this.ordersForNext5Days].forEach(order => {
+            if (order._lastOrders && order._lastOrders.length > 0) {
+                previousHistory.set(order.Id, order._lastOrders);
+            }
+        });
+
         /** 🔥 Załaduj wszystkie listy równolegle */
         forkJoin([
             this.authService.getOrdersForToday(),
@@ -258,13 +270,25 @@ export class OrderListComponent implements OnInit, OnDestroy {
                 this.actualOrders = actual;
                 this.ordersForNext5Days = next5;
 
+                [...this.todayOrders, ...this.actualOrders, ...this.ordersForNext5Days].forEach(order => {
+                    const cached = this.lastOrdersById.get(order.Id) || previousHistory.get(order.Id);
+                    if (cached) {
+                        order._lastOrders = cached;
+                    }
+                });
+
                 // 🔥 wykonaj tylko JEDEN batch request
                 this.loadAllPhoneHistories();
-                this.isLoading = false;
+                if (setLoading) {
+                    this.isLoading = false;
+                }
+                requestAnimationFrame(() => window.scrollTo({ top: scrollY }));
             },
             error: err => {
                 console.error("Error loading orders:", err);
-                this.isLoading = false;
+                if (setLoading) {
+                    this.isLoading = false;
+                }
             }
         });
     }
@@ -292,7 +316,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
         if (this.realtimeReloadHandle) return;
         this.realtimeReloadHandle = setTimeout(() => {
             this.realtimeReloadHandle = null;
-            this.reloadOrders();
+            this.reloadOrders(false);
         }, 500);
     }
 
