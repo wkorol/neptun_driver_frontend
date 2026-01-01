@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { MamTaxiAuthService } from "../services/mam-taxi-auth.service";
 import { apiConfig } from '../config/api.config';
 import { Order } from '../shared/order.model';
@@ -56,7 +56,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     private newOrderIds = new Set<number>();
     private hasLoadedOnce = false;
 
-    constructor(private authService: MamTaxiAuthService) {}
+    constructor(private authService: MamTaxiAuthService, private zone: NgZone) {}
 
     /** 🔥 phone → list of externalIds to exclude */
     buildPhonesPayload() {
@@ -150,6 +150,8 @@ export class OrderListComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.startRealtime();
+
         this.authService.checkSession().subscribe({
             next: (valid: boolean) => {
                 this.isAuthenticated = valid;
@@ -157,7 +159,6 @@ export class OrderListComponent implements OnInit, OnDestroy {
 
                 if (valid) {
                     this.import(5);
-                    this.startRealtime();
                 }
             },
             error: () => {
@@ -275,11 +276,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.eventSource = new EventSource(this.realtimeUrl, { withCredentials: true });
+        this.eventSource = new EventSource(this.realtimeUrl);
 
         this.eventSource.addEventListener('orders_updated', () => {
-            if (!this.isAuthenticated) return;
-            this.scheduleRealtimeReload();
+            this.zone.run(() => this.scheduleRealtimeReload());
         });
 
         this.eventSource.onerror = () => {
