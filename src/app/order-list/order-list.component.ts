@@ -15,8 +15,8 @@ import {
 } from "@angular/material/expansion";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from "@angular/material/input";
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from "@angular/forms";
-import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-order-list',
@@ -32,6 +32,7 @@ import { forkJoin } from 'rxjs';
         MatAccordion,
         MatFormFieldModule,
         MatInput,
+        MatSelectModule,
         FormsModule,
         MatButtonModule,
         MatIconModule,
@@ -56,20 +57,21 @@ export class OrderListComponent implements OnInit, OnDestroy {
     private newOrderIds = new Set<number>();
     private hasLoadedOnce = false;
     private lastOrdersById = new Map<number, Order[]>();
+    historyOrders: Order[] = [];
+    historyDate = '';
+    historyPage = 1;
+    historyPageSize = 10;
+    historyPageSizeOptions = [5, 10, 50, 100];
+    historyTotal = 0;
+    historyLoading = false;
 
     constructor(private authService: MamTaxiAuthService, private zone: NgZone) {}
 
     /** 🔥 phone → list of externalIds to exclude */
-    buildPhonesPayload() {
-        const all = [
-            ...this.todayOrders,
-            ...this.actualOrders,
-            ...this.ordersForNext5Days
-        ];
-
+    private buildPhonesPayload(orders: Order[]) {
         const map: { [phone: string]: number[] } = {};
 
-        all.forEach(order => {
+        orders.forEach(order => {
             const phone = order.PhoneNumber;
             if (!phone) return;
 
@@ -81,19 +83,13 @@ export class OrderListComponent implements OnInit, OnDestroy {
     }
 
     /** 🔥 Jeden BATCH request */
-    loadAllPhoneHistories() {
-        const payload = this.buildPhonesPayload();
+    private loadPhoneHistories(orders: Order[]) {
+        const payload = this.buildPhonesPayload(orders);
         if (!Object.keys(payload).length) return;
 
         this.authService.getBatchPhoneHistory(payload).subscribe({
             next: (data) => {
-                const all = [
-                    ...this.todayOrders,
-                    ...this.actualOrders,
-                    ...this.ordersForNext5Days
-                ];
-
-                all.forEach(order => {
+                orders.forEach(order => {
                     const phone = order.PhoneNumber;
                     if (phone && data[phone]) {
                         order._lastOrders = data[phone];
@@ -169,12 +165,32 @@ export class OrderListComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.reloadOrders();
+        this.reloadOrders(false, false);
+        this.historyDate = this.getLocalDateInput();
+        this.loadHistory(1);
     }
 
-    formatDate(dateStr?: string): string {
-        if (!dateStr) return 'brak';
-        return dateStr.replace('T', ' ').substring(0, 16);
+    formatDate(dateValue?: string | Date | { date?: string } | number): string {
+        if (!dateValue) return 'brak';
+        if (dateValue instanceof Date) {
+            const iso = dateValue.toISOString();
+            return iso.replace('T', ' ').substring(0, 16);
+        }
+        if (typeof dateValue === 'string') {
+            return dateValue.replace('T', ' ').substring(0, 16);
+        }
+        if (typeof dateValue === 'number') {
+            const iso = new Date(dateValue).toISOString();
+            return iso.replace('T', ' ').substring(0, 16);
+        }
+        if (typeof dateValue === 'object' && dateValue.date) {
+            return dateValue.date.replace('T', ' ').substring(0, 16);
+        }
+        return 'brak';
+    }
+
+    formatCreatedAt(dateStr?: string): string {
+        return this.formatDate(dateStr);
     }
 
     confirmCancel(order: Order) {
@@ -204,12 +220,32 @@ export class OrderListComponent implements OnInit, OnDestroy {
         this.updatePanelStates();
     }
 
+    onHistoryDateChange() {
+        this.historyPage = 1;
+        this.loadHistory(this.historyPage);
+    }
+
+    onHistoryPageSizeChange() {
+        this.historyPage = 1;
+        this.loadHistory(this.historyPage);
+    }
+
+    get historyTotalPages(): number {
+        return Math.max(1, Math.ceil(this.historyTotal / this.historyPageSize));
+    }
+
+    goToHistoryPage(page: number) {
+        const safePage = Math.min(Math.max(page, 1), this.historyTotalPages);
+        if (safePage === this.historyPage) return;
+        this.loadHistory(safePage);
+    }
+
     import(howMany: number) {
         this.message = '';
 
         this.authService.importOrders(howMany).subscribe({
             next: () => {
-                this.reloadOrders(true);
+                this.reloadOrders(true, true);
             },
             error: err => {
                 console.error('Import error', err);
@@ -233,11 +269,11 @@ export class OrderListComponent implements OnInit, OnDestroy {
         }
     }
 
-    private reloadOrders(setLoading = false) {
+    private reloadOrders(setLoading = false, preserveScroll = false) {
         if (setLoading) {
             this.isLoading = true;
         }
-        const scrollY = window.scrollY;
+        const scrollY = preserveScroll ? window.scrollY : 0;
         const previousHistory = new Map<number, Order[]>();
         [...this.todayOrders, ...this.actualOrders, ...this.ordersForNext5Days].forEach(order => {
             if (order._lastOrders && order._lastOrders.length > 0) {
@@ -245,13 +281,8 @@ export class OrderListComponent implements OnInit, OnDestroy {
             }
         });
 
-        /** 🔥 Załaduj wszystkie listy równolegle */
-        forkJoin([
-            this.authService.getOrdersForToday(),
-            this.authService.getActualOrders(),
-            this.authService.getOrdersForNext5Days()
-        ]).subscribe({
-            next: ([today, actual, next5]) => {
+        this.authService.getOrdersSummary().subscribe({
+            next: ({ today, actual, next5 }) => {
                 const currentIds = new Set<number>();
                 [...today, ...actual, ...next5].forEach(order => currentIds.add(order.Id));
 
@@ -270,25 +301,55 @@ export class OrderListComponent implements OnInit, OnDestroy {
                 this.actualOrders = actual;
                 this.ordersForNext5Days = next5;
 
-                [...this.todayOrders, ...this.actualOrders, ...this.ordersForNext5Days].forEach(order => {
+                const allOrders = [
+                    ...this.todayOrders,
+                    ...this.actualOrders,
+                    ...this.ordersForNext5Days
+                ];
+
+                allOrders.forEach(order => {
                     const cached = this.lastOrdersById.get(order.Id) || previousHistory.get(order.Id);
                     if (cached) {
                         order._lastOrders = cached;
                     }
                 });
 
-                // 🔥 wykonaj tylko JEDEN batch request
-                this.loadAllPhoneHistories();
+                // 🔥 wykonaj tylko JEDEN batch request dla nowych numerow
+                const ordersMissingHistory = allOrders.filter(order =>
+                    !this.lastOrdersById.has(order.Id) && !order._lastOrders
+                );
+                this.loadPhoneHistories(ordersMissingHistory);
                 if (setLoading) {
                     this.isLoading = false;
                 }
-                requestAnimationFrame(() => window.scrollTo({ top: scrollY }));
+                if (preserveScroll) {
+                    requestAnimationFrame(() => window.scrollTo({ top: scrollY }));
+                }
             },
             error: err => {
                 console.error("Error loading orders:", err);
                 if (setLoading) {
                     this.isLoading = false;
                 }
+            }
+        });
+    }
+
+    private loadHistory(page: number) {
+        if (!this.historyDate) return;
+        this.historyLoading = true;
+
+        this.authService.getOrdersHistoryByDay(this.historyDate, page, this.historyPageSize).subscribe({
+            next: response => {
+                this.historyOrders = response.items || [];
+                this.historyTotal = response.total || 0;
+                this.historyPage = response.page || page;
+            },
+            error: err => {
+                console.error('Error loading history:', err);
+            },
+            complete: () => {
+                this.historyLoading = false;
             }
         });
     }
@@ -316,7 +377,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
         if (this.realtimeReloadHandle) return;
         this.realtimeReloadHandle = setTimeout(() => {
             this.realtimeReloadHandle = null;
-            this.reloadOrders(false);
+            this.reloadOrders(false, false);
         }, 500);
     }
 
@@ -344,5 +405,12 @@ export class OrderListComponent implements OnInit, OnDestroy {
         if (this.newOrderIds.has(orderId)) return;
         this.newOrderIds.add(orderId);
         setTimeout(() => this.newOrderIds.delete(orderId), 5000);
+    }
+
+    private getLocalDateInput(date = new Date()): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 }

@@ -40,12 +40,15 @@
     'new-order': isNewOrder(order.Id)
   }"
             >
-            <div class="order-header">
+                <div class="order-header">
                     <h3>{{ order.City || 'Miasto nieznane' }}</h3>
                     <div class="order-header-tags">
                         <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
                         <span class="status">{{ order.Status || 'brak' }}</span>
                     </div>
+                </div>
+                <div class="order-meta">
+                    <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
                 </div>
                 <div class="order-content">
                     <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
@@ -100,12 +103,15 @@
                 >
                     <div class="order-header">
                         <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                        <div class="order-header-tags">
-                            <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
-                            <span class="status">{{ order.Status || 'brak' }}</span>
-                        </div>
+                    <div class="order-header-tags">
+                        <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
+                        <span class="status">{{ order.Status || 'brak' }}</span>
                     </div>
-                    <div class="order-content">
+                </div>
+                <div class="order-meta">
+                    <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
+                </div>
+                <div class="order-content">
                         <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
                         <p><strong>Z:</strong> {{ order.From }}</p>
                         <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
@@ -159,12 +165,15 @@
             >
                     <div class="order-header">
                         <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                        <div class="order-header-tags">
-                            <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
-                            <span class="status">{{ order.Status || 'brak' }}</span>
-                        </div>
+                    <div class="order-header-tags">
+                        <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
+                        <span class="status">{{ order.Status || 'brak' }}</span>
                     </div>
-                    <div class="order-content">
+                </div>
+                <div class="order-meta">
+                    <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
+                </div>
+                <div class="order-content">
                         <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
                         <p><strong>Z:</strong> {{ order.From }}</p>
                         <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
@@ -202,25 +211,96 @@
 
     </mat-accordion>
 
+    <mat-expansion-panel class="history-orders-panel">
+        <mat-expansion-panel-header>
+            <mat-panel-title>Historia zleceń z dnia</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="history-container">
+            <div class="history-header">
+                <h2>Wybierz dzień</h2>
+                <div class="history-controls">
+                    <mat-form-field appearance="outline" class="history-date">
+                        <mat-label>Data</mat-label>
+                        <input
+                            matInput
+                            type="date"
+                            [(ngModel)]="historyDate"
+                            (ngModelChange)="onHistoryDateChange()" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="history-size">
+                        <mat-label>Na stronie</mat-label>
+                        <mat-select
+                            [(ngModel)]="historyPageSize"
+                            (selectionChange)="onHistoryPageSizeChange()">
+                            <mat-option *ngFor="let size of historyPageSizeOptions" [value]="size">
+                                {{ size }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="history-pagination" *ngIf="historyTotal > historyPageSize">
+                <button
+                    mat-stroked-button
+                    (click)="goToHistoryPage(historyPage - 1)"
+                    [disabled]="historyPage <= 1">
+                    Poprzednia
+                </button>
+                <span>Strona {{ historyPage }} / {{ historyTotalPages }}</span>
+                <button
+                    mat-stroked-button
+                    (click)="goToHistoryPage(historyPage + 1)"
+                    [disabled]="historyPage >= historyTotalPages">
+                    Następna
+                </button>
+            </div>
+
+            <div *ngIf="historyLoading" class="history-loading">
+                <mat-spinner diameter="32"></mat-spinner>
+                <span>Ładowanie historii...</span>
+            </div>
+
+            <div *ngIf="!historyLoading && historyOrders.length === 0" class="no-orders">
+                Brak zleceń dla wybranego dnia
+            </div>
+
+            <div *ngIf="!historyLoading">
+                <div
+                    *ngFor="let order of historyOrders; trackBy: trackByOrderId"
+                    class="order-box"
+                    [ngClass]="{
+        'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
+        'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'
+      }"
+                >
+                    <div class="order-header">
+                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
+                        <div class="order-header-tags">
+                            <span class="status">{{ order.Status || 'brak' }}</span>
+                        </div>
+                    </div>
+                    <div class="order-meta">
+                        <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
+                    </div>
+                    <div class="order-content">
+                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
+                        <p><strong>Z:</strong> {{ order.From }}</p>
+                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
+                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
+                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
+                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
+                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
+                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
+                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-expansion-panel>
+
     <ng-template #loading>
         <p>Ładowanie zamówień...</p>
     </ng-template>
 
-    <div class="import-container">
-        <h2>Import zamówień</h2>
-
-        <div class="buttons">
-            <button mat-raised-button color="primary" (click)="import(25)">Zaimportuj 25 zleceń</button>
-            <button mat-raised-button color="accent" (click)="import(100)">Zaimportuj 100 zleceń</button>
-            <button mat-raised-button color="warn" (click)="import(500)">Zaimportuj 500 zleceń</button>
-            <button mat-raised-button color="primary" (click)="import(1000)">Zaimportuj 1000 zleceń</button>
-        </div>
-
-        <div *ngIf="isLoading" class="loading">
-            <mat-spinner diameter="40"></mat-spinner>
-            <span>Importuję...</span>
-        </div>
-
-        <p *ngIf="message" class="message">{{ message }}</p>
-    </div>
 </div>
