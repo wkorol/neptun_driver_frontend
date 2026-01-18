@@ -285,9 +285,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.isLoading = true;
         }
         const scrollState = preserveScroll ? this.captureScrollState() : null;
-        const previousToday = this.todayOrders;
-        const previousActual = this.actualOrders;
-        const previousNext5 = this.ordersForNext5Days;
         const previousHistory = new Map<number, Order[]>();
         [...this.todayOrders, ...this.actualOrders, ...this.ordersForNext5Days].forEach(order => {
             if (order._lastOrders && order._lastOrders.length > 0) {
@@ -313,9 +310,9 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
 
                 this.knownOrderIds = currentIds;
-                this.todayOrders = this.mergeOrdersByPreviousOrder(previousToday, today);
-                this.actualOrders = this.mergeOrdersByPreviousOrder(previousActual, actual);
-                this.ordersForNext5Days = this.mergeOrdersByPreviousOrder(previousNext5, next5);
+                this.todayOrders = today;
+                this.actualOrders = actual;
+                this.ordersForNext5Days = next5;
 
                 const allOrders = [
                     ...this.todayOrders,
@@ -482,30 +479,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (!value) return null;
         const parsed = Number(value);
         return Number.isFinite(parsed) ? parsed : null;
-    }
-
-    private mergeOrdersByPreviousOrder(previous: Order[], next: Order[]): Order[] {
-        if (!previous.length) return next;
-        const nextById = new Map<number, Order>();
-        next.forEach(order => nextById.set(order.Id, order));
-
-        const merged: Order[] = [];
-        previous.forEach(order => {
-            const updated = nextById.get(order.Id);
-            if (updated) {
-                merged.push(updated);
-                nextById.delete(order.Id);
-            }
-        });
-
-        next.forEach(order => {
-            if (nextById.has(order.Id)) {
-                merged.push(order);
-                nextById.delete(order.Id);
-            }
-        });
-
-        return merged;
     }
 
     private getLocalDateInput(date = new Date()): string {
