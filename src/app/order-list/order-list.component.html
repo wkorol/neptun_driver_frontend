@@ -24,10 +24,7 @@
     <mat-accordion multi="true">
 
         <!-- Sekcja: Aktualne zlecenia -->
-        <mat-expansion-panel
-            [expanded]="panelOpenState.actual"
-            (opened)="setPanelOpen('actual', true)"
-            (closed)="setPanelOpen('actual', false)">
+        <mat-expansion-panel [expanded]="panelOpenState.actual">
             <mat-expansion-panel-header>
                 <mat-panel-title>Aktualne zlecenia ({{ actualOrders.length }})</mat-panel-title>
             </mat-expansion-panel-header>
@@ -90,10 +87,7 @@
         </mat-expansion-panel>
 
         <!-- Sekcja: Terminy na dziś -->
-        <mat-expansion-panel
-            [expanded]="panelOpenState.today"
-            (opened)="setPanelOpen('today', true)"
-            (closed)="setPanelOpen('today', false)">
+        <mat-expansion-panel [expanded]="panelOpenState.today">
             <mat-expansion-panel-header>
                 <mat-panel-title>Terminy na dziś ({{ todayOrders.length }})</mat-panel-title>
             </mat-expansion-panel-header>
@@ -156,10 +150,7 @@
         </mat-expansion-panel>
 
         <!-- Sekcja: Terminy na kolejne 5 dni -->
-        <mat-expansion-panel
-            [expanded]="panelOpenState.next5days"
-            (opened)="setPanelOpen('next5days', true)"
-            (closed)="setPanelOpen('next5days', false)">
+        <mat-expansion-panel [expanded]="panelOpenState.next5days">
             <mat-expansion-panel-header>
                 <mat-panel-title>Terminy na następne 5 dni ({{ ordersForNext5Days.length }})</mat-panel-title>
             </mat-expansion-panel-header>
