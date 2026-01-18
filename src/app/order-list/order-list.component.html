@@ -34,6 +34,7 @@
             <div
                     *ngFor="let order of filteredActualOrders; trackBy: trackByOrderId"
                     class="order-box"
+                    [attr.data-order-id]="order.Id"
                     [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
@@ -95,6 +96,7 @@
                 <div
                         *ngFor="let order of filteredTodayOrders; trackBy: trackByOrderId"
                         class="order-box"
+                        [attr.data-order-id]="order.Id"
                     [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
@@ -157,6 +159,7 @@
                 <div
                     *ngFor="let order of filteredOrdersForNext5Days; trackBy: trackByOrderId"
                     class="order-box"
+                    [attr.data-order-id]="order.Id"
                     [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
@@ -269,6 +272,7 @@
                 <div
                     *ngFor="let order of historyOrders; trackBy: trackByOrderId"
                     class="order-box"
+                    [attr.data-order-id]="order.Id"
                     [ngClass]="{
         'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
         'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk'

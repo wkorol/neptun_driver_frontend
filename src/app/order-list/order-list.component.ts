@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { MamTaxiAuthService } from "../services/mam-taxi-auth.service";
 import { apiConfig } from '../config/api.config';
 import { Order } from '../shared/order.model';
@@ -41,7 +41,7 @@ import { FormsModule } from "@angular/forms";
     templateUrl: './order-list.component.html',
     styleUrl: './order-list.component.css'
 })
-export class OrderListComponent implements OnInit, OnDestroy {
+export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     todayOrders: Order[] = [];
     actualOrders: Order[] = [];
     ordersForNext5Days: Order[] = [];
@@ -57,6 +57,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     private newOrderIds = new Set<number>();
     private hasLoadedOnce = false;
     private lastOrdersById = new Map<number, Order[]>();
+    private pendingScrollRestore: { anchor: { id: number | null; offset: number }; scrollY: number; attempts: number } | null = null;
     historyOrders: Order[] = [];
     historyDate = '';
     historyPage = 1;
@@ -269,11 +270,20 @@ export class OrderListComponent implements OnInit, OnDestroy {
         }
     }
 
+    ngAfterViewChecked(): void {
+        if (!this.pendingScrollRestore) return;
+        this.restoreScrollState(this.pendingScrollRestore);
+        this.pendingScrollRestore.attempts -= 1;
+        if (this.pendingScrollRestore.attempts <= 0) {
+            this.pendingScrollRestore = null;
+        }
+    }
+
     private reloadOrders(setLoading = false, preserveScroll = false) {
         if (setLoading) {
             this.isLoading = true;
         }
-        const scrollY = preserveScroll ? window.scrollY : 0;
+        const scrollState = preserveScroll ? this.captureScrollState() : null;
         const previousHistory = new Map<number, Order[]>();
         [...this.todayOrders, ...this.actualOrders, ...this.ordersForNext5Days].forEach(order => {
             if (order._lastOrders && order._lastOrders.length > 0) {
@@ -322,8 +332,9 @@ export class OrderListComponent implements OnInit, OnDestroy {
                 if (setLoading) {
                     this.isLoading = false;
                 }
-                if (preserveScroll) {
-                    requestAnimationFrame(() => window.scrollTo({ top: scrollY }));
+                if (preserveScroll && scrollState) {
+                    this.pendingScrollRestore = { ...scrollState, attempts: 2 };
+                    requestAnimationFrame(() => this.restoreScrollState(scrollState));
                 }
             },
             error: err => {
@@ -377,7 +388,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
         if (this.realtimeReloadHandle) return;
         this.realtimeReloadHandle = setTimeout(() => {
             this.realtimeReloadHandle = null;
-            this.reloadOrders(false, false);
+            this.reloadOrders(false, true);
         }, 500);
     }
 
@@ -405,6 +416,66 @@ export class OrderListComponent implements OnInit, OnDestroy {
         if (this.newOrderIds.has(orderId)) return;
         this.newOrderIds.add(orderId);
         setTimeout(() => this.newOrderIds.delete(orderId), 5000);
+    }
+
+    private captureScrollState(): { anchor: { id: number | null; offset: number }; scrollY: number } {
+        return {
+            anchor: this.captureScrollAnchor(),
+            scrollY: window.scrollY
+        };
+    }
+
+    private captureScrollAnchor(): { id: number | null; offset: number } {
+        const elements = Array.from(
+            document.querySelectorAll<HTMLElement>('.order-box[data-order-id]')
+        );
+        if (!elements.length) {
+            return { id: null, offset: 0 };
+        }
+
+        const viewportHeight = window.innerHeight;
+        let candidate: { el: HTMLElement; top: number } | null = null;
+
+        for (const el of elements) {
+            const rect = el.getBoundingClientRect();
+            if (rect.bottom < 0 || rect.top > viewportHeight) continue;
+            if (!candidate || rect.top < candidate.top) {
+                candidate = { el, top: rect.top };
+            }
+        }
+
+        if (!candidate) {
+            const last = elements[elements.length - 1];
+            const rect = last.getBoundingClientRect();
+            return { id: this.getOrderIdFromElement(last), offset: rect.top };
+        }
+
+        return { id: this.getOrderIdFromElement(candidate.el), offset: candidate.top };
+    }
+
+    private restoreScrollState(state: { anchor: { id: number | null; offset: number }; scrollY: number }) {
+        if (state.anchor.id == null) {
+            window.scrollTo({ top: state.scrollY });
+            return;
+        }
+        const el = document.querySelector<HTMLElement>(
+            `.order-box[data-order-id="${state.anchor.id}"]`
+        );
+        if (!el) {
+            window.scrollTo({ top: state.scrollY });
+            return;
+        }
+        const rect = el.getBoundingClientRect();
+        const delta = rect.top - state.anchor.offset;
+        if (Math.abs(delta) < 1) return;
+        window.scrollTo({ top: window.scrollY + delta });
+    }
+
+    private getOrderIdFromElement(el: HTMLElement): number | null {
+        const value = el.dataset['orderId'];
+        if (!value) return null;
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : null;
     }
 
     private getLocalDateInput(date = new Date()): string {
