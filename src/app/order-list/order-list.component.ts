@@ -111,6 +111,10 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         next5days: false
     };
 
+    setPanelOpen(panel: keyof typeof this.panelOpenState, open: boolean) {
+        this.panelOpenState[panel] = open;
+    }
+
     updatePanelStates() {
         const hasSearch = this.searchTerm.trim().length > 0;
 
@@ -313,9 +317,13 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
 
                 this.knownOrderIds = currentIds;
-                this.todayOrders = this.mergeOrdersByPreviousOrder(previousToday, today);
-                this.actualOrders = this.mergeOrdersByPreviousOrder(previousActual, actual);
-                this.ordersForNext5Days = this.mergeOrdersByPreviousOrder(previousNext5, next5);
+                this.todayOrders = this.mergeOrdersByPreviousOrder(previousToday, today, this.panelOpenState.today);
+                this.actualOrders = this.mergeOrdersByPreviousOrder(previousActual, actual, this.panelOpenState.actual);
+                this.ordersForNext5Days = this.mergeOrdersByPreviousOrder(
+                    previousNext5,
+                    next5,
+                    this.panelOpenState.next5days
+                );
 
                 const allOrders = [
                     ...this.todayOrders,
@@ -484,7 +492,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         return Number.isFinite(parsed) ? parsed : null;
     }
 
-    private mergeOrdersByPreviousOrder(previous: Order[], next: Order[]): Order[] {
+    private mergeOrdersByPreviousOrder(previous: Order[], next: Order[], keepMissing = false): Order[] {
         if (!previous.length) return next;
         const nextById = new Map<number, Order>();
         next.forEach(order => nextById.set(order.Id, order));
@@ -495,6 +503,8 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             if (updated) {
                 merged.push(updated);
                 nextById.delete(order.Id);
+            } else if (keepMissing) {
+                merged.push(order);
             }
         });
 
