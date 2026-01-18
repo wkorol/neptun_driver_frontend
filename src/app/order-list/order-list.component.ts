@@ -54,6 +54,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     private readonly realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream`;
     private historyOpenIds = new Set<number>();
     private knownOrderIds = new Set<number>();
+    private seenOrderIds = new Set<number>();
     private newOrderIds = new Set<number>();
     private hasLoadedOnce = false;
     private lastOrdersById = new Map<number, Order[]>();
@@ -301,12 +302,14 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
                 if (this.hasLoadedOnce) {
                     currentIds.forEach(id => {
-                        if (!this.knownOrderIds.has(id)) {
+                        if (!this.seenOrderIds.has(id)) {
                             this.markOrderAsNew(id);
                         }
+                        this.seenOrderIds.add(id);
                     });
                 } else {
                     this.hasLoadedOnce = true;
+                    currentIds.forEach(id => this.seenOrderIds.add(id));
                 }
 
                 this.knownOrderIds = currentIds;
