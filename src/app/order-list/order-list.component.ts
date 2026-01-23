@@ -66,6 +66,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     historyPageSizeOptions = [5, 10, 50, 100];
     historyTotal = 0;
     historyLoading = false;
+    historyPlaceholders = [0, 1, 2];
 
     constructor(private authService: MamTaxiAuthService, private zone: NgZone) {}
 
@@ -85,12 +86,13 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     /** 🔥 Jeden BATCH request */
-    private loadPhoneHistories(orders: Order[]) {
+    private loadPhoneHistories(orders: Order[], preserveScroll = false) {
         const payload = this.buildPhonesPayload(orders);
         if (!Object.keys(payload).length) return;
 
         this.authService.getBatchPhoneHistory(payload).subscribe({
             next: (data) => {
+                const scrollState = preserveScroll ? this.captureScrollState() : null;
                 orders.forEach(order => {
                     const phone = order.PhoneNumber;
                     if (phone && data[phone]) {
@@ -98,6 +100,10 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                         this.lastOrdersById.set(order.Id, data[phone]);
                     }
                 });
+                if (preserveScroll && scrollState) {
+                    this.pendingScrollRestore = { ...scrollState, attempts: 2 };
+                    requestAnimationFrame(() => this.restoreScrollState(scrollState));
+                }
             },
             error: err => console.error("Batch history error:", err)
         });
@@ -331,7 +337,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 const ordersMissingHistory = allOrders.filter(order =>
                     !this.lastOrdersById.has(order.Id) && !order._lastOrders
                 );
-                this.loadPhoneHistories(ordersMissingHistory);
+                this.loadPhoneHistories(ordersMissingHistory, preserveScroll);
                 if (setLoading) {
                     this.isLoading = false;
                 }

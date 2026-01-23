@@ -62,9 +62,9 @@
                     <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                     <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
                     <mat-expansion-panel
-                        *ngIf="order._lastOrders"
                         class="history-panel"
                         [expanded]="isHistoryOpen(order.Id)"
+                        [disabled]="!order._lastOrders?.length"
                         (opened)="setHistoryOpen(order.Id, true)"
                         (closed)="setHistoryOpen(order.Id, false)">
                         <mat-expansion-panel-header>
@@ -73,11 +73,18 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
 
-                        <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
-                            <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
-                                | {{ prev.From }} → {{ prev.Destination }}
-                            </p>
-                        </div>
+                        <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlock">
+                            <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
+                                <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                    | {{ prev.From }} → {{ prev.Destination }}
+                                </p>
+                            </div>
+                        </ng-container>
+                        <ng-template #historyPlaceholdersBlock>
+                            <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
+                                <p>➡️ 0000-00-00 00:00 | -- → --</p>
+                            </div>
+                        </ng-template>
                     </mat-expansion-panel>
                     <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
                         Anuluj
@@ -124,9 +131,9 @@
                         <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                         <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
                         <mat-expansion-panel
-                            *ngIf="order._lastOrders"
                             class="history-panel"
                             [expanded]="isHistoryOpen(order.Id)"
+                            [disabled]="!order._lastOrders?.length"
                             (opened)="setHistoryOpen(order.Id, true)"
                             (closed)="setHistoryOpen(order.Id, false)">
                             <mat-expansion-panel-header>
@@ -135,11 +142,18 @@
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
 
-                            <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
-                                <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
-                                    | {{ prev.From }} → {{ prev.Destination }}
-                                </p>
-                            </div>
+                            <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlockToday">
+                                <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
+                                    <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                        | {{ prev.From }} → {{ prev.Destination }}
+                                    </p>
+                                </div>
+                            </ng-container>
+                            <ng-template #historyPlaceholdersBlockToday>
+                                <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
+                                    <p>➡️ 0000-00-00 00:00 | -- → --</p>
+                                </div>
+                            </ng-template>
                         </mat-expansion-panel>
                         <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
                             Anuluj
@@ -187,9 +201,9 @@
                         <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
                         <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
                         <mat-expansion-panel
-                            *ngIf="order._lastOrders"
                             class="history-panel"
                             [expanded]="isHistoryOpen(order.Id)"
+                            [disabled]="!order._lastOrders?.length"
                             (opened)="setHistoryOpen(order.Id, true)"
                             (closed)="setHistoryOpen(order.Id, false)">
                             <mat-expansion-panel-header>
@@ -198,11 +212,18 @@
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
 
-                            <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
-                                <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
-                                    | {{ prev.From }} → {{ prev.Destination }}
-                                </p>
-                            </div>
+                            <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlockNext5">
+                                <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
+                                    <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                        | {{ prev.From }} → {{ prev.Destination }}
+                                    </p>
+                                </div>
+                            </ng-container>
+                            <ng-template #historyPlaceholdersBlockNext5>
+                                <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
+                                    <p>➡️ 0000-00-00 00:00 | -- → --</p>
+                                </div>
+                            </ng-template>
                         </mat-expansion-panel>
                         <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
                             Anuluj
