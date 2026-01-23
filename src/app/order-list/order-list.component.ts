@@ -496,25 +496,40 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     private sortActualOrders(orders: Order[]): Order[] {
         return orders.slice().sort((a, b) => {
-            const aTime = this.toTime(a.CreatedAt);
-            const bTime = this.toTime(b.CreatedAt);
+            const aTime = this.toTime(a.CreatedAt, 0);
+            const bTime = this.toTime(b.CreatedAt, 0);
             if (aTime !== bTime) return bTime - aTime;
-            return a.Id - b.Id;
+            return b.Id - a.Id;
         });
     }
 
     private sortScheduledOrders(orders: Order[]): Order[] {
         return orders.slice().sort((a, b) => {
-            const aTime = this.toTime(a.PlannedArrivalDate || a.CreatedAt);
-            const bTime = this.toTime(b.PlannedArrivalDate || b.CreatedAt);
+            const aTime = this.toTime(a.PlannedArrivalDate || a.CreatedAt, Number.POSITIVE_INFINITY);
+            const bTime = this.toTime(b.PlannedArrivalDate || b.CreatedAt, Number.POSITIVE_INFINITY);
             if (aTime !== bTime) return aTime - bTime;
             return a.Id - b.Id;
         });
     }
 
-    private toTime(value?: string): number {
-        if (!value) return 0;
-        const time = Date.parse(value);
-        return Number.isFinite(time) ? time : 0;
+    private toTime(
+        value?: string | number | Date | { date?: string } | null,
+        missing = 0
+    ): number {
+        if (value == null) return missing;
+        if (typeof value === 'number') return Number.isFinite(value) ? value : missing;
+        if (value instanceof Date) return Number.isFinite(value.getTime()) ? value.getTime() : missing;
+        if (typeof value === 'object' && 'date' in value && value.date) {
+            return this.toTime(value.date, missing);
+        }
+        if (typeof value !== 'string') return missing;
+
+        const trimmed = value.trim();
+        if (!trimmed) return missing;
+
+        // Normalize common "YYYY-MM-DD HH:mm[:ss]" to ISO-like for reliable parsing.
+        const normalized = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
+        const time = Date.parse(normalized);
+        return Number.isFinite(time) ? time : missing;
     }
 }
