@@ -316,9 +316,9 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
 
                 this.knownOrderIds = currentIds;
-                this.todayOrders = today;
-                this.actualOrders = actual;
-                this.ordersForNext5Days = next5;
+                this.todayOrders = this.sortScheduledOrders(today);
+                this.actualOrders = this.sortActualOrders(actual);
+                this.ordersForNext5Days = this.sortScheduledOrders(next5);
 
                 const allOrders = [
                     ...this.todayOrders,
@@ -492,5 +492,29 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
+    }
+
+    private sortActualOrders(orders: Order[]): Order[] {
+        return orders.slice().sort((a, b) => {
+            const aTime = this.toTime(a.CreatedAt);
+            const bTime = this.toTime(b.CreatedAt);
+            if (aTime !== bTime) return bTime - aTime;
+            return a.Id - b.Id;
+        });
+    }
+
+    private sortScheduledOrders(orders: Order[]): Order[] {
+        return orders.slice().sort((a, b) => {
+            const aTime = this.toTime(a.PlannedArrivalDate || a.CreatedAt);
+            const bTime = this.toTime(b.PlannedArrivalDate || b.CreatedAt);
+            if (aTime !== bTime) return aTime - bTime;
+            return a.Id - b.Id;
+        });
+    }
+
+    private toTime(value?: string): number {
+        if (!value) return 0;
+        const time = Date.parse(value);
+        return Number.isFinite(time) ? time : 0;
     }
 }
