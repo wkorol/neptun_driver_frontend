@@ -20,87 +20,22 @@
     </div>
 
 
-    <!-- Sekcja: Aktualne zlecenia -->
-    <mat-expansion-panel [expanded]="panelOpenState.actual">
-        <mat-expansion-panel-header>
-            <mat-panel-title>Aktualne zlecenia ({{ actualOrders.length }})</mat-panel-title>
-        </mat-expansion-panel-header>
+    <!-- ZWIJANE SEKCJE -->
+    <mat-accordion multi="true">
 
-        <div *ngIf="actualOrders.length === 0" class="no-orders">Brak aktywnych zleceń</div>
+        <!-- Sekcja: Aktualne zlecenia -->
+        <mat-expansion-panel [expanded]="panelOpenState.actual">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Aktualne zlecenia ({{ actualOrders.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
 
-        <div
-                *ngFor="let order of filteredActualOrders; trackBy: trackByOrderId"
-                class="order-box"
-                [attr.data-order-id]="order.Id"
-                [ngClass]="{
-    'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
-    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
-    'new-order': isNewOrder(order.Id)
-  }"
-        >
-            <div class="order-header">
-                <h3>{{ order.City || 'Miasto nieznane' }}</h3>
-                <div class="order-header-tags">
-                    <span *ngIf="!isQuickPickup(order)" class="zone-badge">{{ formatZone(order.Zone).toUpperCase() }}</span>
-                    <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
-                    <span class="status">{{ order.Status || 'brak' }}</span>
-                </div>
-            </div>
-            <div class="order-meta">
-                <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
-            </div>
-            <div class="order-content">
-                <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
-                <p><strong>Z:</strong> {{ order.From }}</p>
-                <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
-                <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
-                <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
-                <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
-                <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
-                <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
-                <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                <mat-expansion-panel
-                    class="history-panel"
-                    [expanded]="isHistoryOpen(order.Id)"
-                    [disabled]="!order._lastOrders?.length"
-                    *ngIf="!isQuickPickup(order)"
-                    (opened)="setHistoryOpen(order.Id, true)"
-                    (closed)="setHistoryOpen(order.Id, false)">
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            📞 Ostatnie 3 zlecenia dla tego numeru
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
+            <div *ngIf="actualOrders.length === 0" class="no-orders">Brak aktywnych zleceń</div>
 
-                    <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlock">
-                        <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
-                            <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
-                                | {{ prev.From }} → {{ prev.Destination }}
-                            </p>
-                        </div>
-                    </ng-container>
-                    <ng-template #historyPlaceholdersBlock>
-                        <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
-                            <p>➡️ 0000-00-00 00:00 | -- → --</p>
-                        </div>
-                    </ng-template>
-                </mat-expansion-panel>
-                <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
-                    Anuluj
-                </button>
-            </div>
-        </div>
-    </mat-expansion-panel>
-
-    <!-- Sekcja: Terminy na dziś -->
-    <div class="orders-section">
-        <div class="orders-section-header">Terminy na dziś ({{ todayOrders.length }})</div>
-        <div *ngIf="!isLoading; else loading">
             <div
-                *ngFor="let order of filteredTodayOrders; trackBy: trackByOrderId"
-                class="order-box"
-                [attr.data-order-id]="order.Id"
-                [ngClass]="{
+                    *ngFor="let order of filteredActualOrders; trackBy: trackByOrderId"
+                    class="order-box"
+                    [attr.data-order-id]="order.Id"
+                    [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
     'new-order': isNewOrder(order.Id)
@@ -109,7 +44,6 @@
                 <div class="order-header">
                     <h3>{{ order.City || 'Miasto nieznane' }}</h3>
                     <div class="order-header-tags">
-                        <span *ngIf="!isQuickPickup(order)" class="zone-badge">{{ formatZone(order.Zone).toUpperCase() }}</span>
                         <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
                         <span class="status">{{ order.Status || 'brak' }}</span>
                     </div>
@@ -131,7 +65,6 @@
                         class="history-panel"
                         [expanded]="isHistoryOpen(order.Id)"
                         [disabled]="!order._lastOrders?.length"
-                        *ngIf="!isQuickPickup(order)"
                         (opened)="setHistoryOpen(order.Id, true)"
                         (closed)="setHistoryOpen(order.Id, false)">
                         <mat-expansion-panel-header>
@@ -140,14 +73,14 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
 
-                        <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlockToday">
+                        <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlock">
                             <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
                                 <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
                                     | {{ prev.From }} → {{ prev.Destination }}
                                 </p>
                             </div>
                         </ng-container>
-                        <ng-template #historyPlaceholdersBlockToday>
+                        <ng-template #historyPlaceholdersBlock>
                             <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
                                 <p>➡️ 0000-00-00 00:00 | -- → --</p>
                             </div>
@@ -158,27 +91,28 @@
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
+        </mat-expansion-panel>
 
-    <!-- Sekcja: Terminy na kolejne 5 dni -->
-    <div class="orders-section">
-        <div class="orders-section-header">Terminy na następne 5 dni ({{ ordersForNext5Days.length }})</div>
-        <div *ngIf="!isLoading; else loading">
-            <div
-                *ngFor="let order of filteredOrdersForNext5Days; trackBy: trackByOrderId"
-                class="order-box"
-                [attr.data-order-id]="order.Id"
-                [ngClass]="{
+        <!-- Sekcja: Terminy na dziś -->
+        <mat-expansion-panel [expanded]="panelOpenState.today">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Terminy na dziś ({{ todayOrders.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngIf="!isLoading; else loading">
+                <div
+                        *ngFor="let order of filteredTodayOrders; trackBy: trackByOrderId"
+                        class="order-box"
+                        [attr.data-order-id]="order.Id"
+                    [ngClass]="{
     'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
     'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
     'new-order': isNewOrder(order.Id)
   }"
-            >
-                <div class="order-header">
-                    <h3>{{ order.City || 'Miasto nieznane' }}</h3>
+                >
+                    <div class="order-header">
+                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
                     <div class="order-header-tags">
-                        <span *ngIf="!isQuickPickup(order)" class="zone-badge">{{ formatZone(order.Zone).toUpperCase() }}</span>
                         <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
                         <span class="status">{{ order.Status || 'brak' }}</span>
                     </div>
@@ -187,48 +121,119 @@
                     <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
                 </div>
                 <div class="order-content">
-                    <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
-                    <p><strong>Z:</strong> {{ order.From }}</p>
-                    <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
-                    <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
-                    <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
-                    <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
-                    <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
-                    <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
-                    <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
-                    <mat-expansion-panel
-                        class="history-panel"
-                        [expanded]="isHistoryOpen(order.Id)"
-                        [disabled]="!order._lastOrders?.length"
-                        *ngIf="!isQuickPickup(order)"
-                        (opened)="setHistoryOpen(order.Id, true)"
-                        (closed)="setHistoryOpen(order.Id, false)">
-                        <mat-expansion-panel-header>
-                            <mat-panel-title>
-                                📞 Ostatnie 3 zlecenia dla tego numeru
-                            </mat-panel-title>
-                        </mat-expansion-panel-header>
+                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
+                        <p><strong>Z:</strong> {{ order.From }}</p>
+                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
+                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
+                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
+                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
+                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
+                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
+                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                        <mat-expansion-panel
+                            class="history-panel"
+                            [expanded]="isHistoryOpen(order.Id)"
+                            [disabled]="!order._lastOrders?.length"
+                            (opened)="setHistoryOpen(order.Id, true)"
+                            (closed)="setHistoryOpen(order.Id, false)">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    📞 Ostatnie 3 zlecenia dla tego numeru
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
 
-                        <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlockNext5">
-                            <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
-                                <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
-                                    | {{ prev.From }} → {{ prev.Destination }}
-                                </p>
-                            </div>
-                        </ng-container>
-                        <ng-template #historyPlaceholdersBlockNext5>
-                            <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
-                                <p>➡️ 0000-00-00 00:00 | -- → --</p>
-                            </div>
-                        </ng-template>
-                    </mat-expansion-panel>
-                    <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
-                        Anuluj
-                    </button>
+                            <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlockToday">
+                                <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
+                                    <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                        | {{ prev.From }} → {{ prev.Destination }}
+                                    </p>
+                                </div>
+                            </ng-container>
+                            <ng-template #historyPlaceholdersBlockToday>
+                                <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
+                                    <p>➡️ 0000-00-00 00:00 | -- → --</p>
+                                </div>
+                            </ng-template>
+                        </mat-expansion-panel>
+                        <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
+                            Anuluj
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </mat-expansion-panel>
+
+        <!-- Sekcja: Terminy na kolejne 5 dni -->
+        <mat-expansion-panel [expanded]="panelOpenState.next5days">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Terminy na następne 5 dni ({{ ordersForNext5Days.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngIf="!isLoading; else loading">
+                <div
+                    *ngFor="let order of filteredOrdersForNext5Days; trackBy: trackByOrderId"
+                    class="order-box"
+                    [attr.data-order-id]="order.Id"
+                    [ngClass]="{
+    'airport-order': order.From && (order.From.toLowerCase().includes('lotnisko') || order.From.toLowerCase().includes('juliusza słowackiego 200')),
+    'non-gdansk-order': order.City && order.City.toLowerCase() !== 'gdańsk',
+    'new-order': isNewOrder(order.Id)
+  }"
+            >
+                    <div class="order-header">
+                        <h3>{{ order.City || 'Miasto nieznane' }}</h3>
+                    <div class="order-header-tags">
+                        <span *ngIf="isNewOrder(order.Id)" class="new-badge">NOWE</span>
+                        <span class="status">{{ order.Status || 'brak' }}</span>
+                    </div>
+                </div>
+                <div class="order-meta">
+                    <span class="created-badge">{{ formatCreatedAt(order.CreatedAt) }}</span>
+                </div>
+                <div class="order-content">
+                        <p><strong>Adres:</strong> {{ order.Street || 'brak' }} {{ order.House || '' }}</p>
+                        <p><strong>Z:</strong> {{ order.From }}</p>
+                        <p><strong>Do:</strong> {{ order.Destination || 'brak' }}</p>
+                        <p><strong>Przyjazd:</strong> {{ formatDate(order.PlannedArrivalDate) }}</p>
+                        <p><strong>📞</strong> {{ order.PhoneNumber || 'brak' }}</p>
+                        <p><strong>🚕</strong> {{ order.TaxiNumber || 'brak' }} | 👥 {{ order.PassengersCount || '?' }}</p>
+                        <p><strong>Firma:</strong> {{ order.CompanyName || 'brak' }}</p>
+                        <p><strong>💰</strong> {{ order.Price ? order.Price + ' zł' : 'brak' }}</p>
+                        <p *ngIf="order.Notes"><strong>📝</strong> {{ order.Notes }}</p>
+                        <mat-expansion-panel
+                            class="history-panel"
+                            [expanded]="isHistoryOpen(order.Id)"
+                            [disabled]="!order._lastOrders?.length"
+                            (opened)="setHistoryOpen(order.Id, true)"
+                            (closed)="setHistoryOpen(order.Id, false)">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    📞 Ostatnie 3 zlecenia dla tego numeru
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <ng-container *ngIf="order._lastOrders?.length; else historyPlaceholdersBlockNext5">
+                                <div *ngFor="let prev of order._lastOrders; trackBy: trackByOrderId" class="history-item">
+                                    <p>➡️ {{ formatDate(prev.PlannedArrivalDate) }}
+                                        | {{ prev.From }} → {{ prev.Destination }}
+                                    </p>
+                                </div>
+                            </ng-container>
+                            <ng-template #historyPlaceholdersBlockNext5>
+                                <div *ngFor="let _ of historyPlaceholders" class="history-item history-placeholder">
+                                    <p>➡️ 0000-00-00 00:00 | -- → --</p>
+                                </div>
+                            </ng-template>
+                        </mat-expansion-panel>
+                        <button mat-stroked-button color="warn" (click)="confirmCancel(order)">
+                            Anuluj
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+    </mat-accordion>
 
     <mat-expansion-panel class="history-orders-panel">
         <mat-expansion-panel-header>
@@ -297,7 +302,6 @@
                     <div class="order-header">
                         <h3>{{ order.City || 'Miasto nieznane' }}</h3>
                         <div class="order-header-tags">
-                            <span *ngIf="!isQuickPickup(order)" class="zone-badge">{{ formatZone(order.Zone).toUpperCase() }}</span>
                             <span class="status">{{ order.Status || 'brak' }}</span>
                         </div>
                     </div>

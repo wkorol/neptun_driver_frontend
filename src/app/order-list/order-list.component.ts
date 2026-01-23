@@ -17,8 +17,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from "@angular/material/input";
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from "@angular/forms";
-import { GoogleGeocodingService } from "../services/google-geocoding.service";
-import { ZoneLookupService } from "../services/zone-lookup.service";
 
 @Component({
     selector: 'app-order-list',
@@ -53,7 +51,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     sessionChecked = false;
     private eventSource: EventSource | null = null;
     private realtimeReloadHandle: ReturnType<typeof setTimeout> | null = null;
-    private pollingHandle: ReturnType<typeof setInterval> | null = null;
     private readonly realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream`;
     private historyOpenIds = new Set<number>();
     private knownOrderIds = new Set<number>();
@@ -62,46 +59,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     private hasLoadedOnce = false;
     private lastOrdersById = new Map<number, Order[]>();
     private pendingScrollRestore: { anchor: { id: number | null; offset: number }; scrollY: number; attempts: number } | null = null;
-    private addressZoneCache = new Map<string, number | null>();
-    private addressGeoCache = new Map<string, { lat: number; lng: number } | null>();
-    private orderZoneById = new Map<number, number | null>();
-    private zoneLookupReady = false;
-    private geocodeQueue: Array<{ address: string; resolve: (coords: { lat: number; lng: number } | null) => void }> = [];
-    private geocodeInFlight = 0;
-    private readonly geocodeConcurrency = 2;
-    private geocodePromises = new Map<string, Promise<{ lat: number; lng: number } | null>>();
-    private pendingGeocodeAddresses = new Set<string>();
-    private readonly maxGeocodePerRun = 20;
-    private pendingAssignHandle: ReturnType<typeof setTimeout> | null = null;
-    private persistHandle: ReturnType<typeof setTimeout> | null = null;
-    private cacheDirty = false;
-    private pendingZoneUpdates = new Map<number, { order: Order; zoneId: number | null }>();
-    private zoneFlushHandle: ReturnType<typeof setTimeout> | null = null;
-    private readonly geoCacheKey = 'zone-geo-cache-v1';
-    private readonly zoneCacheKey = 'zone-by-address-cache-v1';
-    private readonly geocodeBounds = {
-        north: 54.6,
-        south: 54.2,
-        east: 18.9,
-        west: 18.2
-    };
-    private filterCache = {
-        term: '',
-        todayRef: null as Order[] | null,
-        actualRef: null as Order[] | null,
-        nextRef: null as Order[] | null,
-        today: [] as Order[],
-        actual: [] as Order[],
-        next: [] as Order[]
-    };
-    private groupCache = {
-        term: '',
-        todayRef: null as Order[] | null,
-        nextRef: null as Order[] | null,
-        today: [] as Array<{ zoneId: number | null; label: string; orders: Order[] }>,
-        next: [] as Array<{ zoneId: number | null; label: string; orders: Order[] }>
-    };
-    zonesEnabled = true;
     historyOrders: Order[] = [];
     historyDate = '';
     historyPage = 1;
@@ -111,14 +68,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     historyLoading = false;
     historyPlaceholders = [0, 1, 2];
 
-    constructor(
-        private authService: MamTaxiAuthService,
-        private zone: NgZone,
-        private geocodingService: GoogleGeocodingService,
-        private zoneLookup: ZoneLookupService
-    ) {
-        this.loadCachesFromStorage();
-    }
+    constructor(private authService: MamTaxiAuthService, private zone: NgZone) {}
 
     /** 🔥 phone → list of externalIds to exclude */
     private buildPhonesPayload(orders: Order[]) {
@@ -173,29 +123,18 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.panelOpenState.actual = hasSearch && this.filteredActualOrders.length > 0;
         this.panelOpenState.today = hasSearch && this.filteredTodayOrders.length > 0;
         this.panelOpenState.next5days = hasSearch && this.filteredOrdersForNext5Days.length > 0;
-
-        this.invalidateFilterCaches();
     }
 
-
     get filteredActualOrders(): Order[] {
-        return this.getFilteredOrders('actual');
+        return this.filterOrders(this.actualOrders);
     }
 
     get filteredTodayOrders(): Order[] {
-        return this.getFilteredOrders('today');
+        return this.filterOrders(this.todayOrders);
     }
 
     get filteredOrdersForNext5Days(): Order[] {
-        return this.getFilteredOrders('next');
-    }
-
-    get groupedTodayOrders() {
-        return this.getGroupedOrders('today');
-    }
-
-    get groupedOrdersForNext5Days() {
-        return this.getGroupedOrders('next');
+        return this.filterOrders(this.ordersForNext5Days);
     }
 
     private fieldsToSearch = [
@@ -216,84 +155,8 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         );
     }
 
-    private getFilteredOrders(kind: 'today' | 'actual' | 'next'): Order[] {
-        const term = this.searchTerm.trim().toLowerCase();
-        if (kind === 'today') {
-            if (this.filterCache.term === term && this.filterCache.todayRef === this.todayOrders) {
-                return this.filterCache.today;
-            }
-            const filtered = term ? this.filterOrders(this.todayOrders) : this.todayOrders;
-            this.filterCache.term = term;
-            this.filterCache.todayRef = this.todayOrders;
-            this.filterCache.today = filtered;
-            return filtered;
-        }
-        if (kind === 'actual') {
-            if (this.filterCache.term === term && this.filterCache.actualRef === this.actualOrders) {
-                return this.filterCache.actual;
-            }
-            const filtered = term ? this.filterOrders(this.actualOrders) : this.actualOrders;
-            this.filterCache.term = term;
-            this.filterCache.actualRef = this.actualOrders;
-            this.filterCache.actual = filtered;
-            return filtered;
-        }
-        if (this.filterCache.term === term && this.filterCache.nextRef === this.ordersForNext5Days) {
-            return this.filterCache.next;
-        }
-        const filtered = term ? this.filterOrders(this.ordersForNext5Days) : this.ordersForNext5Days;
-        this.filterCache.term = term;
-        this.filterCache.nextRef = this.ordersForNext5Days;
-        this.filterCache.next = filtered;
-        return filtered;
-    }
-
-    private getGroupedOrders(kind: 'today' | 'next') {
-        const term = this.searchTerm.trim().toLowerCase();
-        if (kind === 'today') {
-            if (this.groupCache.term === term && this.groupCache.todayRef === this.filterCache.today) {
-                return this.groupCache.today;
-            }
-            const grouped = this.groupOrdersByZone(this.getFilteredOrders('today'));
-            this.groupCache.term = term;
-            this.groupCache.todayRef = this.filterCache.today;
-            this.groupCache.today = grouped;
-            return grouped;
-        }
-
-        if (this.groupCache.term === term && this.groupCache.nextRef === this.filterCache.next) {
-            return this.groupCache.next;
-        }
-        const grouped = this.groupOrdersByZone(this.getFilteredOrders('next'));
-        this.groupCache.term = term;
-        this.groupCache.nextRef = this.filterCache.next;
-        this.groupCache.next = grouped;
-        return grouped;
-    }
-
-    private invalidateFilterCaches() {
-        this.filterCache.term = '';
-        this.filterCache.todayRef = null;
-        this.filterCache.actualRef = null;
-        this.filterCache.nextRef = null;
-        this.groupCache.term = '';
-        this.groupCache.todayRef = null;
-        this.groupCache.nextRef = null;
-    }
-
     ngOnInit(): void {
-        if (this.zonesEnabled) {
-            this.zoneLookup.ensureLoaded().then(() => {
-                this.zoneLookupReady = true;
-                this.assignZones([
-                    ...this.todayOrders,
-                    ...this.actualOrders,
-                    ...this.ordersForNext5Days
-                ]);
-            });
-        }
         this.startRealtime();
-        this.startPollingFallback();
 
         this.authService.checkSession().subscribe({
             next: (valid: boolean) => {
@@ -412,10 +275,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             clearTimeout(this.realtimeReloadHandle);
             this.realtimeReloadHandle = null;
         }
-        if (this.pollingHandle) {
-            clearInterval(this.pollingHandle);
-            this.pollingHandle = null;
-        }
     }
 
     ngAfterViewChecked(): void {
@@ -460,7 +319,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 this.todayOrders = this.sortScheduledOrders(today);
                 this.actualOrders = this.sortActualOrders(actual);
                 this.ordersForNext5Days = this.sortScheduledOrders(next5);
-                this.invalidateFilterCaches();
 
                 const allOrders = [
                     ...this.todayOrders,
@@ -480,10 +338,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                     !this.lastOrdersById.has(order.Id) && !order._lastOrders
                 );
                 this.loadPhoneHistories(ordersMissingHistory, preserveScroll);
-
-                if (this.zonesEnabled) {
-                    this.assignZones(allOrders);
-                }
                 if (setLoading) {
                     this.isLoading = false;
                 }
@@ -499,265 +353,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
             }
         });
-    }
-
-    formatZone(zoneId?: number | null): string {
-        if (zoneId === null || zoneId === undefined) return 'brak';
-        return `Rejon ${zoneId}`;
-    }
-
-    isQuickPickup(order: Order): boolean {
-        return !!order.From && order.From.toLowerCase().includes('szybka łapka');
-    }
-
-    private groupOrdersByZone(orders: Order[]) {
-        const groups = new Map<string, { zoneId: number | null; label: string; orders: Order[]; earliestTs: number }>();
-
-        orders.forEach(order => {
-            const zoneId = order.Zone ?? null;
-            const label = zoneId === null ? 'Rejon ?' : `Rejon ${zoneId}`;
-            const key = zoneId === null ? 'unknown' : String(zoneId);
-
-            if (!groups.has(key)) {
-                groups.set(key, { zoneId, label, orders: [], earliestTs: Number.POSITIVE_INFINITY });
-            }
-            const group = groups.get(key)!;
-            group.orders.push(order);
-            const ts = this.getOrderTimestamp(order);
-            if (ts < group.earliestTs) {
-                group.earliestTs = ts;
-            }
-        });
-
-        const result = Array.from(groups.values());
-        result.sort((a, b) => {
-            if (a.earliestTs !== b.earliestTs) return a.earliestTs - b.earliestTs;
-            if (a.zoneId === null && b.zoneId !== null) return 1;
-            if (a.zoneId !== null && b.zoneId === null) return -1;
-            return (a.zoneId ?? 0) - (b.zoneId ?? 0);
-        });
-        return result;
-    }
-
-    private getOrderTimestamp(order: Order): number {
-        const planned = order.PlannedArrivalDate ? this.parseDateValue(order.PlannedArrivalDate) : null;
-        if (planned !== null) return planned;
-        const created = order.CreatedAt ? this.parseDateValue(order.CreatedAt) : null;
-        return created ?? Number.POSITIVE_INFINITY;
-    }
-
-    private parseDateValue(value: string | Date | { date?: string } | number): number | null {
-        if (!value) return null;
-        if (value instanceof Date) return value.getTime();
-        if (typeof value === 'number') return value;
-        if (typeof value === 'string') {
-            const parsed = Date.parse(value);
-            return Number.isNaN(parsed) ? null : parsed;
-        }
-        if (typeof value === 'object' && value.date) {
-            const parsed = Date.parse(value.date);
-            return Number.isNaN(parsed) ? null : parsed;
-        }
-        return null;
-    }
-
-    private async assignZones(orders: Order[]) {
-        if (!orders.length) return;
-        if (!this.zoneLookupReady) {
-            await this.zoneLookup.ensureLoaded();
-            this.zoneLookupReady = true;
-        }
-
-        let queuedThisRun = 0;
-
-        for (const order of orders) {
-            if (this.orderZoneById.has(order.Id)) {
-                order.Zone = this.orderZoneById.get(order.Id) ?? null;
-                continue;
-            }
-
-            const address = this.buildPickupAddress(order);
-            if (!address) {
-                this.setOrderZone(order, null);
-                continue;
-            }
-
-            if (this.addressZoneCache.has(address)) {
-                this.setOrderZone(order, this.addressZoneCache.get(address) ?? null);
-                continue;
-            }
-
-            if (this.pendingGeocodeAddresses.has(address)) continue;
-            if (queuedThisRun >= this.maxGeocodePerRun) {
-                this.scheduleDeferredAssign(orders);
-                break;
-            }
-
-            this.pendingGeocodeAddresses.add(address);
-            queuedThisRun += 1;
-
-            this.enqueueGeocode(address).then(coords => {
-                this.pendingGeocodeAddresses.delete(address);
-                console.log('[ZoneLookup] geocode', { address, coords });
-                if (!coords) {
-                    this.addressZoneCache.set(address, null);
-                    this.schedulePersistCaches();
-                    this.setOrderZone(order, null);
-                    return;
-                }
-
-                let zoneId = this.zoneLookup.getZoneForPoint(coords.lat, coords.lng);
-                if (zoneId === null) {
-                    zoneId = this.zoneLookup.getNearestZoneForPoint(coords.lat, coords.lng);
-                }
-                console.log('[ZoneLookup] match', { address, coords, zoneId });
-                this.addressZoneCache.set(address, zoneId);
-                this.schedulePersistCaches();
-                this.setOrderZone(order, zoneId);
-            });
-        }
-    }
-
-    private setOrderZone(order: Order, zoneId: number | null) {
-        this.orderZoneById.set(order.Id, zoneId);
-        this.pendingZoneUpdates.set(order.Id, { order, zoneId });
-        this.scheduleZoneFlush();
-    }
-
-    private scheduleZoneFlush() {
-        if (this.zoneFlushHandle) return;
-        this.zoneFlushHandle = setTimeout(() => {
-            this.zoneFlushHandle = null;
-            const updates = Array.from(this.pendingZoneUpdates.values());
-            this.pendingZoneUpdates.clear();
-            if (!updates.length) return;
-            this.zone.run(() => {
-                updates.forEach(({ order, zoneId }) => {
-                    order.Zone = zoneId;
-                });
-            });
-        }, 250);
-    }
-
-    private buildPickupAddress(order: Order): string {
-        const from = (order.From || '').trim();
-        const street = [order.Street, order.House].filter(Boolean).join(' ').trim();
-        const city = (order.City || '').trim();
-
-        let address = '';
-
-        if (street && city) {
-            address = `${street}, ${city}`;
-        } else if (street) {
-            address = street;
-        } else {
-            address = from;
-        }
-
-        if (city && address && !address.toLowerCase().includes(city.toLowerCase())) {
-            address = `${address}, ${city}`;
-        } else if (!address && city) {
-            address = city;
-        }
-
-        return address;
-    }
-
-    private enqueueGeocode(address: string): Promise<{ lat: number; lng: number } | null> {
-        const cached = this.addressGeoCache.get(address);
-        if (cached !== undefined) {
-            return Promise.resolve(cached);
-        }
-
-        const existing = this.geocodePromises.get(address);
-        if (existing) return existing;
-
-        const promise = new Promise<{ lat: number; lng: number } | null>(resolve => {
-            this.geocodeQueue.push({ address, resolve });
-            this.processGeocodeQueue();
-        });
-
-        this.geocodePromises.set(address, promise);
-        return promise;
-    }
-
-    private processGeocodeQueue() {
-        if (this.geocodeInFlight >= this.geocodeConcurrency) return;
-
-        while (this.geocodeInFlight < this.geocodeConcurrency && this.geocodeQueue.length > 0) {
-            const job = this.geocodeQueue.shift();
-            if (!job) return;
-
-            this.geocodeInFlight += 1;
-            this.geocodingService
-                .geocodeAddress(job.address, { bounds: this.geocodeBounds, region: 'pl' })
-                .then(coords => {
-                    this.addressGeoCache.set(job.address, coords);
-                    this.schedulePersistCaches();
-                    job.resolve(coords);
-                })
-                .catch(() => {
-                    this.addressGeoCache.set(job.address, null);
-                    this.schedulePersistCaches();
-                    job.resolve(null);
-                })
-                .finally(() => {
-                    this.geocodeInFlight -= 1;
-                    this.geocodePromises.delete(job.address);
-                    setTimeout(() => this.processGeocodeQueue(), 0);
-                });
-        }
-    }
-
-    private scheduleDeferredAssign(orders: Order[]) {
-        if (this.pendingAssignHandle) return;
-        this.pendingAssignHandle = setTimeout(() => {
-            this.pendingAssignHandle = null;
-            this.assignZones(orders);
-        }, 1000);
-    }
-
-    private loadCachesFromStorage() {
-        try {
-            const geoRaw = localStorage.getItem(this.geoCacheKey);
-            if (geoRaw) {
-                const parsed = JSON.parse(geoRaw) as Record<string, { lat: number; lng: number } | null>;
-                Object.entries(parsed).forEach(([key, value]) => this.addressGeoCache.set(key, value));
-            }
-        } catch (err) {
-            console.warn('[ZoneLookup] Failed to load geo cache', err);
-        }
-
-        try {
-            const zoneRaw = localStorage.getItem(this.zoneCacheKey);
-            if (zoneRaw) {
-                const parsed = JSON.parse(zoneRaw) as Record<string, number | null>;
-                Object.entries(parsed).forEach(([key, value]) => this.addressZoneCache.set(key, value));
-            }
-        } catch (err) {
-            console.warn('[ZoneLookup] Failed to load zone cache', err);
-        }
-    }
-
-    private schedulePersistCaches() {
-        this.cacheDirty = true;
-        if (this.persistHandle) return;
-        this.persistHandle = setTimeout(() => {
-            this.persistHandle = null;
-            if (!this.cacheDirty) return;
-            this.cacheDirty = false;
-            try {
-                const geoObj: Record<string, { lat: number; lng: number } | null> = {};
-                for (const [key, value] of this.addressGeoCache.entries()) geoObj[key] = value;
-                localStorage.setItem(this.geoCacheKey, JSON.stringify(geoObj));
-            } catch {}
-
-            try {
-                const zoneObj: Record<string, number | null> = {};
-                for (const [key, value] of this.addressZoneCache.entries()) zoneObj[key] = value;
-                localStorage.setItem(this.zoneCacheKey, JSON.stringify(zoneObj));
-            } catch {}
-        }, 2000);
     }
 
     private loadHistory(page: number) {
@@ -796,13 +391,6 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             if (!this.eventSource) return;
             console.warn('SSE connection error. Browser will retry automatically.');
         };
-    }
-
-    private startPollingFallback() {
-        if (this.pollingHandle) return;
-        this.pollingHandle = setInterval(() => {
-            this.reloadOrders(false, false);
-        }, 2000);
     }
 
     private scheduleRealtimeReload() {

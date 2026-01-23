@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class GoogleGeocodingService {
-    geocodeAddress(address: string, options?: { bounds?: google.maps.LatLngBoundsLiteral; region?: string }): Promise<google.maps.LatLngLiteral | null> {
+    geocodeAddress(address: string): Promise<google.maps.LatLngLiteral | null> {
         const geocoder = new google.maps.Geocoder();
         return new Promise((resolve) => {
-            geocoder.geocode({ address, bounds: options?.bounds, region: options?.region }, (results, status) => {
+            geocoder.geocode({ address }, (results, status) => {
                 if (status === 'OK' && results?.[0]) {
                     const location = results[0].geometry.location;
                     resolve({ lat: location.lat(), lng: location.lng() });
