@@ -14,5 +14,6 @@ export interface Order {
     CompanyName?: string;
     Price?: number;
     PassengersCount?: number;
+    Zone?: number | null;
     _lastOrders?: Order[];
 }
