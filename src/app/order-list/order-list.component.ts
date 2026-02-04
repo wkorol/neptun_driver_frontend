@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from "@angular/material/input";
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
     selector: 'app-order-list',
@@ -51,7 +52,9 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     sessionChecked = false;
     private eventSource: EventSource | null = null;
     private realtimeReloadHandle: ReturnType<typeof setTimeout> | null = null;
-    private readonly realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream`;
+    private realtimeUrl = '';
+    private orderListToken: string | null = null;
+    private isPublicAccess = false;
     private historyOpenIds = new Set<number>();
     private knownOrderIds = new Set<number>();
     private seenOrderIds = new Set<number>();
@@ -68,7 +71,12 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     historyLoading = false;
     historyPlaceholders = [0, 1, 2];
 
-    constructor(private authService: MamTaxiAuthService, private zone: NgZone) {}
+    constructor(
+        private authService: MamTaxiAuthService,
+        private zone: NgZone,
+        private route: ActivatedRoute,
+        private router: Router
+    ) {}
 
     /** 🔥 phone → list of externalIds to exclude */
     private buildPhonesPayload(orders: Order[]) {
@@ -105,7 +113,10 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                     requestAnimationFrame(() => this.restoreScrollState(scrollState));
                 }
             },
-            error: err => console.error("Batch history error:", err)
+            error: err => {
+                if (this.handleForbidden(err)) return;
+                console.error("Batch history error:", err);
+            }
         });
     }
 
@@ -156,10 +167,33 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngOnInit(): void {
+        const routeToken = this.route.snapshot.paramMap.get('token');
+        const queryToken = this.route.snapshot.queryParamMap.get('token');
+        const routePath = this.route.snapshot.routeConfig?.path;
+        this.isPublicAccess = routePath === '3f9b0e1b-1616-4be0-962b-aa63409d4650';
+        const token = (routeToken || queryToken || '').trim() || null;
+        this.orderListToken = token;
+        this.authService.setOrderListToken(token);
+        this.authService.setOrderListPublicToken(this.isPublicAccess ? '3f9b0e1b-1616-4be0-962b-aa63409d4650' : null);
+
+        if (!token && !this.isPublicAccess) {
+            this.redirectToEmpty();
+            return;
+        }
+
+        if (this.isPublicAccess) {
+            this.realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream?publicToken=3f9b0e1b-1616-4be0-962b-aa63409d4650`;
+        } else if (token) {
+            this.realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream?token=${encodeURIComponent(token)}`;
+        }
         this.startRealtime();
 
         this.authService.checkSession().subscribe({
             next: (valid: boolean) => {
+                if (!valid) {
+                    this.redirectToEmpty();
+                    return;
+                }
                 this.isAuthenticated = valid;
                 this.sessionChecked = true;
 
@@ -167,7 +201,8 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                     this.import(5);
                 }
             },
-            error: () => {
+            error: (err) => {
+                if (this.handleForbidden(err)) return;
                 this.isAuthenticated = false;
                 this.sessionChecked = true;
             }
@@ -256,6 +291,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 this.reloadOrders(true, true);
             },
             error: err => {
+                if (this.handleForbidden(err)) return;
                 console.error('Import error', err);
                 this.isLoading = false;
                 if (err.status === 401) {
@@ -347,6 +383,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
             },
             error: err => {
+                if (this.handleForbidden(err)) return;
                 console.error("Error loading orders:", err);
                 if (setLoading) {
                     this.isLoading = false;
@@ -366,6 +403,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 this.historyPage = response.page || page;
             },
             error: err => {
+                if (this.handleForbidden(err)) return;
                 console.error('Error loading history:', err);
             },
             complete: () => {
@@ -375,6 +413,8 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     private startRealtime() {
+        if (!this.orderListToken) return;
+        if (!this.realtimeUrl) return;
         if (this.eventSource) return;
         if (typeof EventSource === 'undefined') {
             console.warn('EventSource is not supported in this browser.');
@@ -531,5 +571,17 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         const normalized = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
         const time = Date.parse(normalized);
         return Number.isFinite(time) ? time : missing;
+    }
+
+    private handleForbidden(err: any): boolean {
+        if (err && err.status === 403) {
+            this.redirectToEmpty();
+            return true;
+        }
+        return false;
+    }
+
+    private redirectToEmpty() {
+        this.router.navigate(['/']);
     }
 }

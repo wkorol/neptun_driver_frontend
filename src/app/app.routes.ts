@@ -37,11 +37,12 @@ export const routes: Routes = [
     { path: 'uslugi-dodatkowe', component: AdditionalServicesComponent },
     { path: 'jarmark', component: MarketInfoComponent },
     { path: 'admin', component: AdminPanelComponent },
-    { path: 'a7275ba5-4158-4e6b-b444-218bb44076e1', component: OrderListComponent },
     {path: 'taxii', component: TaxiFormComponent},
     {path: 'driver', component: DriverStatusComponent},
     {path: 'doplata', component: SendSocketMessageComponent},
     {path: 'sol-marina', component: SolMarinaMapComponent},
+    { path: '3f9b0e1b-1616-4be0-962b-aa63409d4650', component: OrderListComponent },
+    { path: ':token', component: OrderListComponent },
 
 ];
 
