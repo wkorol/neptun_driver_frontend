@@ -106,8 +106,10 @@ export class HotelListComponent implements OnInit, OnDestroy {
       return this.hotels;
     }
 
+    const normalizedTerm = term.toLowerCase();
     const filtered = this.hotels.filter(hotel =>
-        hotel.name.toLowerCase().includes(term.toLowerCase())
+        hotel.name.toLowerCase().includes(normalizedTerm) ||
+        (hotel.oldName ?? '').toLowerCase().includes(normalizedTerm)
     );
 
     console.log('Filtered Hotels:', filtered);

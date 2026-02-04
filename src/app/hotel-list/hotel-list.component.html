@@ -4,8 +4,13 @@
             class="hotel-card"
             (click)="viewHotelDetails(hotel.id)">
         <mat-card-header>
-            <mat-card-title>{{ hotel?.name }}</mat-card-title>
-            <mat-card-subtitle>Rejon: {{ hotel?.region?.name }}</mat-card-subtitle>
+            <div class="hotel-header-text">
+                <div *ngIf="hotel?.oldName" class="old-name-badge">
+                    Poprzednia nazwa: {{ hotel?.oldName }}
+                </div>
+                <mat-card-title>{{ hotel?.name }}</mat-card-title>
+                <mat-card-subtitle>Rejon: {{ hotel?.region?.name }}</mat-card-subtitle>
+            </div>
         </mat-card-header>
 
         <mat-card-content>
@@ -17,5 +22,3 @@
         <button mat-raised-button (click)="goBack()">Powrót</button>
     </div>
 </div>
-
-

@@ -104,10 +104,30 @@
 }
 
 /* Sticky Header */
+.sticky-header {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
 .sticky-header h3 {
     font-size: 1.8rem;
     color: #333;
     margin: 0 0 10px;
+}
+
+.old-name-badge {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background-color: #ffe08a;
+    color: #4a3b00;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
 }
 
 /* Card color styles */

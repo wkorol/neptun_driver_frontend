@@ -8,6 +8,7 @@ import { apiConfig } from '../config/api.config';
 export interface Hotel {
   id: string;
   name: string;
+  oldName?: string | null;
   region:  Region;
   lump_sums: LumpSum;
   update_date: Date;

@@ -1,6 +1,9 @@
 <div class="centered-container">
     <div class="sticky-section">
         <div class="sticky-header">
+            <div *ngIf="hotel?.oldName" class="old-name-badge">
+                Poprzednia nazwa: {{ hotel?.oldName }}
+            </div>
             <h3>{{ hotel?.name }}</h3>
         </div>
         <div class="back-button">
