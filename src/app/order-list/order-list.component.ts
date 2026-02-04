@@ -413,7 +413,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     private startRealtime() {
-        if (!this.orderListToken) return;
+        if (!this.orderListToken && !this.isPublicAccess) return;
         if (!this.realtimeUrl) return;
         if (this.eventSource) return;
         if (typeof EventSource === 'undefined') {
