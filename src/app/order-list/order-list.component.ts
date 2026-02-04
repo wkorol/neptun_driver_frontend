@@ -52,6 +52,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     sessionChecked = false;
     private eventSource: EventSource | null = null;
     private realtimeReloadHandle: ReturnType<typeof setTimeout> | null = null;
+    private fallbackRefreshHandle: ReturnType<typeof setInterval> | null = null;
     private realtimeUrl = '';
     private orderListToken: string | null = null;
     private isPublicAccess = false;
@@ -187,6 +188,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.realtimeUrl = `${apiConfig.baseUrl}/api/orders/stream?token=${encodeURIComponent(token)}`;
         }
         this.startRealtime();
+        this.startFallbackRefresh();
 
         this.authService.checkSession().subscribe({
             next: (valid: boolean) => {
@@ -310,6 +312,10 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (this.realtimeReloadHandle) {
             clearTimeout(this.realtimeReloadHandle);
             this.realtimeReloadHandle = null;
+        }
+        if (this.fallbackRefreshHandle) {
+            clearInterval(this.fallbackRefreshHandle);
+            this.fallbackRefreshHandle = null;
         }
     }
 
@@ -439,6 +445,13 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.realtimeReloadHandle = null;
             this.reloadOrders(false, true);
         }, 500);
+    }
+
+    private startFallbackRefresh() {
+        if (this.fallbackRefreshHandle) return;
+        this.fallbackRefreshHandle = setInterval(() => {
+            this.reloadOrders(false, true);
+        }, 15000);
     }
 
     trackByOrderId(_index: number, order: Order): number {
