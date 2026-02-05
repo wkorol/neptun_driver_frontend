@@ -10,6 +10,7 @@ import { catchError, of, Subscription, timer, switchMap } from 'rxjs';
 import {FormsModule} from "@angular/forms";
 import {NgIf} from "@angular/common";
 import { apiConfig } from '../config/api.config';
+import { environment } from "../../environments/environment";
 
 interface TaxiStatus {
   TaxiNo: string;
@@ -37,6 +38,7 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
   center: google.maps.LatLngLiteral = { lat: 54.352025, lng: 18.646638 };
   zoom = 12;
   taxis: TaxiStatus[] = [];
+  ordersFetchingDisabled = environment.ordersFetchingDisabled;
   private latestSub?: Subscription;
   private refreshSub?: Subscription;
   private markers: google.maps.marker.AdvancedMarkerElement[] = [];
@@ -51,13 +53,15 @@ export class DriverStatusComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    if (this.ordersFetchingDisabled) {
+      return;
+    }
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
       center: this.center,
       zoom: this.zoom,
       disableDefaultUI: true,
       mapId: '63516a0a42b74a67?v=1337'
     });
-
 
     // Trigger cache refresh once
     this.http.get(`${this.baseUrl}/api/proxy/drivers/status`)
