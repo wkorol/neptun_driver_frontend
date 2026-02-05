@@ -18,6 +18,7 @@ import { MatInput } from "@angular/material/input";
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { environment } from "../../environments/environment";
 
 @Component({
     selector: 'app-order-list',
@@ -43,6 +44,7 @@ import { ActivatedRoute, Router } from "@angular/router";
     styleUrl: './order-list.component.css'
 })
 export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
+    ordersFetchingDisabled = environment.ordersFetchingDisabled;
     todayOrders: Order[] = [];
     actualOrders: Order[] = [];
     ordersForNext5Days: Order[] = [];
@@ -96,6 +98,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     /** 🔥 Jeden BATCH request */
     private loadPhoneHistories(orders: Order[], preserveScroll = false) {
+        if (this.ordersFetchingDisabled) return;
         const payload = this.buildPhonesPayload(orders);
         if (!Object.keys(payload).length) return;
 
@@ -168,6 +171,11 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngOnInit(): void {
+        if (this.ordersFetchingDisabled) {
+            this.sessionChecked = true;
+            this.message = 'Pobieranie zleceń jest tymczasowo wyłączone.';
+            return;
+        }
         const routeToken = this.route.snapshot.paramMap.get('token');
         const queryToken = this.route.snapshot.queryParamMap.get('token');
         const routePath = this.route.snapshot.routeConfig?.path;
@@ -286,6 +294,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     import(howMany: number) {
+        if (this.ordersFetchingDisabled) return;
         this.message = '';
 
         this.authService.importOrders(howMany).subscribe({
@@ -329,6 +338,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     private reloadOrders(setLoading = false, preserveScroll = false) {
+        if (this.ordersFetchingDisabled) return;
         if (setLoading) {
             this.isLoading = true;
         }
@@ -399,6 +409,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     private loadHistory(page: number) {
+        if (this.ordersFetchingDisabled) return;
         if (!this.historyDate) return;
         this.historyLoading = true;
 
@@ -419,6 +430,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     private startRealtime() {
+        if (this.ordersFetchingDisabled) return;
         if (!this.orderListToken && !this.isPublicAccess) return;
         if (!this.realtimeUrl) return;
         if (this.eventSource) return;

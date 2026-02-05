@@ -19,6 +19,9 @@
         </mat-form-field>
     </div>
 
+    <div *ngIf="ordersFetchingDisabled" class="no-orders">
+        Pobieranie zleceń jest tymczasowo wyłączone.
+    </div>
 
     <!-- ZWIJANE SEKCJE -->
     <mat-accordion multi="true">
