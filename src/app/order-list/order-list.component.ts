@@ -55,7 +55,11 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     private eventSource: EventSource | null = null;
     private realtimeReloadHandle: ReturnType<typeof setTimeout> | null = null;
     private fallbackRefreshHandle: ReturnType<typeof setInterval> | null = null;
+    private sseReconnectHandle: ReturnType<typeof setTimeout> | null = null;
+    private sseReconnectDelay = 1000;
+    private readonly SSE_MAX_RECONNECT_DELAY = 30000;
     private realtimeUrl = '';
+    private visibilityHandler: (() => void) | null = null;
     private orderListToken: string | null = null;
     private isPublicAccess = false;
     private historyOpenIds = new Set<number>();
@@ -200,7 +204,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         this.authService.checkSession().subscribe({
             next: (valid: boolean) => {
-                if (!valid) {
+                if (!valid && !this.isPublicAccess) {
                     this.redirectToEmpty();
                     return;
                 }
@@ -212,7 +216,7 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
             },
             error: (err) => {
-                if (this.handleForbidden(err)) return;
+                if (!this.isPublicAccess && this.handleForbidden(err)) return;
                 this.isAuthenticated = false;
                 this.sessionChecked = true;
             }
@@ -221,6 +225,22 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.reloadOrders(false, false);
         this.historyDate = this.getLocalDateInput();
         this.loadHistory(1);
+
+        this.visibilityHandler = () => {
+            if (document.visibilityState === 'visible') {
+                this.zone.run(() => {
+                    this.reloadOrders(false, true);
+                    if (!this.eventSource || this.eventSource.readyState === EventSource.CLOSED) {
+                        this.sseReconnectDelay = 1000;
+                        this.startRealtime();
+                    }
+                    if (!this.fallbackRefreshHandle) {
+                        this.startFallbackRefresh();
+                    }
+                });
+            }
+        };
+        document.addEventListener('visibilitychange', this.visibilityHandler);
     }
 
     formatDate(dateValue?: string | Date | { date?: string } | number): string {
@@ -314,17 +334,22 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngOnDestroy(): void {
-        if (this.eventSource) {
-            this.eventSource.close();
-            this.eventSource = null;
-        }
+        this.closeEventSource();
         if (this.realtimeReloadHandle) {
             clearTimeout(this.realtimeReloadHandle);
             this.realtimeReloadHandle = null;
         }
+        if (this.sseReconnectHandle) {
+            clearTimeout(this.sseReconnectHandle);
+            this.sseReconnectHandle = null;
+        }
         if (this.fallbackRefreshHandle) {
             clearInterval(this.fallbackRefreshHandle);
             this.fallbackRefreshHandle = null;
+        }
+        if (this.visibilityHandler) {
+            document.removeEventListener('visibilitychange', this.visibilityHandler);
+            this.visibilityHandler = null;
         }
     }
 
@@ -433,13 +458,18 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (this.ordersFetchingDisabled) return;
         if (!this.orderListToken && !this.isPublicAccess) return;
         if (!this.realtimeUrl) return;
-        if (this.eventSource) return;
         if (typeof EventSource === 'undefined') {
             console.warn('EventSource is not supported in this browser.');
             return;
         }
 
+        this.closeEventSource();
+
         this.eventSource = new EventSource(this.realtimeUrl);
+
+        this.eventSource.onopen = () => {
+            this.sseReconnectDelay = 1000;
+        };
 
         this.eventSource.addEventListener('orders_updated', () => {
             this.zone.run(() => this.scheduleRealtimeReload());
@@ -447,8 +477,28 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         this.eventSource.onerror = () => {
             if (!this.eventSource) return;
-            console.warn('SSE connection error. Browser will retry automatically.');
+            if (this.eventSource.readyState === EventSource.CLOSED) {
+                console.warn('SSE connection closed. Scheduling reconnect...');
+                this.closeEventSource();
+                this.scheduleSseReconnect();
+            }
         };
+    }
+
+    private closeEventSource() {
+        if (this.eventSource) {
+            this.eventSource.close();
+            this.eventSource = null;
+        }
+    }
+
+    private scheduleSseReconnect() {
+        if (this.sseReconnectHandle) return;
+        this.sseReconnectHandle = setTimeout(() => {
+            this.sseReconnectHandle = null;
+            this.sseReconnectDelay = Math.min(this.sseReconnectDelay * 2, this.SSE_MAX_RECONNECT_DELAY);
+            this.startRealtime();
+        }, this.sseReconnectDelay);
     }
 
     private scheduleRealtimeReload() {
@@ -462,8 +512,16 @@ export class OrderListComponent implements OnInit, OnDestroy, AfterViewChecked {
     private startFallbackRefresh() {
         if (this.fallbackRefreshHandle) return;
         this.fallbackRefreshHandle = setInterval(() => {
-            this.reloadOrders(false, true);
+            this.importAndReload();
         }, 15000);
+    }
+
+    private importAndReload() {
+        if (this.ordersFetchingDisabled) return;
+        this.authService.importOrders(5).subscribe({
+            next: () => this.reloadOrders(false, true),
+            error: () => this.reloadOrders(false, true)
+        });
     }
 
     trackByOrderId(_index: number, order: Order): number {
